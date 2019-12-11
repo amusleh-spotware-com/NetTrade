@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace NetTrade.Abstractions
+namespace NetTrade.Interfaces
 {
     public interface IRobot
     {

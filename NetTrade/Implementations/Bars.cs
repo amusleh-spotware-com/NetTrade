@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using NetTrade.Abstractions;
+using NetTrade.Interfaces;
 
 namespace NetTrade.Implementations
 {
     public class Bars : IBars
     {
-        public ITimeSeries Time => throw new NotImplementedException();
+        public ISeries<DateTime> Time { get; } = new CustomSeries<DateTime>();
 
-        public IDataSeries Open => throw new NotImplementedException();
+        public ISeries<double> Open { get; } = new CustomSeries<double>();
 
-        public IDataSeries High => throw new NotImplementedException();
+        public ISeries<double> High { get; } = new CustomSeries<double>();
 
-        public IDataSeries Low => throw new NotImplementedException();
+        public ISeries<double> Low { get; } = new CustomSeries<double>();
 
-        public IDataSeries Close => throw new NotImplementedException();
-
-        
+        public ISeries<double> Close { get; } = new CustomSeries<double>();
     }
 }
