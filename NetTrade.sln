@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29519.181
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetTrade", "NetTrade\NetTrade.csproj", "{FDBBAFE3-7E23-4E2C-91B1-E7C78733D498}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FDBBAFE3-7E23-4E2C-91B1-E7C78733D498}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDBBAFE3-7E23-4E2C-91B1-E7C78733D498}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDBBAFE3-7E23-4E2C-91B1-E7C78733D498}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDBBAFE3-7E23-4E2C-91B1-E7C78733D498}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ABCDFF70-A6BF-4B15-96D0-2EE32E35CB2B}
+	EndGlobalSection
+EndGlobal
