@@ -1,20 +1,49 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using NetTrade.Helpers;
 using NetTrade.Interfaces;
+using NetTrade.Models;
+using System;
 
 namespace NetTrade.Implementations
 {
-    public class Bars : IBars
+    internal class Bars : IBars
     {
-        public ISeries<DateTime> Time { get; } = new CustomSeries<DateTime>();
+        private CustomSeries<DateTime> _time = new CustomSeries<DateTime>();
 
-        public ISeries<double> Open { get; } = new CustomSeries<double>();
+        private CustomSeries<double> _open = new CustomSeries<double>();
 
-        public ISeries<double> High { get; } = new CustomSeries<double>();
+        private CustomSeries<double> _high = new CustomSeries<double>();
 
-        public ISeries<double> Low { get; } = new CustomSeries<double>();
+        private CustomSeries<double> _low = new CustomSeries<double>();
 
-        public ISeries<double> Close { get; } = new CustomSeries<double>();
+        private CustomSeries<double> _close = new CustomSeries<double>();
+
+        private CustomSeries<long> _volume = new CustomSeries<long>();
+
+        public ISeries<DateTime> Time => _time;
+
+        public ISeries<double> Open => _open;
+
+        public ISeries<double> High => _high;
+
+        public ISeries<double> Low => _low;
+
+        public ISeries<double> Close => _close;
+
+        public ISeries<long> Volume => _volume;
+
+        public event OnBarHandler OnBar;
+
+        internal void AddValue(Bar bar)
+        {
+            int index = _time.Count;
+
+            _time.Add(index, bar.Time);
+            _open.Add(index, bar.Open);
+            _high.Add(index, bar.High);
+            _low.Add(index, bar.Low);
+            _volume.Add(index, bar.Volume);
+
+            OnBar?.Invoke(index);
+        }
     }
 }

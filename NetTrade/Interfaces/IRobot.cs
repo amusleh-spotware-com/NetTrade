@@ -6,8 +6,6 @@ namespace NetTrade.Interfaces
 {
     public interface IRobot
     {
-        IBars Bars { get; }
-
         void OnStart();
 
         void OnBar();

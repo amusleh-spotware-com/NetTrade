@@ -1,4 +1,5 @@
 ﻿using System;
+using NetTrade.Helpers;
 
 namespace NetTrade.Interfaces
 {
@@ -13,5 +14,9 @@ namespace NetTrade.Interfaces
         ISeries<double> Low { get; }
 
         ISeries<double> Close { get; }
+
+        ISeries<long> Volume { get; }
+
+        event OnBarHandler OnBar;
     }
 }
