@@ -6,6 +6,18 @@ namespace NetTrade.Interfaces
 {
     public interface IRobot
     {
+        ISymbol Symbol { get; }
+
+        List<ISymbol> OtherSymbols { get; }
+
+        bool IsRunning { get; }
+
+        void Start();
+
+        void Stop();
+
+        void Pause();
+
         void OnStart();
 
         void OnBar();
