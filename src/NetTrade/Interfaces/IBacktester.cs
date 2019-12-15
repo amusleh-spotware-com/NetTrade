@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using NetTrade.Helpers;
+using NetTrade.Models;
 
 namespace NetTrade.Interfaces
 {
@@ -20,5 +21,7 @@ namespace NetTrade.Interfaces
         void Pause();
 
         void Stop();
+
+        IBacktestResult GetResult();
     }
 }

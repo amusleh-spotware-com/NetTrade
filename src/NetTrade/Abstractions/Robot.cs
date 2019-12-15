@@ -81,8 +81,9 @@ namespace NetTrade.Abstractions
             throw new NotImplementedException();
         }
 
-        private void Backtester_OnBacktestFinishedEvent(object sender, BackTestResult result)
+        private void Backtester_OnBacktestFinishedEvent(object sender, IBacktestResult result)
         {
+            throw new NotImplementedException();
         }
 
         #endregion Backtester event handlers

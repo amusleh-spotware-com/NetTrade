@@ -1,5 +1,7 @@
 ﻿using NetTrade.Helpers;
 using NetTrade.Interfaces;
+using NetTrade.Models;
+using System;
 using System.Linq;
 
 namespace NetTrade.Implementations
@@ -20,9 +22,13 @@ namespace NetTrade.Implementations
         {
             _robot = robot;
 
+            OnBacktestStartEvent?.Invoke(this, _robot);
+
             StartIteration();
 
-            OnBacktestStartEvent?.Invoke(this, _robot);
+            var result = GetResult();
+
+            OnBacktestFinishedEvent?.Invoke(this, result);
         }
 
         public void Pause()
@@ -59,6 +65,11 @@ namespace NetTrade.Implementations
 
                 _robot.OnBar(index);
             }
+        }
+
+        public IBacktestResult GetResult()
+        {
+            throw new NotImplementedException();
         }
     }
 }
