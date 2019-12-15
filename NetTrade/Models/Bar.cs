@@ -4,7 +4,7 @@ using System.Text;
 
 namespace NetTrade.Models
 {
-    internal class Bar
+    public class Bar
     {
         public DateTime Time { get; set; }
 

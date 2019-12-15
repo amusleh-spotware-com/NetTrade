@@ -1,7 +1,6 @@
-﻿using System;
+﻿using NetTrade.Interfaces;
+using NetTrade.Models;
 using System.Collections.Generic;
-using System.Text;
-using NetTrade.Interfaces;
 
 namespace NetTrade.Implementations
 {
@@ -13,6 +12,8 @@ namespace NetTrade.Implementations
         }
 
         public string DataFilePath { get; set; }
+
+        public List<Bar> Data { get; set; }
 
         public string Name { get; set; }
 
@@ -28,6 +29,6 @@ namespace NetTrade.Implementations
 
         public long VolumeStep { get; set; }
 
-        public IBars Bars { get; }
+        public Bars Bars { get; }
     }
 }

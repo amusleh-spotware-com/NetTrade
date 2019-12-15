@@ -1,11 +1,11 @@
 ﻿using NetTrade.Helpers;
+using NetTrade.Implementations;
 using NetTrade.Interfaces;
-using NetTrade.Models;
 using System;
 
-namespace NetTrade.Implementations
+namespace NetTrade.Models
 {
-    internal class Bars : IBars
+    public class Bars
     {
         private CustomSeries<DateTime> _time = new CustomSeries<DateTime>();
 
@@ -43,7 +43,7 @@ namespace NetTrade.Implementations
             _low.Add(index, bar.Low);
             _volume.Add(index, bar.Volume);
 
-            OnBar?.Invoke(index);
+            OnBar?.Invoke(this, index);
         }
     }
 }

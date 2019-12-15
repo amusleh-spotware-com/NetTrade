@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using NetTrade.Models;
 
 namespace NetTrade.Interfaces
 {
     public interface ISymbol
     {
         string DataFilePath { get; }
+
+        List<Bar> Data { get; set; }
 
         string Name { get; }
 
@@ -22,6 +25,6 @@ namespace NetTrade.Interfaces
 
         long VolumeStep { get; }
 
-        IBars Bars { get; }
+        Bars Bars { get; }
     }
 }

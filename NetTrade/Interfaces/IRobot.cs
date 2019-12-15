@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using NetTrade.Models;
 
 namespace NetTrade.Interfaces
 {
     public interface IRobot
     {
-        ISymbol Symbol { get; }
-
-        List<ISymbol> OtherSymbols { get; }
+        RobotSettings Settings { get; }
 
         bool IsRunning { get; }
 

@@ -1,30 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using NetTrade.Enums;
 using NetTrade.Interfaces;
-using System.Linq;
+using NetTrade.Models;
+using System;
 
 namespace NetTrade.Abstractions
 {
     public abstract class Robot : IRobot
     {
-        public Robot(ISymbol symbol, IEnumerable<ISymbol> otherSymbols)
+        public Robot(RobotSettings settings)
         {
-            Symbol = symbol;
-
-            OtherSymbols = otherSymbols.ToList();
+            Settings = settings;
         }
 
-        public ISymbol Symbol { get; }
-
-        public List<ISymbol> OtherSymbols { get; }
-
         public bool IsRunning { get; private set; }
+
+        public RobotSettings Settings { get; }
 
         public void Start()
         {
             IsRunning = true;
 
             OnStart();
+
+            switch (Settings.Mode)
+            {
+                case Mode.Backtest:
+                    Backtest();
+                    break;
+
+                case Mode.Optimization:
+                    break;
+
+                case Mode.Live:
+                    break;
+            }
         }
 
         public void Stop()
@@ -44,5 +53,38 @@ namespace NetTrade.Abstractions
         public abstract void OnStart();
 
         public abstract void OnStop();
+
+        private void Backtest()
+        {
+            Settings.Backtester.OnBacktestFinishedEvent += Backtester_OnBacktestFinishedEvent;
+            Settings.Backtester.OnBacktestStartEvent += Backtester_OnBacktestStartEvent;
+            Settings.Backtester.OnBacktestPauseEvent += Backtester_OnBacktestPauseEvent; ;
+            Settings.Backtester.OnBacktestStopEvent += Backtester_OnBacktestStopEvent; ;
+
+            Settings.Backtester.Start(this);
+        }
+
+        #region Backtester event handlers
+
+        private void Backtester_OnBacktestStopEvent(object sender, IRobot robot)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Backtester_OnBacktestPauseEvent(object sender, IRobot robot)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Backtester_OnBacktestStartEvent(object sender, IRobot robot)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Backtester_OnBacktestFinishedEvent(object sender, BackTestResult result)
+        {
+        }
+
+        #endregion Backtester event handlers
     }
 }
