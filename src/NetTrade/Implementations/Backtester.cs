@@ -37,9 +37,13 @@ namespace NetTrade.Implementations
 
         private void StartIteration()
         {
-            foreach (var bar in _robot.Settings.MainSymbol.Data)
+            var symbolDataOrdered = _robot.Settings.MainSymbol.Data.OrderBy(iBar => iBar.Time);
+
+            foreach (var bar in symbolDataOrdered)
             {
                 var index = _robot.Settings.MainSymbol.Bars.AddValue(bar);
+
+                _robot.Settings.MainSymbol.Data.Remove(bar);
 
                 foreach (var otherSymbol in _robot.Settings.OtherSymbols)
                 {
@@ -48,6 +52,8 @@ namespace NetTrade.Implementations
                     if (otherSymbolBar != null)
                     {
                         otherSymbol.Bars.AddValue(otherSymbolBar);
+
+                        otherSymbol.Data.Remove(otherSymbolBar);
                     }
                 }
 
