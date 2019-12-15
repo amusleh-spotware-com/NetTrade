@@ -19,7 +19,7 @@ namespace NetTrade.Interfaces
 
         void OnStart();
 
-        void OnBar();
+        void OnBar(int index);
 
         void OnStop();
     }

@@ -20,9 +20,6 @@ namespace NetTrade.Implementations
         {
             _robot = robot;
 
-            DataReader.SetSymbolsData(_robot.Settings.CsvConfiguration, _robot.Settings.MainSymbol);
-            DataReader.SetSymbolsData(_robot.Settings.CsvConfiguration, _robot.Settings.OtherSymbols.ToArray());
-
             StartIteration();
 
             OnBacktestStartEvent?.Invoke(this, _robot);
@@ -42,7 +39,7 @@ namespace NetTrade.Implementations
         {
             foreach (var bar in _robot.Settings.MainSymbol.Data)
             {
-                _robot.Settings.MainSymbol.Bars.AddValue(bar);
+                var index = _robot.Settings.MainSymbol.Bars.AddValue(bar);
 
                 foreach (var otherSymbol in _robot.Settings.OtherSymbols)
                 {
@@ -53,6 +50,8 @@ namespace NetTrade.Implementations
                         otherSymbol.Bars.AddValue(otherSymbolBar);
                     }
                 }
+
+                _robot.OnBar(index);
             }
         }
     }

@@ -7,8 +7,6 @@ namespace NetTrade.Interfaces
 {
     public interface ISymbol
     {
-        string DataFilePath { get; }
-
         List<Bar> Data { get; set; }
 
         string Name { get; }

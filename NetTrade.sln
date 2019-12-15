@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29519.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetTrade", "NetTrade\NetTrade.csproj", "{FDBBAFE3-7E23-4E2C-91B1-E7C78733D498}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetTrade", "src\NetTrade\NetTrade.csproj", "{FDBBAFE3-7E23-4E2C-91B1-E7C78733D498}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9E9CC09E-9418-4505-867C-6F6AD1C2F18B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,6 +20,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FDBBAFE3-7E23-4E2C-91B1-E7C78733D498} = {9E9CC09E-9418-4505-867C-6F6AD1C2F18B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {ABCDFF70-A6BF-4B15-96D0-2EE32E35CB2B}

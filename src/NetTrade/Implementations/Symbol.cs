@@ -10,9 +10,6 @@ namespace NetTrade.Implementations
         {
             Bars = new Bars();
         }
-
-        public string DataFilePath { get; set; }
-
         public List<Bar> Data { get; set; }
 
         public string Name { get; set; }

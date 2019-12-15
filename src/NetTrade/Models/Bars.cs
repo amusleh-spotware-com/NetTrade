@@ -33,7 +33,7 @@ namespace NetTrade.Models
 
         public event OnBarHandler OnBar;
 
-        internal void AddValue(Bar bar)
+        internal int AddValue(Bar bar)
         {
             int index = _time.Count;
 
@@ -44,6 +44,8 @@ namespace NetTrade.Models
             _volume.Add(index, bar.Volume);
 
             OnBar?.Invoke(this, index);
+
+            return index;
         }
     }
 }

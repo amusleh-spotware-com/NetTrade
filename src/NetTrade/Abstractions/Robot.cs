@@ -48,7 +48,7 @@ namespace NetTrade.Abstractions
             IsRunning = false;
         }
 
-        public abstract void OnBar();
+        public abstract void OnBar(int index);
 
         public abstract void OnStart();
 
