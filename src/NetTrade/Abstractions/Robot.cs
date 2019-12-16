@@ -7,18 +7,18 @@ namespace NetTrade.Abstractions
 {
     public abstract class Robot : IRobot
     {
-        public Robot(RobotSettings settings)
+        public Robot(IRobotSettings settings)
         {
             Settings = settings;
         }
 
-        public bool IsRunning { get; private set; }
+        public IRobotSettings Settings { get; }
 
-        public RobotSettings Settings { get; }
+        public RunningMode RunningMode { get; private set; }
 
         public void Start()
         {
-            IsRunning = true;
+            RunningMode = RunningMode.Running;
 
             OnStart();
 
@@ -38,14 +38,19 @@ namespace NetTrade.Abstractions
 
         public void Stop()
         {
-            IsRunning = false;
+            RunningMode = RunningMode.Stopped;
 
             OnStop();
         }
 
         public void Pause()
         {
-            IsRunning = false;
+            RunningMode = RunningMode.Paused;
+        }
+
+        public void Resume()
+        {
+            RunningMode = RunningMode.Running;
         }
 
         public abstract void OnBar(int index);

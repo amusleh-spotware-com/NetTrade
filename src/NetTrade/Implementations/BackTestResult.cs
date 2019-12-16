@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using NetTrade.Interfaces;
 
-namespace NetTrade.Models
+namespace NetTrade.Implementations
 {
     public class BackTestResult: IBacktestResult
     {

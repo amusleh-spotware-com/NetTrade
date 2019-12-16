@@ -6,7 +6,7 @@ namespace NetTrade.Models
 {
     public class Bar
     {
-        public DateTime Time { get; set; }
+        public DateTimeOffset Time { get; set; }
 
         public double Open { get; set; }
 

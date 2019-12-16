@@ -7,7 +7,7 @@ namespace NetTrade.Models
 {
     public class Bars
     {
-        private CustomSeries<DateTime> _time = new CustomSeries<DateTime>();
+        private CustomSeries<DateTimeOffset> _time = new CustomSeries<DateTimeOffset>();
 
         private CustomSeries<double> _open = new CustomSeries<double>();
 
@@ -19,7 +19,12 @@ namespace NetTrade.Models
 
         private CustomSeries<long> _volume = new CustomSeries<long>();
 
-        public ISeries<DateTime> Time => _time;
+        public Bars(TimeSpan timeFrame)
+        {
+            TimeFrame = timeFrame;
+        }
+
+        public ISeries<DateTimeOffset> Time => _time;
 
         public ISeries<double> Open => _open;
 
@@ -30,6 +35,8 @@ namespace NetTrade.Models
         public ISeries<double> Close => _close;
 
         public ISeries<long> Volume => _volume;
+
+        public TimeSpan TimeFrame { get; }
 
         public event OnBarHandler OnBar;
 

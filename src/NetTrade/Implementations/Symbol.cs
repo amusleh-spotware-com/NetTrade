@@ -1,14 +1,15 @@
 ﻿using NetTrade.Interfaces;
 using NetTrade.Models;
 using System.Collections.Generic;
+using System;
 
 namespace NetTrade.Implementations
 {
     public class Symbol : ISymbol
     {
-        public Symbol()
+        public Symbol(TimeSpan timeFrame)
         {
-            Bars = new Bars();
+            Bars = new Bars(timeFrame);
         }
         public List<Bar> Data { get; set; }
 
