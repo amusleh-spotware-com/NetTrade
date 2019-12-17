@@ -1,16 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using NetTrade.Enums;
 using NetTrade.Interfaces;
-using NetTrade.Enums;
+using NetTrade.Models;
+using System;
 
 namespace NetTrade.Abstractions
 {
-    public abstract class OrderParameters: IOrderParameters
+    public abstract class OrderParameters : IOrderParameters
     {
-        public OrderParameters(OrderType orderType)
+        public OrderParameters(OrderType orderType, ISymbol symbol)
         {
             OrderType = orderType;
+
+            Symbol = symbol;
         }
 
         public OrderType OrderType { get; }
@@ -24,5 +25,9 @@ namespace NetTrade.Abstractions
         public double? TakeProfitPrice { get; set; }
 
         public string Comment { get; set; }
+
+        public ISymbol Symbol { get; }
+
+        public abstract TradeResult Execute(ITradeEngine tradeEngine);
     }
 }

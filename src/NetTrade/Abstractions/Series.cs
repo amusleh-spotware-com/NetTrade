@@ -17,10 +17,19 @@ namespace NetTrade.Abstractions
 
         public int Count => Storage.Count;
 
+        public T LastValue => this[Count - 1];
+
         public IEnumerator<T> GetEnumerator() => Storage.Values.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => Storage.Values.GetEnumerator();
 
         protected abstract ConcurrentDictionary<int, T> GetStorage();
+
+        public T Last(int index)
+        {
+            int lastIndex = (Count - 1) - index;
+
+            return this[lastIndex];
+        }
     }
 }

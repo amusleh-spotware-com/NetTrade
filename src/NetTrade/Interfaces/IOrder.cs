@@ -16,5 +16,9 @@ namespace NetTrade.Interfaces
         double? TakeProfitPrice { get; }
 
         string Comment { get; }
+
+        long Volume { get; }
+
+        ISymbol Symbol { get; }
     }
 }

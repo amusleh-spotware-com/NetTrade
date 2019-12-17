@@ -20,5 +20,7 @@ namespace NetTrade.Interfaces
         long Leverage { get; }
 
         string BrokerName { get; }
+
+        ITradeEngine Trade { get; }
     }
 }

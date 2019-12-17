@@ -6,14 +6,27 @@ namespace NetTrade.Abstractions
 {
     public abstract class Order : IOrder
     {
-        public Order(OrderType orderType, DateTimeOffset openTime, string comment)
+
+        public Order(IOrderParameters orderParameters)
         {
-            OrderType = orderType;
+            Symbol = orderParameters.Symbol;
 
-            OpenTime = openTime;
+            TradeType = orderParameters.TradeType;
 
-            Comment = comment;
+            OrderType = orderParameters.OrderType;
+
+            Volume = orderParameters.Volume;
+
+            Comment = orderParameters.Comment;
+
+            StopLossPrice = orderParameters.StopLossPrice;
+
+            TakeProfitPrice = orderParameters.TakeProfitPrice;
+
+            OpenTime = DateTimeOffset.Now;
         }
+
+        public TradeType TradeType { get; }
 
         public OrderType OrderType { get; }
 
@@ -24,5 +37,9 @@ namespace NetTrade.Abstractions
         public double? StopLossPrice { get; set; }
 
         public double? TakeProfitPrice { get; set; }
+
+        public long Volume { get; }
+
+        public ISymbol Symbol { get; }
     }
 }

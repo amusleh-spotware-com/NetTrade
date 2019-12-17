@@ -2,6 +2,7 @@
 using NetTrade.Models;
 using System.Collections.Generic;
 using System;
+using NetTrade.Enums;
 
 namespace NetTrade.Implementations
 {
@@ -28,5 +29,11 @@ namespace NetTrade.Implementations
         public long VolumeStep { get; set; }
 
         public Bars Bars { get; }
+
+        public double Bid => Bars.Close.LastValue;
+
+        public double Ask => Bars.Close.LastValue;
+
+        public double GetPrice(TradeType tradeType) => tradeType == TradeType.Buy ? Ask : Bid;
     }
 }

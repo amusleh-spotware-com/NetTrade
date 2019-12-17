@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using NetTrade.Models;
+using NetTrade.Enums;
 
 namespace NetTrade.Interfaces
 {
@@ -23,6 +24,12 @@ namespace NetTrade.Interfaces
 
         long VolumeStep { get; }
 
+        double Bid { get; }
+
+        double Ask { get; }
+
         Bars Bars { get; }
+
+        double GetPrice(TradeType tradeType);
     }
 }

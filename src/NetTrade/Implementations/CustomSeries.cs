@@ -9,9 +9,16 @@ namespace NetTrade.Implementations
 
         protected override ConcurrentDictionary<int, T> GetStorage() => _storage;
 
-        internal void Add(int index, T value)
+        public void Add(int index, T value)
         {
             _storage.AddOrUpdate(index, value, (iIndex, iValue) => value);
+        }
+
+        public void Add(T value)
+        {
+            int index = _storage.Keys.Count;
+
+            Add(index, value);
         }
     }
 }

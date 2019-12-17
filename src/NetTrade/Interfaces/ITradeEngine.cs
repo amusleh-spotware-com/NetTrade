@@ -7,12 +7,14 @@ namespace NetTrade.Interfaces
 {
     public interface ITradeEngine
     {
-        ISymbol Symbol { get; }
+        ISeries<IOrder> Orders { get; }
 
-        List<IOrder> Orders { get; }
-
-        List<ITrade> Trades { get; }
+        ISeries<ITrade> Trades { get; }
 
         TradeResult PlaceOrder(IOrderParameters parameters);
+
+        void UpdateSymbolOrders(ISymbol symbol);
+
+        void AddOrder(IOrder order);
     }
 }

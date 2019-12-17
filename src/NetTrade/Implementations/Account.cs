@@ -8,13 +8,14 @@ namespace NetTrade.Implementations
 {
     public class Account : IAccount
     {
-        public Account(long id, long number, string label, long leverage, string brokerName)
+        public Account(long id, long number, string label, long leverage, string brokerName, ITradeEngine tradeEngine)
         {
             Id = id;
             Number = number;
             Label = label;
             Leverage = leverage;
             BrokerName = brokerName;
+            Trade = tradeEngine;
         }
 
         public List<Transaction> Transactions { get; } = new List<Transaction>();
@@ -32,5 +33,7 @@ namespace NetTrade.Implementations
         public long Leverage { get; }
 
         public string BrokerName { get; }
+
+        public ITradeEngine Trade { get; }
     }
 }
