@@ -5,6 +5,8 @@ namespace NetTrade.Helpers
 {
     public delegate void OnBarHandler(object sender, int index);
 
+    public delegate void OnTickHandler(object sender);
+
     public delegate void OnBacktestStart(object sender, IRobot robot);
 
     public delegate void OnBacktestStop(object sender, IRobot robot);

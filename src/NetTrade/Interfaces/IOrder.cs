@@ -20,5 +20,7 @@ namespace NetTrade.Interfaces
         long Volume { get; }
 
         ISymbol Symbol { get; }
+
+        TradeType TradeType { get; }
     }
 }

@@ -7,17 +7,17 @@ namespace NetTrade.Models
 {
     public class Bars
     {
-        private CustomSeries<DateTimeOffset> _time = new CustomSeries<DateTimeOffset>();
+        private ExpandableSeries<DateTimeOffset> _time = new ExpandableSeries<DateTimeOffset>();
 
-        private CustomSeries<double> _open = new CustomSeries<double>();
+        private ExpandableSeries<double> _open = new ExpandableSeries<double>();
 
-        private CustomSeries<double> _high = new CustomSeries<double>();
+        private ExpandableSeries<double> _high = new ExpandableSeries<double>();
 
-        private CustomSeries<double> _low = new CustomSeries<double>();
+        private ExpandableSeries<double> _low = new ExpandableSeries<double>();
 
-        private CustomSeries<double> _close = new CustomSeries<double>();
+        private ExpandableSeries<double> _close = new ExpandableSeries<double>();
 
-        private CustomSeries<long> _volume = new CustomSeries<long>();
+        private ExpandableSeries<long> _volume = new ExpandableSeries<long>();
 
         public Bars(TimeSpan timeFrame)
         {

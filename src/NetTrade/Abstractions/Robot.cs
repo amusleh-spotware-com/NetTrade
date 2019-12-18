@@ -18,6 +18,13 @@ namespace NetTrade.Abstractions
 
         public void Start()
         {
+            Settings.MainSymbol.OnTickEvent += Symbol_OnTickEvent;
+
+            foreach (var symbol in Settings.OtherSymbols)
+            {
+                symbol.OnTickEvent += Symbol_OnTickEvent;
+            }
+
             RunningMode = RunningMode.Running;
 
             OnStart();
@@ -92,5 +99,16 @@ namespace NetTrade.Abstractions
         }
 
         #endregion Backtester event handlers
+
+        #region Symbols on tick event handler
+
+        private void Symbol_OnTickEvent(object sender)
+        {
+            var symbol = sender as ISymbol;
+
+            Settings.Account.Trade.UpdateSymbolOrders(symbol);
+        }
+
+        #endregion
     }
 }

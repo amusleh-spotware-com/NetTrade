@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Text;
 using NetTrade.Models;
 using NetTrade.Enums;
+using NetTrade.Helpers;
 
 namespace NetTrade.Interfaces
 {
-    public interface ISymbol
+    public interface ISymbol: IEquatable<ISymbol>
     {
         List<Bar> Data { get; set; }
 
@@ -29,6 +30,8 @@ namespace NetTrade.Interfaces
         double Ask { get; }
 
         Bars Bars { get; }
+
+        event OnTickHandler OnTickEvent;
 
         double GetPrice(TradeType tradeType);
     }

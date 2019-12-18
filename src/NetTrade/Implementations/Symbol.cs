@@ -3,6 +3,7 @@ using NetTrade.Models;
 using System.Collections.Generic;
 using System;
 using NetTrade.Enums;
+using NetTrade.Helpers;
 
 namespace NetTrade.Implementations
 {
@@ -11,7 +12,10 @@ namespace NetTrade.Implementations
         public Symbol(TimeSpan timeFrame)
         {
             Bars = new Bars(timeFrame);
+
+            Bars.OnBar += Bars_OnBar;
         }
+
         public List<Bar> Data { get; set; }
 
         public string Name { get; set; }
@@ -34,6 +38,40 @@ namespace NetTrade.Implementations
 
         public double Ask => Bars.Close.LastValue;
 
+        public event OnTickHandler OnTickEvent;
+
         public double GetPrice(TradeType tradeType) => tradeType == TradeType.Buy ? Ask : Bid;
+
+        private void Bars_OnBar(object sender, int index) => OnTickEvent?.Invoke(this);
+
+        #region Equality methods
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Symbol);
+        }
+
+        public bool Equals(ISymbol other)
+        {
+            return other != null && Name == other.Name;
+        }
+
+        public override int GetHashCode()
+        {
+            return 539060726 + EqualityComparer<string>.Default.GetHashCode(Name);
+        }
+
+        public static bool operator ==(Symbol left, Symbol right)
+        {
+            return EqualityComparer<Symbol>.Default.Equals(left, right);
+        }
+
+        public static bool operator !=(Symbol left, Symbol right)
+        {
+            return !(left == right);
+        }
+
+        #endregion
+
     }
 }

@@ -12,5 +12,7 @@ namespace NetTrade.Interfaces
         List<ISymbol> OtherSymbols { get; }
 
         IBacktester Backtester { get; }
+
+        IAccount Account { get; }
     }
 }
