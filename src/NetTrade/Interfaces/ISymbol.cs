@@ -31,6 +31,10 @@ namespace NetTrade.Interfaces
 
         Bars Bars { get; }
 
+        double Slippage { get; }
+
+        double Spread { get; }
+
         event OnTickHandler OnTickEvent;
 
         double GetPrice(TradeType tradeType);

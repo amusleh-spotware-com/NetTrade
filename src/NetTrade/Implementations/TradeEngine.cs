@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using NetTrade.Enums;
 using NetTrade.Interfaces;
 using NetTrade.Models;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using NetTrade.Enums;
 
 namespace NetTrade.Implementations
 {
@@ -16,7 +15,7 @@ namespace NetTrade.Implementations
         private readonly List<ITrade> _trades = new List<ITrade>();
         private readonly List<ITradingEvent> _journal = new List<ITradingEvent>();
 
-        #endregion
+        #endregion Fields
 
         public IReadOnlyList<IOrder> Orders => _orders;
 
@@ -36,7 +35,7 @@ namespace NetTrade.Implementations
                 {
                     bool closeOrder = false;
 
-                    if (order.TradeType == TradeType.Buy && (symbol.Bid >= order.TakeProfitPrice || symbol.Bid <= order.StopLossPrice ))
+                    if (order.TradeType == TradeType.Buy && (symbol.Bid >= order.TakeProfitPrice || symbol.Bid <= order.StopLossPrice))
                     {
                         closeOrder = true;
                     }
@@ -101,6 +100,7 @@ namespace NetTrade.Implementations
                     _journal.Add(tradingEvent);
 
                     break;
+
                 case OrderType.Limit:
                 case OrderType.Stop:
                     tradingEvent = new TradingEvent(TradingEventType.PendingOrderPlaced, order, string.Empty);

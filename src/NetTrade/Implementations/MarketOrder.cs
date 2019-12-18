@@ -11,7 +11,17 @@ namespace NetTrade.Implementations
     {
         public MarketOrder(MarketOrderParameters parameters): base(parameters)
         {
-            EntryPrice = parameters.Symbol.GetPrice(parameters.TradeType);
+            var symbolPrice = parameters.Symbol.GetPrice(parameters.TradeType);
+            var symbolSlippageInPrice = parameters.Symbol.Slippage * parameters.Symbol.TickSize;
+
+            if (TradeType == TradeType.Buy)
+            {
+                EntryPrice = symbolPrice + symbolSlippageInPrice;
+            }
+            else
+            {
+                EntryPrice = symbolPrice - symbolSlippageInPrice;
+            }
         }
 
         public double EntryPrice { get; }

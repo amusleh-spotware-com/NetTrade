@@ -32,11 +32,15 @@ namespace NetTrade.Implementations
 
         public long VolumeStep { get; set; }
 
+        public double Slippage { get; set; }
+
         public Bars Bars { get; }
 
         public double Bid => Bars.Close.LastValue;
 
         public double Ask => Bars.Close.LastValue;
+
+        public double Spread => Ask - Bid;
 
         public event OnTickHandler OnTickEvent;
 
