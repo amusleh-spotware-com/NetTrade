@@ -23,7 +23,21 @@ namespace NetTrade.Implementations
 
         public IReadOnlyList<ITradingEvent> Journal => _journal;
 
-        public TradeResult PlaceOrder(IOrderParameters parameters) => parameters.Execute(this);
+        public TradeResult Execute(IOrderParameters parameters)
+        {
+            switch (parameters.OrderType)
+            {
+                case OrderType.Market:
+                    return ExecuteMarketOrder(parameters as MarketOrderParameters);
+
+                case OrderType.Limit:
+                case OrderType.Stop:
+                    return PlacePendingOrder(parameters as PendingOrderParameters);
+
+                default:
+                    throw new ArgumentException("Unknown order type");
+            }
+        }
 
         public void UpdateSymbolOrders(ISymbol symbol)
         {
@@ -88,29 +102,6 @@ namespace NetTrade.Implementations
             }
         }
 
-        public void AddOrder(IOrder order)
-        {
-            _orders.Add(order);
-
-            switch (order.OrderType)
-            {
-                case OrderType.Market:
-                    var tradingEvent = new TradingEvent(TradingEventType.MarketOrderExecuted, order, string.Empty);
-
-                    _journal.Add(tradingEvent);
-
-                    break;
-
-                case OrderType.Limit:
-                case OrderType.Stop:
-                    tradingEvent = new TradingEvent(TradingEventType.PendingOrderPlaced, order, string.Empty);
-
-                    _journal.Add(tradingEvent);
-
-                    break;
-            }
-        }
-
         public void CloseMarketOrder(MarketOrder order)
         {
             if (_orders.Contains(order))
@@ -160,6 +151,29 @@ namespace NetTrade.Implementations
             _journal.Add(tradingEvent);
         }
 
+        private void AddOrder(IOrder order)
+        {
+            _orders.Add(order);
+
+            switch (order.OrderType)
+            {
+                case OrderType.Market:
+                    var tradingEvent = new TradingEvent(TradingEventType.MarketOrderExecuted, order, string.Empty);
+
+                    _journal.Add(tradingEvent);
+
+                    break;
+
+                case OrderType.Limit:
+                case OrderType.Stop:
+                    tradingEvent = new TradingEvent(TradingEventType.PendingOrderPlaced, order, string.Empty);
+
+                    _journal.Add(tradingEvent);
+
+                    break;
+            }
+        }
+
         private void TriggerPendingOrder(PendingOrder order)
         {
             if (_orders.Contains(order))
@@ -180,7 +194,47 @@ namespace NetTrade.Implementations
 
             _journal.Add(tradingEvent);
 
-            PlaceOrder(marketOrderParameters);
+            Execute(marketOrderParameters);
+        }
+
+        private TradeResult ExecuteMarketOrder(MarketOrderParameters parameters)
+        {
+            var order = new MarketOrder(parameters);
+
+            AddOrder(order);
+
+            var result = new TradeResult(order);
+
+            return result;
+        }
+
+        private TradeResult PlacePendingOrder(PendingOrderParameters parameters)
+        {
+            double price = parameters.Symbol.GetPrice(parameters.TradeType);
+
+            bool isPriceValid = true;
+
+            switch (parameters.OrderType)
+            {
+                case OrderType.Limit:
+                    isPriceValid = parameters.TradeType == TradeType.Buy ? parameters.TargetPrice < price : parameters.TargetPrice > price;
+                    break;
+
+                case OrderType.Stop:
+                    isPriceValid = parameters.TradeType == TradeType.Buy ? parameters.TargetPrice > price : parameters.TargetPrice < price;
+                    break;
+            }
+
+            if (isPriceValid)
+            {
+                var order = new PendingOrder(parameters);
+
+                AddOrder(order);
+
+                return new TradeResult(order);
+            }
+
+            return new TradeResult(OrderErrorCode.InvalidTargetPrice);
         }
     }
 }

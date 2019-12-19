@@ -21,7 +21,5 @@ namespace NetTrade.Interfaces
         double? StopLossPrice { get; }
 
         double? TakeProfitPrice { get; }
-
-        TradeResult Execute(ITradeEngine tradeEngine);
     }
 }

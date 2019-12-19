@@ -20,32 +20,5 @@ namespace NetTrade.Implementations
         public double TargetPrice { get; set; }
 
         public DateTimeOffset? ExpiryTime { get; set; }
-
-        public override TradeResult Execute(ITradeEngine tradeEngine)
-        {
-            double price = Symbol.GetPrice(TradeType);
-
-            bool isPriceValid = true;
-
-            switch (OrderType)
-            {
-                case OrderType.Limit:
-                    isPriceValid = TradeType == TradeType.Buy ? TargetPrice < price : TargetPrice > price;
-                    break;
-
-                case OrderType.Stop:
-                    isPriceValid = TradeType == TradeType.Buy ? TargetPrice > price : TargetPrice < price;
-                    break;
-            }
-
-            if (isPriceValid)
-            {
-                var order = new PendingOrder(this);
-
-                return new TradeResult(order);
-            }
-
-            return new TradeResult(OrderErrorCode.InvalidTargetPrice);
-        }
     }
 }

@@ -13,16 +13,5 @@ namespace NetTrade.Implementations
         public MarketOrderParameters(ISymbol symbol): base(OrderType.Market, symbol)
         {
         }
-
-        public override TradeResult Execute(ITradeEngine tradeEngine)
-        {
-            var order = new MarketOrder(this);
-
-            tradeEngine.AddOrder(order);
-
-            var result = new TradeResult(order);
-
-            return result;
-        }
     }
 }

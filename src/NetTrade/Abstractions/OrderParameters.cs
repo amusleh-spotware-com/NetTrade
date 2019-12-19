@@ -27,7 +27,5 @@ namespace NetTrade.Abstractions
         public string Comment { get; set; }
 
         public ISymbol Symbol { get; }
-
-        public abstract TradeResult Execute(ITradeEngine tradeEngine);
     }
 }

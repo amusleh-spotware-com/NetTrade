@@ -14,11 +14,9 @@ namespace NetTrade.Interfaces
 
         IReadOnlyList<ITradingEvent> Journal { get; }
 
-        TradeResult PlaceOrder(IOrderParameters parameters);
+        TradeResult Execute(IOrderParameters parameters);
 
         void UpdateSymbolOrders(ISymbol symbol);
-
-        void AddOrder(IOrder order);
 
         void CloseMarketOrder(MarketOrder order);
 
