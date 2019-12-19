@@ -128,7 +128,7 @@ namespace NetTrade.Implementations
 
             grossProfit *= Math.Pow(10, order.Symbol.Digits);
 
-            double netProfit = grossProfit - (order.Symbol.Commission * 2);
+            double netProfit = grossProfit - (order.Symbol.Commission * 2 * order.Volume);
 
             var trade = new Trade(order, grossProfit, netProfit, DateTimeOffset.Now);
 
