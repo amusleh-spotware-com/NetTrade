@@ -1,5 +1,4 @@
 ﻿using NetTrade.Abstractions;
-using NetTrade.Enums;
 
 namespace NetTrade.Implementations
 {
@@ -7,17 +6,7 @@ namespace NetTrade.Implementations
     {
         public MarketOrder(MarketOrderParameters parameters) : base(parameters)
         {
-            var symbolPrice = parameters.Symbol.GetPrice(parameters.TradeType);
-            var symbolSlippageInPrice = parameters.Symbol.Slippage * parameters.Symbol.TickSize;
-
-            if (TradeType == TradeType.Buy)
-            {
-                EntryPrice = symbolPrice + symbolSlippageInPrice;
-            }
-            else
-            {
-                EntryPrice = symbolPrice - symbolSlippageInPrice;
-            }
+            EntryPrice = parameters.EntryPrice;
         }
 
         public double EntryPrice { get; }
