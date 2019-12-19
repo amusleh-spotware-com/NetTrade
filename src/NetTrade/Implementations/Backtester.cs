@@ -1,6 +1,5 @@
 ﻿using NetTrade.Helpers;
 using NetTrade.Interfaces;
-using NetTrade.Models;
 using System;
 using System.Linq;
 

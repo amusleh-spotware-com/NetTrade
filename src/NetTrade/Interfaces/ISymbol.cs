@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NetTrade.Models;
-using NetTrade.Enums;
+﻿using NetTrade.Enums;
 using NetTrade.Helpers;
+using NetTrade.Models;
+using System;
+using System.Collections.Generic;
 
 namespace NetTrade.Interfaces
 {
-    public interface ISymbol: IEquatable<ISymbol>
+    public interface ISymbol : IEquatable<ISymbol>
     {
         List<Bar> Data { get; set; }
 

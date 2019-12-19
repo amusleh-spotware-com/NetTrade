@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NetTrade.Models;
-using NetTrade.Enums;
+﻿using NetTrade.Enums;
 
 namespace NetTrade.Interfaces
 {
@@ -23,6 +19,8 @@ namespace NetTrade.Interfaces
         void OnStart();
 
         void OnBar(int index);
+
+        void OnTick(ISymbol symbol);
 
         void OnStop();
     }

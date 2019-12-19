@@ -1,7 +1,5 @@
 ﻿using NetTrade.Enums;
 using NetTrade.Interfaces;
-using NetTrade.Models;
-using System;
 
 namespace NetTrade.Abstractions
 {

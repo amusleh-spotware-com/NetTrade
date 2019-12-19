@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NetTrade.Models;
-using NetTrade.Enums;
+﻿using NetTrade.Enums;
 
 namespace NetTrade.Interfaces
 {

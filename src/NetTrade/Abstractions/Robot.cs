@@ -1,6 +1,5 @@
 ﻿using NetTrade.Enums;
 using NetTrade.Interfaces;
-using NetTrade.Models;
 using System;
 
 namespace NetTrade.Abstractions
@@ -36,9 +35,11 @@ namespace NetTrade.Abstractions
                     break;
 
                 case Mode.Optimization:
+                    Optimization();
                     break;
 
                 case Mode.Live:
+                    Live();
                     break;
             }
         }
@@ -60,11 +61,19 @@ namespace NetTrade.Abstractions
             RunningMode = RunningMode.Running;
         }
 
-        public abstract void OnBar(int index);
+        public virtual void OnTick(ISymbol symbol)
+        {
+        }
+
+        public virtual void OnBar(int index)
+        {
+        }
 
         public abstract void OnStart();
 
         public abstract void OnStop();
+
+        #region Robot different mode methods
 
         private void Backtest()
         {
@@ -75,6 +84,16 @@ namespace NetTrade.Abstractions
 
             Settings.Backtester.Start(this);
         }
+
+        private void Optimization()
+        {
+        }
+
+        private void Live()
+        {
+        }
+
+        #endregion Robot different mode methods
 
         #region Backtester event handlers
 
@@ -107,8 +126,10 @@ namespace NetTrade.Abstractions
             var symbol = sender as ISymbol;
 
             Settings.Account.Trade.UpdateSymbolOrders(symbol);
+
+            OnTick(symbol);
         }
 
-        #endregion
+        #endregion Symbols on tick event handler
     }
 }

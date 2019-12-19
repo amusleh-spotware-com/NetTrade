@@ -6,7 +6,6 @@ namespace NetTrade.Abstractions
 {
     public abstract class Order : IOrder
     {
-
         public Order(IOrderParameters orderParameters)
         {
             Symbol = orderParameters.Symbol;

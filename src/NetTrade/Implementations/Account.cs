@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NetTrade.Interfaces;
+﻿using NetTrade.Interfaces;
 using NetTrade.Models;
+using System.Collections.Generic;
 
 namespace NetTrade.Implementations
 {

@@ -1,9 +1,9 @@
-﻿using NetTrade.Interfaces;
-using NetTrade.Models;
-using System.Collections.Generic;
-using System;
-using NetTrade.Enums;
+﻿using NetTrade.Enums;
 using NetTrade.Helpers;
+using NetTrade.Interfaces;
+using NetTrade.Models;
+using System;
+using System.Collections.Generic;
 
 namespace NetTrade.Implementations
 {
@@ -75,7 +75,6 @@ namespace NetTrade.Implementations
             return !(left == right);
         }
 
-        #endregion
-
+        #endregion Equality methods
     }
 }

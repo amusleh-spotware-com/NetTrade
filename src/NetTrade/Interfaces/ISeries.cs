@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace NetTrade.Interfaces
 {
-    public interface ISeries<T>: IReadOnlyList<T>
+    public interface ISeries<T> : IReadOnlyList<T>
     {
         T LastValue { get; }
 

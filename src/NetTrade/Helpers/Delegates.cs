@@ -1,5 +1,4 @@
-﻿using NetTrade.Models;
-using NetTrade.Interfaces;
+﻿using NetTrade.Interfaces;
 
 namespace NetTrade.Helpers
 {
