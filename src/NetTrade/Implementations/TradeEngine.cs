@@ -199,6 +199,18 @@ namespace NetTrade.Implementations
 
         private TradeResult ExecuteMarketOrder(MarketOrderParameters parameters)
         {
+            var symbolPrice = parameters.Symbol.GetPrice(parameters.TradeType);
+            var symbolSlippageInPrice = parameters.Symbol.Slippage * parameters.Symbol.TickSize;
+
+            if (parameters.TradeType == TradeType.Buy)
+            {
+                parameters.EntryPrice = symbolPrice + symbolSlippageInPrice;
+            }
+            else
+            {
+                parameters.EntryPrice = symbolPrice - symbolSlippageInPrice;
+            }
+
             var order = new MarketOrder(parameters);
 
             AddOrder(order);
