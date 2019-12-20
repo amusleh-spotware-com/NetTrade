@@ -3,9 +3,9 @@ using NetTrade.Implementations;
 using NetTrade.Interfaces;
 using System;
 
-namespace NetTrade.Models
+namespace NetTrade.Abstractions
 {
-    public class Bars
+    public abstract class Bars: IBars
     {
         private ExpandableSeries<DateTimeOffset> _time = new ExpandableSeries<DateTimeOffset>();
 
@@ -19,11 +19,6 @@ namespace NetTrade.Models
 
         private ExpandableSeries<long> _volume = new ExpandableSeries<long>();
 
-        public Bars(TimeSpan timeFrame)
-        {
-            TimeFrame = timeFrame;
-        }
-
         public ISeries<DateTimeOffset> Time => _time;
 
         public ISeries<double> Open => _open;
@@ -36,11 +31,9 @@ namespace NetTrade.Models
 
         public ISeries<long> Volume => _volume;
 
-        public TimeSpan TimeFrame { get; }
+        public event OnBarHandler OnBarEvent;
 
-        public event OnBarHandler OnBar;
-
-        internal int AddValue(Bar bar)
+        public virtual int AddBar(IBar bar)
         {
             int index = _time.Count;
 
@@ -50,7 +43,7 @@ namespace NetTrade.Models
             _low.Add(index, bar.Low);
             _volume.Add(index, bar.Volume);
 
-            OnBar?.Invoke(this, index);
+            OnBarEvent?.Invoke(this, index);
 
             return index;
         }

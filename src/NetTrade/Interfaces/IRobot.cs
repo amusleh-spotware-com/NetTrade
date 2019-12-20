@@ -18,7 +18,7 @@ namespace NetTrade.Interfaces
 
         void OnStart();
 
-        void OnBar(int index);
+        void OnBar(ISymbol symbol, int index);
 
         void OnTick(ISymbol symbol);
 

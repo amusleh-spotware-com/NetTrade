@@ -1,15 +1,11 @@
 ﻿using NetTrade.Enums;
 using NetTrade.Helpers;
-using NetTrade.Models;
 using System;
-using System.Collections.Generic;
 
 namespace NetTrade.Interfaces
 {
     public interface ISymbol : IEquatable<ISymbol>
     {
-        List<Bar> Data { get; set; }
-
         string Name { get; }
 
         double TickSize { get; }
@@ -28,14 +24,20 @@ namespace NetTrade.Interfaces
 
         double Ask { get; }
 
-        Bars Bars { get; }
+        IBars Bars { get; }
 
         double Slippage { get; }
 
         double Spread { get; }
 
+        bool IsSubscribedToDataFeed { get; }
+
         event OnTickHandler OnTickEvent;
 
         double GetPrice(TradeType tradeType);
+
+        void SubscribeToDataFeed();
+
+        void UnsubscribeFromDataFeed();
     }
 }

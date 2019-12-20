@@ -18,10 +18,12 @@ namespace NetTrade.Abstractions
         public void Start()
         {
             Settings.MainSymbol.OnTickEvent += Symbol_OnTickEvent;
+            Settings.MainSymbol.Bars.OnBarEvent += SymbolBars_OnBarEvent;
 
             foreach (var symbol in Settings.OtherSymbols)
             {
                 symbol.OnTickEvent += Symbol_OnTickEvent;
+                symbol.Bars.OnBarEvent += SymbolBars_OnBarEvent;
             }
 
             RunningMode = RunningMode.Running;
@@ -65,7 +67,7 @@ namespace NetTrade.Abstractions
         {
         }
 
-        public virtual void OnBar(int index)
+        public virtual void OnBar(ISymbol symbol, int index)
         {
         }
 
@@ -75,7 +77,7 @@ namespace NetTrade.Abstractions
 
         #region Robot different mode methods
 
-        private void Backtest()
+        protected virtual void Backtest()
         {
             Settings.Backtester.OnBacktestFinishedEvent += Backtester_OnBacktestFinishedEvent;
             Settings.Backtester.OnBacktestStartEvent += Backtester_OnBacktestStartEvent;
@@ -85,11 +87,11 @@ namespace NetTrade.Abstractions
             Settings.Backtester.Start(this);
         }
 
-        private void Optimization()
+        protected virtual void Optimization()
         {
         }
 
-        private void Live()
+        protected virtual void Live()
         {
         }
 
@@ -112,14 +114,14 @@ namespace NetTrade.Abstractions
             throw new NotImplementedException();
         }
 
-        private void Backtester_OnBacktestFinishedEvent(object sender, IBacktestResult result)
+        private void Backtester_OnBacktestFinishedEvent(object sender, IRobot robot)
         {
             throw new NotImplementedException();
         }
 
         #endregion Backtester event handlers
 
-        #region Symbols on tick event handler
+        #region Symbols on tick/bar event handlers
 
         private void Symbol_OnTickEvent(object sender)
         {
@@ -130,6 +132,13 @@ namespace NetTrade.Abstractions
             OnTick(symbol);
         }
 
-        #endregion Symbols on tick event handler
+        private void SymbolBars_OnBarEvent(object sender, int index)
+        {
+            var symbol = sender as ISymbol;
+
+            OnBar(symbol, index);
+        }
+
+        #endregion Symbols on tick/bar event handlers
     }
 }

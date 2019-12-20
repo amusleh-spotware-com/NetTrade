@@ -23,46 +23,42 @@ namespace NetTrade.Implementations
 
             OnBacktestStartEvent?.Invoke(this, _robot);
 
-            StartIteration();
+            StartDataFeed();
 
-            var result = GetResult();
-
-            OnBacktestFinishedEvent?.Invoke(this, result);
+            OnBacktestFinishedEvent?.Invoke(this, _robot);
         }
 
         public void Pause()
         {
+            StopDataFeed();
+
             OnBacktestPauseEvent?.Invoke(this, _robot);
         }
 
         public void Stop()
         {
+            StopDataFeed();
+
             OnBacktestStopEvent?.Invoke(this, _robot);
         }
 
-        private void StartIteration()
+        private void StartDataFeed()
         {
-            var symbolDataOrdered = _robot.Settings.MainSymbol.Data.OrderBy(iBar => iBar.Time);
+            _robot.Settings.MainSymbol.SubscribeToDataFeed();
 
-            foreach (var bar in symbolDataOrdered)
+            foreach (var otherSymbol in _robot.Settings.OtherSymbols)
             {
-                var index = _robot.Settings.MainSymbol.Bars.AddValue(bar);
+                otherSymbol.SubscribeToDataFeed();
+            }
+        }
 
-                _robot.Settings.MainSymbol.Data.Remove(bar);
+        private void StopDataFeed()
+        {
+            _robot.Settings.MainSymbol.UnsubscribeFromDataFeed();
 
-                foreach (var otherSymbol in _robot.Settings.OtherSymbols)
-                {
-                    var otherSymbolBar = otherSymbol.Data.FirstOrDefault(iBar => iBar.Time == bar.Time);
-
-                    if (otherSymbolBar != null)
-                    {
-                        otherSymbol.Bars.AddValue(otherSymbolBar);
-
-                        otherSymbol.Data.Remove(otherSymbolBar);
-                    }
-                }
-
-                _robot.OnBar(index);
+            foreach (var otherSymbol in _robot.Settings.OtherSymbols)
+            {
+                otherSymbol.UnsubscribeFromDataFeed();
             }
         }
 

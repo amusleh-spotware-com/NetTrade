@@ -4,19 +4,20 @@ using NetTrade.Interfaces;
 using NetTrade.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NetTrade.Implementations
 {
     public class Symbol : ISymbol
     {
-        public Symbol(TimeSpan timeFrame)
+        private readonly List<IBar> _barsData;
+
+        public Symbol(List<IBar> barsData, IBars bars)
         {
-            Bars = new Bars(timeFrame);
+            _barsData = barsData;
 
-            Bars.OnBar += Bars_OnBar;
+            Bars = bars;
         }
-
-        public List<Bar> Data { get; set; }
 
         public string Name { get; set; }
 
@@ -34,19 +35,50 @@ namespace NetTrade.Implementations
 
         public double Slippage { get; set; }
 
-        public Bars Bars { get; }
+        public IBars Bars { get; }
 
-        public double Bid => Bars.Close.LastValue;
+        public double Bid { get; private set; }
 
-        public double Ask => Bars.Close.LastValue;
+        public double Ask { get; private set; }
 
         public double Spread => Ask - Bid;
+
+        public bool IsSubscribedToDataFeed { get; private set; }
 
         public event OnTickHandler OnTickEvent;
 
         public double GetPrice(TradeType tradeType) => tradeType == TradeType.Buy ? Ask : Bid;
 
-        private void Bars_OnBar(object sender, int index) => OnTickEvent?.Invoke(this);
+        private void SetBidAsk(double bid, double ask)
+        {
+            Bid = bid;
+            Ask = ask;
+
+            OnTickEvent?.Invoke(this);
+        }
+
+        public void SubscribeToDataFeed()
+        {
+            IsSubscribedToDataFeed = true;
+
+            var barsDataOrdered = _barsData.OrderBy(iBar => iBar.Time);
+
+            foreach (var bar in barsDataOrdered)
+            {
+                if (!IsSubscribedToDataFeed)
+                {
+                    break;
+                }
+
+                SetBidAsk(bar.Close, bar.Close);
+
+                var index = Bars.AddBar(bar);
+
+                _barsData.Remove(bar);
+            }
+        }
+
+        public void UnsubscribeFromDataFeed() => IsSubscribedToDataFeed = false;
 
         #region Equality methods
 
