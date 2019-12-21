@@ -11,6 +11,4 @@ namespace NetTrade.Helpers
     public delegate void OnBacktestStop(object sender, IRobot robot);
 
     public delegate void OnBacktestPause(object sender, IRobot robot);
-
-    public delegate void OnBacktestFinished(object sender, IRobot robot);
 }

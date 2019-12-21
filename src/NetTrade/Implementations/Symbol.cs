@@ -19,6 +19,8 @@ namespace NetTrade.Implementations
             Bars = bars;
         }
 
+        public IReadOnlyList<IBar> BarsData => _barsData;
+
         public string Name { get; set; }
 
         public double TickSize { get; set; }
@@ -43,8 +45,6 @@ namespace NetTrade.Implementations
 
         public double Spread => Ask - Bid;
 
-        public bool IsSubscribedToDataFeed { get; private set; }
-
         public event OnTickHandler OnTickEvent;
 
         public double GetPrice(TradeType tradeType) => tradeType == TradeType.Buy ? Ask : Bid;
@@ -57,28 +57,12 @@ namespace NetTrade.Implementations
             OnTickEvent?.Invoke(this);
         }
 
-        public void SubscribeToDataFeed()
+        public void PublishBar(IBar bar)
         {
-            IsSubscribedToDataFeed = true;
+            SetBidAsk(bar.Close, bar.Close);
 
-            var barsDataOrdered = _barsData.OrderBy(iBar => iBar.Time);
-
-            foreach (var bar in barsDataOrdered)
-            {
-                if (!IsSubscribedToDataFeed)
-                {
-                    break;
-                }
-
-                SetBidAsk(bar.Close, bar.Close);
-
-                var index = Bars.AddBar(bar);
-
-                _barsData.Remove(bar);
-            }
+            Bars.AddBar(bar);
         }
-
-        public void UnsubscribeFromDataFeed() => IsSubscribedToDataFeed = false;
 
         #region Equality methods
 

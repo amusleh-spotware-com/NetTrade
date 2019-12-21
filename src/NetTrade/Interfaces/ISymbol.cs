@@ -30,14 +30,8 @@ namespace NetTrade.Interfaces
 
         double Spread { get; }
 
-        bool IsSubscribedToDataFeed { get; }
-
         event OnTickHandler OnTickEvent;
 
         double GetPrice(TradeType tradeType);
-
-        void SubscribeToDataFeed();
-
-        void UnsubscribeFromDataFeed();
     }
 }
