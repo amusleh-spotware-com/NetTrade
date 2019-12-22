@@ -5,7 +5,7 @@ namespace NetTrade.Implementations
 {
     public class PendingOrder : Order
     {
-        public PendingOrder(PendingOrderParameters parameters) : base(parameters)
+        public PendingOrder(PendingOrderParameters parameters, DateTimeOffset openTime) : base(parameters, openTime)
         {
             TargetPrice = parameters.TargetPrice;
             ExpiryTime = parameters.ExpiryTime;

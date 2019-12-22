@@ -120,12 +120,15 @@ namespace NetTrade.Implementations
                 TotalTradesNumber = tradeEngine.Trades.Count,
                 LongTradesNumber = tradeEngine.Trades.Where(iTrade => iTrade.Order.TradeType == TradeType.Buy).Count(),
                 ShortTradesNumber = tradeEngine.Trades.Where(iTrade => iTrade.Order.TradeType == TradeType.Sell).Count(),
-                NetProfit = tradeEngine.Trades.Select(iTrade => iTrade.NetProfit).Sum(),
-                WinningRate = tradeEngine.Trades.Where(iTrade => iTrade.NetProfit > 0).Count() / tradeEngine.Trades.Count,
+                NetProfit = tradeEngine.Trades.Select(iTrade => iTrade.Order.NetProfit).Sum(),
+                WinningRate = tradeEngine.Trades.Where(iTrade => iTrade.Order.NetProfit > 0).Count() / tradeEngine.Trades.Count,
             };
 
-            var grossProfit = tradeEngine.Trades.Where(iTrade => iTrade.GrossProfit > 0).Select(iTrade => iTrade.GrossProfit).Sum();
-            var grossLoss = tradeEngine.Trades.Where(iTrade => iTrade.GrossProfit < 0).Select(iTrade => iTrade.GrossProfit).Sum();
+            var grossProfit = tradeEngine.Trades.Where(iTrade => iTrade.Order.GrossProfit > 0)
+                .Select(iTrade => iTrade.Order.GrossProfit).Sum();
+
+            var grossLoss = tradeEngine.Trades.Where(iTrade => iTrade.Order.GrossProfit < 0)
+                .Select(iTrade => iTrade.Order.GrossProfit).Sum();
 
             result.ProfitFactor = grossProfit / grossLoss;
 

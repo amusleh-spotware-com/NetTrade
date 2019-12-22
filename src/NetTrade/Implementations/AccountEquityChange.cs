@@ -1,10 +1,11 @@
-﻿using System;
+﻿using NetTrade.Interfaces;
+using System;
 
-namespace NetTrade.Models
+namespace NetTrade.Implementations
 {
-    public class Transaction
+    public class AccountEquityChange : IAccountEquityChange
     {
-        public Transaction(double amount, DateTimeOffset time, string note)
+        public AccountEquityChange(double amount, DateTimeOffset time, string note)
         {
             Amount = amount;
 

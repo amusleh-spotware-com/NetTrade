@@ -5,7 +5,7 @@ using System;
 
 namespace NetTrade.Abstractions
 {
-    public abstract class Bars: IBars
+    public abstract class Bars : IBars
     {
         private ExpandableSeries<DateTimeOffset> _time = new ExpandableSeries<DateTimeOffset>();
 

@@ -17,11 +17,22 @@ namespace NetTrade.Implementations
 
         #endregion Fields
 
+        public TradeEngine(IAccount account, IRobot robot)
+        {
+            Account = account;
+
+            Robot = robot;
+        }
+
         public IReadOnlyList<IOrder> Orders => _orders;
 
         public IReadOnlyList<ITrade> Trades => _trades;
 
         public IReadOnlyList<ITradingEvent> Journal => _journal;
+
+        public IAccount Account { get; }
+
+        public IRobot Robot { get; }
 
         public TradeResult Execute(IOrderParameters parameters)
         {
@@ -43,18 +54,22 @@ namespace NetTrade.Implementations
         {
             var symbolOrders = _orders.Where(iOrder => iOrder.Symbol == symbol);
 
+            double totalEquityChange = 0, totalBalanceChange = 0;
+
             foreach (var order in symbolOrders)
             {
                 if (order.OrderType == OrderType.Market)
                 {
                     var marketOrder = order as MarketOrder;
 
-                    CalculateMarketOrderProfit(marketOrder);
+                    totalEquityChange += CalculateMarketOrderProfit(marketOrder);
 
                     bool closeOrder = IsTimeToCloseMarketOrder(marketOrder);
 
                     if (closeOrder)
                     {
+                        totalBalanceChange += marketOrder.NetProfit;
+
                         CloseMarketOrder(marketOrder);
                     }
                 }
@@ -70,6 +85,24 @@ namespace NetTrade.Implementations
                     }
                 }
             }
+
+            if (totalEquityChange != 0)
+            {
+                var note = $"{symbol.Name} Open Market Orders Total Net Profit Change";
+
+                var equityChange = new AccountEquityChange(totalEquityChange, Robot.Time, note);
+
+                Account.ChangeEquity(equityChange, this);
+            }
+
+            if (totalBalanceChange != 0)
+            {
+                var note = $"{symbol.Name} Closed Market Orders Total Net Profit Change";
+
+                var balanceChange = new AccountBalanceChange(totalBalanceChange, Robot.Time, note);
+
+                Account.ChangeBalance(balanceChange, this);
+            }
         }
 
         public void CloseMarketOrder(MarketOrder order)
@@ -79,7 +112,7 @@ namespace NetTrade.Implementations
                 _orders.Remove(order);
             }
 
-            var trade = new Trade(order, DateTimeOffset.Now);
+            var trade = new Trade(order, Robot.Time);
 
             _trades.Add(trade);
 
@@ -160,9 +193,10 @@ namespace NetTrade.Implementations
                 parameters.EntryPrice = symbolPrice - symbolSlippageInPrice;
             }
 
-            var order = new MarketOrder(parameters);
-
-            order.Commission = parameters.Symbol.Commission;
+            var order = new MarketOrder(parameters, Robot.Time)
+            {
+                Commission = parameters.Symbol.Commission * 2
+            };
 
             AddOrder(order);
 
@@ -190,7 +224,7 @@ namespace NetTrade.Implementations
 
             if (isPriceValid)
             {
-                var order = new PendingOrder(parameters);
+                var order = new PendingOrder(parameters, Robot.Time);
 
                 AddOrder(order);
 
@@ -200,7 +234,7 @@ namespace NetTrade.Implementations
             return new TradeResult(OrderErrorCode.InvalidTargetPrice);
         }
 
-        private void CalculateMarketOrderProfit(MarketOrder order)
+        private double CalculateMarketOrderProfit(MarketOrder order)
         {
             double price;
 
@@ -223,7 +257,13 @@ namespace NetTrade.Implementations
 
             order.GrossProfit = grossProfitInTicks * order.Symbol.TickValue;
 
-            order.NetProfit = order.GrossProfit - (order.Commission * order.Volume);
+            var netProfit = order.GrossProfit - (order.Commission * order.Volume);
+
+            double result = netProfit - order.NetProfit;
+
+            order.NetProfit = netProfit;
+
+            return result;
         }
 
         private bool IsTimeToCloseMarketOrder(MarketOrder order)

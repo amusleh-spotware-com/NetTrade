@@ -1,9 +1,9 @@
-﻿using System;
-using NetTrade.Interfaces;
+﻿using NetTrade.Interfaces;
+using System;
 
 namespace NetTrade.Implementations
 {
-    public class Bar: IBar
+    public class Bar : IBar
     {
         public Bar(DateTimeOffset time, double open, double high, double low, double close, long volume)
         {

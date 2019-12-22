@@ -1,11 +1,14 @@
-﻿using NetTrade.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace NetTrade.Interfaces
 {
     public interface IAccount
     {
-        List<Transaction> Transactions { get; }
+        IReadOnlyList<ITransaction> Transactions { get; }
+
+        IReadOnlyList<IAccountBalanceChange> BalanceChanges { get; }
+
+        IReadOnlyList<IAccountEquityChange> EquityChanges { get; }
 
         double CurrentBalance { get; }
 
@@ -22,5 +25,9 @@ namespace NetTrade.Interfaces
         string BrokerName { get; }
 
         ITradeEngine Trade { get; }
+
+        void ChangeEquity(IAccountEquityChange change, ITradeEngine tradeEngine);
+
+        void ChangeBalance(IAccountBalanceChange change, ITradeEngine tradeEngine);
     }
 }

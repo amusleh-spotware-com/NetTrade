@@ -1,10 +1,11 @@
-﻿using System;
+﻿using NetTrade.Implementations;
+using System;
 
 namespace NetTrade.Interfaces
 {
     public interface ITrade
     {
-        IOrder Order { get; }
+        MarketOrder Order { get; }
 
         DateTimeOffset ExitTime { get; }
     }

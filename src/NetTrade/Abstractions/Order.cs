@@ -6,7 +6,7 @@ namespace NetTrade.Abstractions
 {
     public abstract class Order : IOrder
     {
-        public Order(IOrderParameters orderParameters)
+        public Order(IOrderParameters orderParameters, DateTimeOffset openTime)
         {
             Symbol = orderParameters.Symbol;
 
@@ -22,7 +22,7 @@ namespace NetTrade.Abstractions
 
             TakeProfitPrice = orderParameters.TakeProfitPrice;
 
-            OpenTime = DateTimeOffset.Now;
+            OpenTime = openTime;
         }
 
         public TradeType TradeType { get; }

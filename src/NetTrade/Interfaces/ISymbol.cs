@@ -16,11 +16,13 @@ namespace NetTrade.Interfaces
 
         int Digits { get; }
 
-        long MinVolume { get; }
+        double MinVolume { get; }
 
-        long MaxVolume { get; }
+        double MaxVolume { get; }
 
-        long VolumeStep { get; }
+        double VolumeStep { get; }
+
+        double VolumeUnitValue { get; }
 
         double Bid { get; }
 

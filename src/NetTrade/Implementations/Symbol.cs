@@ -28,11 +28,13 @@ namespace NetTrade.Implementations
 
         public int Digits { get; set; }
 
-        public long MinVolume { get; set; }
+        public double MinVolume { get; set; }
 
-        public long MaxVolume { get; set; }
+        public double MaxVolume { get; set; }
 
-        public long VolumeStep { get; set; }
+        public double VolumeStep { get; set; }
+
+        public double VolumeUnitValue { get; set; }
 
         public double Slippage { get; set; }
 

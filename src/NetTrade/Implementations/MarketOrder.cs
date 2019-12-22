@@ -1,10 +1,11 @@
 ﻿using NetTrade.Abstractions;
+using System;
 
 namespace NetTrade.Implementations
 {
     public class MarketOrder : Order
     {
-        public MarketOrder(MarketOrderParameters parameters) : base(parameters)
+        public MarketOrder(MarketOrderParameters parameters, DateTimeOffset openTime) : base(parameters, openTime)
         {
             EntryPrice = parameters.EntryPrice;
         }

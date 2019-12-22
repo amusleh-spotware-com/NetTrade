@@ -12,6 +12,10 @@ namespace NetTrade.Interfaces
 
         IReadOnlyList<ITradingEvent> Journal { get; }
 
+        IAccount Account { get; }
+
+        IRobot Robot { get; }
+
         TradeResult Execute(IOrderParameters parameters);
 
         void UpdateSymbolOrders(ISymbol symbol);
