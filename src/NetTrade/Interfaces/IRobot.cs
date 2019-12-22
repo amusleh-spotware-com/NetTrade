@@ -1,4 +1,5 @@
 ﻿using NetTrade.Enums;
+using System;
 
 namespace NetTrade.Interfaces
 {
@@ -7,6 +8,8 @@ namespace NetTrade.Interfaces
         IRobotSettings Settings { get; }
 
         RunningMode RunningMode { get; }
+
+        DateTimeOffset Time { get; }
 
         void Start();
 
@@ -23,5 +26,7 @@ namespace NetTrade.Interfaces
         void OnTick(ISymbol symbol);
 
         void OnStop();
+
+        void SetTimeByBacktester(IBacktester backtester, DateTimeOffset time);
     }
 }

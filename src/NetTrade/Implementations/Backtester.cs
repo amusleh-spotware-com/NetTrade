@@ -11,29 +11,13 @@ namespace NetTrade.Implementations
     {
         public IRobot Robot { get; private set; }
 
-        public DateTimeOffset StartTime { get; private set; }
+        public event OnBacktestStartHandler OnBacktestStartEvent;
 
-        public DateTimeOffset EndTime { get; private set; }
+        public event OnBacktestPauseHandler OnBacktestPauseEvent;
 
-        public event OnBacktestStart OnBacktestStartEvent;
+        public event OnBacktestStopHandler OnBacktestStopEvent;
 
-        public event OnBacktestPause OnBacktestPauseEvent;
-
-        public event OnBacktestStop OnBacktestStopEvent;
-
-        public void SetTime(DateTimeOffset startTime, DateTimeOffset endTime)
-        {
-            if (Robot != null && Robot.RunningMode != RunningMode.Stopped)
-            {
-                throw new InvalidOperationException("You can only change the backtester time when robot is stopped");
-            }
-
-            StartTime = startTime;
-
-            EndTime = endTime;
-        }
-
-        public void Start(IRobot robot)
+        public async void Start(IRobot robot, IBacktestSettings settings)
         {
             if (Robot != null && Robot.RunningMode != RunningMode.Stopped)
             {
@@ -44,7 +28,7 @@ namespace NetTrade.Implementations
 
             OnBacktestStartEvent?.Invoke(this, Robot);
 
-            Task.Run(StartDataFeed);
+            await StartDataFeed(settings.StartTime, settings.EndTime).ConfigureAwait(false);
         }
 
         public void Pause()
@@ -67,19 +51,12 @@ namespace NetTrade.Implementations
             OnBacktestStopEvent?.Invoke(this, Robot);
         }
 
-        private async void StartDataFeed()
+        private async Task StartDataFeed(DateTimeOffset startTime, DateTimeOffset endTime)
         {
             var symbol = Robot.Settings.MainSymbol as Symbol;
 
-            var barsDataOrdered = symbol.BarsData.OrderBy(iBar => iBar.Time);
-
-            foreach (var bar in barsDataOrdered)
+            for (var currentTime = startTime; currentTime <= endTime; currentTime = currentTime.AddTicks(1))
             {
-                if (bar.Time < StartTime || bar.Time > EndTime)
-                {
-                    continue;
-                }
-
                 bool continueDataFeed = await ContinueDataFeed();
 
                 if (!continueDataFeed)
@@ -87,9 +64,18 @@ namespace NetTrade.Implementations
                     break;
                 }
 
+                Robot.SetTimeByBacktester(this, currentTime);
+
+                var symbolBar = symbol.BarsData.FirstOrDefault(iBar => iBar.Time == currentTime);
+
+                if (symbolBar == null)
+                {
+                    continue;
+                }
+
                 foreach (var otherSymbol in Robot.Settings.OtherSymbols)
                 {
-                    var otherSymbolBar = (otherSymbol as Symbol).BarsData.FirstOrDefault(iBar => iBar.Time == bar.Time);
+                    var otherSymbolBar = (otherSymbol as Symbol).BarsData.FirstOrDefault(iBar => iBar.Time == symbolBar.Time);
 
                     if (otherSymbolBar != null)
                     {
@@ -97,7 +83,7 @@ namespace NetTrade.Implementations
                     }
                 }
 
-                symbol.PublishBar(bar);
+                symbol.PublishBar(symbolBar);
             }
 
             if (Robot.RunningMode != RunningMode.Stopped)

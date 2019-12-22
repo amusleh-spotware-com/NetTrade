@@ -6,9 +6,11 @@ namespace NetTrade.Helpers
 
     public delegate void OnTickHandler(object sender);
 
-    public delegate void OnBacktestStart(object sender, IRobot robot);
+    public delegate void OnBacktestProgressChangedHandler(object sender, double progress);
 
-    public delegate void OnBacktestStop(object sender, IRobot robot);
+    public delegate void OnBacktestStartHandler(object sender, IRobot robot);
 
-    public delegate void OnBacktestPause(object sender, IRobot robot);
+    public delegate void OnBacktestStopHandler(object sender, IRobot robot);
+
+    public delegate void OnBacktestPauseHandler(object sender, IRobot robot);
 }

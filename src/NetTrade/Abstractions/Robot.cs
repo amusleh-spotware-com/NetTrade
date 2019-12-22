@@ -6,6 +6,8 @@ namespace NetTrade.Abstractions
 {
     public abstract class Robot : IRobot
     {
+        private DateTimeOffset _time;
+
         public Robot(IRobotSettings settings)
         {
             Settings = settings;
@@ -14,6 +16,8 @@ namespace NetTrade.Abstractions
         public IRobotSettings Settings { get; }
 
         public RunningMode RunningMode { get; private set; }
+
+        public DateTimeOffset Time => Settings.Mode == Mode.Live ? DateTimeOffset.Now : _time;
 
         public void Start()
         {
@@ -89,6 +93,23 @@ namespace NetTrade.Abstractions
             RunningMode = RunningMode.Running;
         }
 
+        public void SetTimeByBacktester(IBacktester backtester, DateTimeOffset time)
+        {
+            if (Settings.Mode == Mode.Live)
+            {
+                throw new InvalidOperationException("You can not set the robot time with a back tester when the robot is on" +
+                    " live mode");
+            }
+
+            if (Settings.Backtester != backtester)
+            {
+                throw new InvalidOperationException("You can not set the robot time with another back tester, " +
+                    "the provided back tester isn't the one available on robot settings");
+            }
+
+            _time = time;
+        }
+
         public virtual void OnTick(ISymbol symbol)
         {
         }
@@ -109,7 +130,7 @@ namespace NetTrade.Abstractions
             Settings.Backtester.OnBacktestPauseEvent += Backtester_OnBacktestPauseEvent;
             Settings.Backtester.OnBacktestStopEvent += Backtester_OnBacktestStopEvent;
 
-            Settings.Backtester.Start(this);
+            Settings.Backtester.Start(this, Settings.BacktestSettings);
         }
 
         protected virtual void Optimization()

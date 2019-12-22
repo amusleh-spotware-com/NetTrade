@@ -7,19 +7,13 @@ namespace NetTrade.Interfaces
     {
         IRobot Robot { get; }
 
-        DateTimeOffset StartTime { get; }
+        event OnBacktestStartHandler OnBacktestStartEvent;
 
-        DateTimeOffset EndTime { get; }
+        event OnBacktestPauseHandler OnBacktestPauseEvent;
 
-        event OnBacktestStart OnBacktestStartEvent;
+        event OnBacktestStopHandler OnBacktestStopEvent;
 
-        event OnBacktestPause OnBacktestPauseEvent;
-
-        event OnBacktestStop OnBacktestStopEvent;
-
-        void SetTime(DateTimeOffset startTime, DateTimeOffset endTime);
-
-        void Start(IRobot robot);
+        void Start(IRobot robot, IBacktestSettings settings);
 
         void Pause();
 

@@ -13,6 +13,8 @@ namespace NetTrade.Interfaces
 
         IBacktester Backtester { get; }
 
+        IBacktestSettings BacktestSettings { get; }
+
         IAccount Account { get; }
     }
 }

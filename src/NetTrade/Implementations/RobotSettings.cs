@@ -6,7 +6,8 @@ namespace NetTrade.Implementations
 {
     public class RobotSettings : IRobotSettings
     {
-        public RobotSettings(Mode mode, ISymbol mainSymbol, List<ISymbol> otherSymbols, IBacktester backtester, IAccount account)
+        public RobotSettings(Mode mode, ISymbol mainSymbol, List<ISymbol> otherSymbols, IBacktester backtester,
+            IBacktestSettings backtestSettings, IAccount account)
         {
             Mode = mode;
 
@@ -15,6 +16,8 @@ namespace NetTrade.Implementations
             OtherSymbols = otherSymbols;
 
             Backtester = backtester;
+
+            BacktestSettings = backtestSettings;
 
             Account = account;
         }
@@ -26,6 +29,8 @@ namespace NetTrade.Implementations
         public List<ISymbol> OtherSymbols { get; }
 
         public IBacktester Backtester { get; }
+
+        public IBacktestSettings BacktestSettings { get; }
 
         public IAccount Account { get; }
     }
