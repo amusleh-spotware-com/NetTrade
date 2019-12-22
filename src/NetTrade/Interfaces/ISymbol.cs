@@ -10,6 +10,8 @@ namespace NetTrade.Interfaces
 
         double TickSize { get; }
 
+        double TickValue { get; }
+
         double Commission { get; }
 
         int Digits { get; }

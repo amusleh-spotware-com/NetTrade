@@ -10,5 +10,11 @@ namespace NetTrade.Implementations
         }
 
         public double EntryPrice { get; }
+
+        public double Commission { get; set; }
+
+        public double GrossProfit { get; set; }
+
+        public double NetProfit { get; set; }
     }
 }

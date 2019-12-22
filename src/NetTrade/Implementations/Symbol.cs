@@ -1,10 +1,7 @@
 ﻿using NetTrade.Enums;
 using NetTrade.Helpers;
 using NetTrade.Interfaces;
-using NetTrade.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace NetTrade.Implementations
 {
@@ -24,6 +21,8 @@ namespace NetTrade.Implementations
         public string Name { get; set; }
 
         public double TickSize { get; set; }
+
+        public double TickValue { get; set; }
 
         public double Commission { get; set; }
 

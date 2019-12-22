@@ -6,10 +6,6 @@ namespace NetTrade.Interfaces
     {
         IOrder Order { get; }
 
-        double GrossProfit { get; }
-
-        double NetProfit { get; }
-
         DateTimeOffset ExitTime { get; }
     }
 }

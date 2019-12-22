@@ -47,52 +47,22 @@ namespace NetTrade.Implementations
             {
                 if (order.OrderType == OrderType.Market)
                 {
-                    bool closeOrder = false;
+                    var marketOrder = order as MarketOrder;
 
-                    if (order.TradeType == TradeType.Buy && (symbol.Bid >= order.TakeProfitPrice || symbol.Bid <= order.StopLossPrice))
-                    {
-                        closeOrder = true;
-                    }
-                    else if (order.TradeType == TradeType.Sell && (symbol.Ask <= order.TakeProfitPrice || symbol.Ask >= order.StopLossPrice))
-                    {
-                        closeOrder = true;
-                    }
+                    CalculateMarketOrderProfit(marketOrder);
+
+                    bool closeOrder = IsTimeToCloseMarketOrder(marketOrder);
 
                     if (closeOrder)
                     {
-                        CloseMarketOrder(order as MarketOrder);
+                        CloseMarketOrder(marketOrder);
                     }
                 }
                 else if (order is PendingOrder)
                 {
-                    double price = symbol.GetPrice(order.TradeType);
-
                     var pendingOrder = order as PendingOrder;
 
-                    bool triggerOrder = false;
-
-                    if (order.TradeType == TradeType.Buy)
-                    {
-                        if (order.OrderType == OrderType.Limit && price <= pendingOrder.TargetPrice)
-                        {
-                            triggerOrder = true;
-                        }
-                        else if (order.OrderType == OrderType.Stop && price >= pendingOrder.TargetPrice)
-                        {
-                            triggerOrder = true;
-                        }
-                    }
-                    else
-                    {
-                        if (order.OrderType == OrderType.Limit && price >= pendingOrder.TargetPrice)
-                        {
-                            triggerOrder = true;
-                        }
-                        else if (order.OrderType == OrderType.Stop && price <= pendingOrder.TargetPrice)
-                        {
-                            triggerOrder = true;
-                        }
-                    }
+                    bool triggerOrder = IsTimeToTriggerPendingOrder(pendingOrder);
 
                     if (triggerOrder)
                     {
@@ -109,28 +79,7 @@ namespace NetTrade.Implementations
                 _orders.Remove(order);
             }
 
-            double price;
-
-            double grossProfit;
-
-            if (order.TradeType == TradeType.Buy)
-            {
-                price = order.Symbol.Bid;
-
-                grossProfit = price - order.EntryPrice;
-            }
-            else
-            {
-                price = order.Symbol.Ask;
-
-                grossProfit = order.EntryPrice - price;
-            }
-
-            grossProfit *= Math.Pow(10, order.Symbol.Digits);
-
-            double netProfit = grossProfit - (order.Symbol.Commission * 2 * order.Volume);
-
-            var trade = new Trade(order, grossProfit, netProfit, DateTimeOffset.Now);
+            var trade = new Trade(order, DateTimeOffset.Now);
 
             _trades.Add(trade);
 
@@ -213,6 +162,8 @@ namespace NetTrade.Implementations
 
             var order = new MarketOrder(parameters);
 
+            order.Commission = parameters.Symbol.Commission;
+
             AddOrder(order);
 
             var result = new TradeResult(order);
@@ -247,6 +198,82 @@ namespace NetTrade.Implementations
             }
 
             return new TradeResult(OrderErrorCode.InvalidTargetPrice);
+        }
+
+        private void CalculateMarketOrderProfit(MarketOrder order)
+        {
+            double price;
+
+            double grossProfitInTicks;
+
+            if (order.TradeType == TradeType.Buy)
+            {
+                price = order.Symbol.Bid;
+
+                grossProfitInTicks = price - order.EntryPrice;
+            }
+            else
+            {
+                price = order.Symbol.Ask;
+
+                grossProfitInTicks = order.EntryPrice - price;
+            }
+
+            grossProfitInTicks *= Math.Pow(10, order.Symbol.Digits);
+
+            order.GrossProfit = grossProfitInTicks * order.Symbol.TickValue;
+
+            order.NetProfit = order.GrossProfit - (order.Commission * order.Volume);
+        }
+
+        private bool IsTimeToCloseMarketOrder(MarketOrder order)
+        {
+            bool result = false;
+
+            if (order.TradeType == TradeType.Buy &&
+                (order.Symbol.Bid >= order.TakeProfitPrice || order.Symbol.Bid <= order.StopLossPrice))
+            {
+                result = true;
+            }
+            else if (order.TradeType == TradeType.Sell &&
+                (order.Symbol.Ask <= order.TakeProfitPrice || order.Symbol.Ask >= order.StopLossPrice))
+            {
+                result = true;
+            }
+
+            return result;
+        }
+
+        private bool IsTimeToTriggerPendingOrder(PendingOrder order)
+        {
+            bool result = false;
+
+            double price = order.Symbol.GetPrice(order.TradeType);
+
+            if (order.TradeType == TradeType.Buy)
+            {
+                if (order.OrderType == OrderType.Limit && price <= order.TargetPrice)
+                {
+                    result = true;
+                }
+                else if (order.OrderType == OrderType.Stop && price >= order.TargetPrice)
+                {
+                    result = true;
+                }
+            }
+            else
+            {
+                if (order.OrderType == OrderType.Limit && price >= order.TargetPrice)
+                {
+                    result = true;
+                }
+                else if (order.OrderType == OrderType.Stop && price <= order.TargetPrice)
+                {
+                    result = true;
+                }
+            }
+
+            return result;
         }
     }
 }
