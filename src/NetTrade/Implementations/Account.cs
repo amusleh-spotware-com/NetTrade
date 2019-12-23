@@ -9,9 +9,9 @@ namespace NetTrade.Implementations
     {
         private List<ITransaction> _transactions;
 
-        private List<IAccountEquityChange> _equityChanges = new List<IAccountEquityChange>();
+        private List<IAccountChange> _equityChanges = new List<IAccountChange>();
 
-        private List<IAccountBalanceChange> _balanceChanges = new List<IAccountBalanceChange>();
+        private List<IAccountChange> _balanceChanges = new List<IAccountChange>();
 
         public Account(long id, long number, string label, long leverage, string brokerName,
             IEnumerable<ITransaction> transactions, ITradeEngine tradeEngine)
@@ -30,9 +30,9 @@ namespace NetTrade.Implementations
 
         public IReadOnlyList<ITransaction> Transactions => _transactions;
 
-        public IReadOnlyList<IAccountBalanceChange> BalanceChanges => _balanceChanges;
+        public IReadOnlyList<IAccountChange> BalanceChanges => _balanceChanges;
 
-        public IReadOnlyList<IAccountEquityChange> EquityChanges => _equityChanges;
+        public IReadOnlyList<IAccountChange> EquityChanges => _equityChanges;
 
         public double CurrentBalance { get; private set; }
 
@@ -50,7 +50,7 @@ namespace NetTrade.Implementations
 
         public ITradeEngine Trade { get; }
 
-        public void ChangeBalance(IAccountBalanceChange change, ITradeEngine tradeEngine)
+        public void ChangeBalance(IAccountChange change, ITradeEngine tradeEngine)
         {
             if (tradeEngine != Trade)
             {
@@ -59,10 +59,10 @@ namespace NetTrade.Implementations
 
             _balanceChanges.Add(change);
 
-            CurrentBalance += change.Amount;
+            CurrentBalance = change.NewValue;
         }
 
-        public void ChangeEquity(IAccountEquityChange change, ITradeEngine tradeEngine)
+        public void ChangeEquity(IAccountChange change, ITradeEngine tradeEngine)
         {
             if (tradeEngine != Trade)
             {
@@ -71,18 +71,18 @@ namespace NetTrade.Implementations
 
             _equityChanges.Add(change);
 
-            Equity += change.Amount;
+            Equity = change.NewValue;
         }
 
         public void AddTransaction(ITransaction transaction)
         {
             _transactions.Add(transaction);
 
-            var balanceChange = new AccountBalanceChange(transaction.Amount, transaction.Time, transaction.Note);
+            var balanceChange = new AccountChange(CurrentBalance, transaction.Amount, transaction.Time, transaction.Note);
 
             ChangeBalance(balanceChange, Trade);
 
-            var equityChange = new AccountEquityChange(transaction.Amount, transaction.Time, transaction.Note);
+            var equityChange = new AccountChange(Equity, transaction.Amount, transaction.Time, transaction.Note);
 
             ChangeEquity(equityChange, Trade);
         }

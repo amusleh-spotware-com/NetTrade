@@ -6,9 +6,9 @@ namespace NetTrade.Interfaces
     {
         IReadOnlyList<ITransaction> Transactions { get; }
 
-        IReadOnlyList<IAccountBalanceChange> BalanceChanges { get; }
+        IReadOnlyList<IAccountChange> BalanceChanges { get; }
 
-        IReadOnlyList<IAccountEquityChange> EquityChanges { get; }
+        IReadOnlyList<IAccountChange> EquityChanges { get; }
 
         double CurrentBalance { get; }
 
@@ -26,8 +26,8 @@ namespace NetTrade.Interfaces
 
         ITradeEngine Trade { get; }
 
-        void ChangeEquity(IAccountEquityChange change, ITradeEngine tradeEngine);
+        void ChangeEquity(IAccountChange change, ITradeEngine tradeEngine);
 
-        void ChangeBalance(IAccountBalanceChange change, ITradeEngine tradeEngine);
+        void ChangeBalance(IAccountChange change, ITradeEngine tradeEngine);
     }
 }

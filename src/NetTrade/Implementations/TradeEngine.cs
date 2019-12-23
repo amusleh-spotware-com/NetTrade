@@ -90,7 +90,7 @@ namespace NetTrade.Implementations
             {
                 var note = $"{symbol.Name} Open Market Orders Total Net Profit Change";
 
-                var equityChange = new AccountEquityChange(totalEquityChange, Robot.Time, note);
+                var equityChange = new AccountChange(Account.Equity, totalEquityChange, Robot.Time, note);
 
                 Account.ChangeEquity(equityChange, this);
             }
@@ -99,7 +99,7 @@ namespace NetTrade.Implementations
             {
                 var note = $"{symbol.Name} Closed Market Orders Total Net Profit Change";
 
-                var balanceChange = new AccountBalanceChange(totalBalanceChange, Robot.Time, note);
+                var balanceChange = new AccountChange(Account.CurrentBalance, totalBalanceChange, Robot.Time, note);
 
                 Account.ChangeBalance(balanceChange, this);
             }

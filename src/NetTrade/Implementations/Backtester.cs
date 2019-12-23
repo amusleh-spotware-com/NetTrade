@@ -114,23 +114,27 @@ namespace NetTrade.Implementations
         public IBacktestResult GetResult()
         {
             var tradeEngine = Robot.Settings.Account.Trade;
+            var trades = tradeEngine.Trades.ToList();
 
             var result = new BacktestResult
             {
-                TotalTradesNumber = tradeEngine.Trades.Count,
-                LongTradesNumber = tradeEngine.Trades.Where(iTrade => iTrade.Order.TradeType == TradeType.Buy).Count(),
-                ShortTradesNumber = tradeEngine.Trades.Where(iTrade => iTrade.Order.TradeType == TradeType.Sell).Count(),
-                NetProfit = tradeEngine.Trades.Select(iTrade => iTrade.Order.NetProfit).Sum(),
-                WinningRate = tradeEngine.Trades.Where(iTrade => iTrade.Order.NetProfit > 0).Count() / tradeEngine.Trades.Count,
+                TotalTradesNumber = trades.Count,
+                LongTradesNumber = trades.Where(iTrade => iTrade.Order.TradeType == TradeType.Buy).Count(),
+                ShortTradesNumber = trades.Where(iTrade => iTrade.Order.TradeType == TradeType.Sell).Count(),
+                NetProfit = trades.Select(iTrade => iTrade.Order.NetProfit).Sum(),
+                WinningRate = trades.Where(iTrade => iTrade.Order.NetProfit > 0).Count() / trades.Count,
             };
 
-            var grossProfit = tradeEngine.Trades.Where(iTrade => iTrade.Order.GrossProfit > 0)
+            var grossProfit = trades.Where(iTrade => iTrade.Order.GrossProfit > 0)
                 .Select(iTrade => iTrade.Order.GrossProfit).Sum();
 
-            var grossLoss = tradeEngine.Trades.Where(iTrade => iTrade.Order.GrossProfit < 0)
+            var grossLoss = trades.Where(iTrade => iTrade.Order.GrossProfit < 0)
                 .Select(iTrade => iTrade.Order.GrossProfit).Sum();
 
             result.ProfitFactor = grossProfit / grossLoss;
+
+            result.MaxEquityDrawdown = MaxDrawdownCalculator.GetMaxDrawdown(Robot.Settings.Account.EquityChanges);
+            result.MaxBalanceDrawdown = MaxDrawdownCalculator.GetMaxDrawdown(Robot.Settings.Account.BalanceChanges);
 
             return result;
         }
