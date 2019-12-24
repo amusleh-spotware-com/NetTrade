@@ -54,19 +54,6 @@ namespace NetTrade.Abstractions
         {
             RunningMode = RunningMode.Stopped;
 
-            switch (Settings.Mode)
-            {
-                case Mode.Backtest:
-                    Settings.Backtester.Stop();
-                    break;
-
-                case Mode.Optimization:
-                    break;
-
-                case Mode.Live:
-                    break;
-            }
-
             OnStop();
         }
 

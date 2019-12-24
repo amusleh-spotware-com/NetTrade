@@ -1,7 +1,5 @@
-﻿using System;
+﻿using NetTrade.Interfaces;
 using System.Collections.Generic;
-using System.Text;
-using NetTrade.Interfaces;
 using System.Linq;
 
 namespace NetTrade.Helpers

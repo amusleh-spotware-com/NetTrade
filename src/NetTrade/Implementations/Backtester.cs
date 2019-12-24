@@ -51,66 +51,6 @@ namespace NetTrade.Implementations
             OnBacktestStopEvent?.Invoke(this, Robot);
         }
 
-        private async Task StartDataFeed(DateTimeOffset startTime, DateTimeOffset endTime)
-        {
-            var symbol = Robot.Settings.MainSymbol as Symbol;
-
-            for (var currentTime = startTime; currentTime <= endTime; currentTime = currentTime.AddTicks(1))
-            {
-                bool continueDataFeed = await ContinueDataFeed();
-
-                if (!continueDataFeed)
-                {
-                    break;
-                }
-
-                Robot.SetTimeByBacktester(this, currentTime);
-
-                var symbolBar = symbol.BarsData.FirstOrDefault(iBar => iBar.Time == currentTime);
-
-                if (symbolBar == null)
-                {
-                    continue;
-                }
-
-                foreach (var otherSymbol in Robot.Settings.OtherSymbols)
-                {
-                    var otherSymbolBar = (otherSymbol as Symbol).BarsData.FirstOrDefault(iBar => iBar.Time == symbolBar.Time);
-
-                    if (otherSymbolBar != null)
-                    {
-                        (otherSymbol as Symbol).PublishBar(otherSymbolBar);
-                    }
-                }
-
-                symbol.PublishBar(symbolBar);
-            }
-
-            if (Robot.RunningMode != RunningMode.Stopped)
-            {
-                Stop();
-            }
-        }
-
-        private async Task<bool> ContinueDataFeed()
-        {
-            if (Robot.RunningMode == RunningMode.Stopped)
-            {
-                return false;
-            }
-            else if (Robot.RunningMode == RunningMode.Paused)
-            {
-                while (Robot.RunningMode == RunningMode.Paused)
-                {
-                    await Task.Delay(1000);
-                }
-
-                return await ContinueDataFeed();
-            }
-
-            return true;
-        }
-
         public IBacktestResult GetResult()
         {
             var tradeEngine = Robot.Settings.Account.Trade;
@@ -137,6 +77,63 @@ namespace NetTrade.Implementations
             result.MaxBalanceDrawdown = MaxDrawdownCalculator.GetMaxDrawdown(Robot.Settings.Account.BalanceChanges);
 
             return result;
+        }
+
+        private async Task StartDataFeed(DateTimeOffset startTime, DateTimeOffset endTime)
+        {
+            var symbol = Robot.Settings.MainSymbol as Symbol;
+
+            for (var currentTime = startTime; currentTime <= endTime; currentTime = currentTime.AddTicks(1))
+            {
+                bool shouldContinueDataFeed = await ShouldContinueDataFeed();
+
+                if (!shouldContinueDataFeed)
+                {
+                    break;
+                }
+
+                Robot.SetTimeByBacktester(this, currentTime);
+
+                var symbolBar = symbol.BarsData.FirstOrDefault(iBar => iBar.Time == currentTime);
+
+                if (symbolBar == null)
+                {
+                    continue;
+                }
+
+                foreach (var otherSymbol in Robot.Settings.OtherSymbols)
+                {
+                    var otherSymbolBar = (otherSymbol as Symbol).BarsData.FirstOrDefault(iBar => iBar.Time == symbolBar.Time);
+
+                    if (otherSymbolBar != null)
+                    {
+                        (otherSymbol as Symbol).PublishBar(otherSymbolBar);
+                    }
+                }
+
+                symbol.PublishBar(symbolBar);
+            }
+
+            Stop();
+        }
+
+        private async Task<bool> ShouldContinueDataFeed()
+        {
+            if (Robot.RunningMode == RunningMode.Stopped)
+            {
+                return false;
+            }
+            else if (Robot.RunningMode == RunningMode.Paused)
+            {
+                while (Robot.RunningMode == RunningMode.Paused)
+                {
+                    await Task.Delay(1000);
+                }
+
+                return await ShouldContinueDataFeed();
+            }
+
+            return true;
         }
     }
 }
