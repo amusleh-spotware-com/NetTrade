@@ -1,5 +1,6 @@
 ﻿using NetTrade.Helpers;
 using System.Collections.Generic;
+using NetTrade.Enums;
 
 namespace NetTrade.Interfaces
 {
@@ -7,13 +8,15 @@ namespace NetTrade.Interfaces
     {
         IBacktestSettings BacktestSettings { get; }
 
-        IAccount SampleAccount { get; }
+        IAccount Account { get; }
 
         ISymbol MainSymbol { get; }
 
-        List<ISymbol> OtherSymbols { get; }
+        IReadOnlyList<ISymbol> OtherSymbols { get; }
 
         IReadOnlyList<IOptimizeParameter> Parameters { get; }
+
+        RunningMode RunningMode { get; }
 
         event OnOptimizationPassCompletionHandler OnOptimizationPassCompletionEvent;
 

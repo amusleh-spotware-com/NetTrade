@@ -13,5 +13,11 @@ namespace NetTrade.Interfaces
         object MaxValue { get; }
 
         object Step { get; }
+
+        bool Optimize { get; }
+
+        object DefaultValue { get; }
+
+        IReadOnlyList<object> Values { get; }
     }
 }
