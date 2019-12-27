@@ -20,21 +20,30 @@ namespace NetTrade.Helpers
 
                 var currentParameter = parameters.First();
 
-                foreach (var x in currentParameter.Values)
+                foreach (var currentValue in currentParameter.Values)
                 {
                     var currentSet = new Dictionary<string, object>
                     { 
-                        { currentParameter.Name, x},
+                        { currentParameter.Name, currentValue},
                     };
 
                     var parametersWithoutCurrentParameter = parameters.Skip(1);
 
-                    foreach (var y in GetAllParameterSets(parametersWithoutCurrentParameter))
-                    {
-                        var newSet = currentSet.Concat(y)
-                            .ToDictionary(nameAndValue => nameAndValue.Key, nameAndValue => nameAndValue.Value);
+                    var otherParametersSets = GetAllParameterSets(parametersWithoutCurrentParameter);
 
-                        result.Add(newSet);
+                    if (otherParametersSets.Any())
+                    {
+                        foreach (var otherParametersSet in otherParametersSets)
+                        {
+                            var newSet = currentSet.Concat(otherParametersSet)
+                                .ToDictionary(nameAndValue => nameAndValue.Key, nameAndValue => nameAndValue.Value);
+
+                            result.Add(newSet);
+                        }
+                    }
+                    else
+                    {
+                        result.Add(currentSet);
                     }
                 }
 

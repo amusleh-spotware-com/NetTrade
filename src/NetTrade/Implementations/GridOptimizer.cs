@@ -51,7 +51,6 @@ namespace NetTrade.Implementations
             {
                 if (!parameter.Optimize)
                 {
-                    parameter.Range = 1;
 
                     continue;
                 }
