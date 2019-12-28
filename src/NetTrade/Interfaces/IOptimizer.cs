@@ -6,15 +6,7 @@ namespace NetTrade.Interfaces
 {
     public interface IOptimizer
     {
-        IBacktestSettings BacktestSettings { get; }
-
-        IAccount Account { get; }
-
-        ISymbol MainSymbol { get; }
-
-        IReadOnlyList<ISymbol> OtherSymbols { get; }
-
-        IReadOnlyList<IOptimizeParameter> Parameters { get; }
+        IOptimizerSettings Settings { get; }
 
         RunningMode RunningMode { get; }
 

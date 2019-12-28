@@ -10,25 +10,12 @@ namespace NetTrade.Implementations
 {
     public class GridOptimizer : IOptimizer
     {
-        public GridOptimizer(IBacktestSettings backtestSettings, IAccount account, ISymbol mainSymbol,
-            IEnumerable<ISymbol> otherSymbols, IEnumerable<IOptimizeParameter> parameters)
+        public GridOptimizer(IOptimizerSettings settings)
         {
-            BacktestSettings = backtestSettings;
-            Account = account;
-            MainSymbol = mainSymbol;
-            OtherSymbols = otherSymbols.ToList();
-            Parameters = parameters.ToList();
+            Settings = settings;
         }
 
-        public IBacktestSettings BacktestSettings { get; }
-
-        public IAccount Account { get; }
-
-        public ISymbol MainSymbol { get; }
-
-        public IReadOnlyList<ISymbol> OtherSymbols { get; }
-
-        public IReadOnlyList<IOptimizeParameter> Parameters { get; }
+        public IOptimizerSettings Settings { get; }
 
         public RunningMode RunningMode { get; private set; }
 
@@ -45,29 +32,7 @@ namespace NetTrade.Implementations
         {
             RunningMode = RunningMode.Running;
 
-            int counter = 0;
-
-            foreach (var parameter in Parameters)
-            {
-                if (!parameter.Optimize)
-                {
-
-                    continue;
-                }
-
-                if (parameter.Step is int)
-                {
-
-                }
-                else if (parameter.Step is double)
-                {
-
-                }
-                else if (parameter.Step is Enum)
-                {
-
-                }
-            }
+            var parameterSets = OptimizerParameterSetsCalculator.GetAllParameterSets(Settings.Parameters);
         }
 
         public void Stop()

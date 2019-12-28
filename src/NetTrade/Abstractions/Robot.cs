@@ -40,10 +40,6 @@ namespace NetTrade.Abstractions
                     Backtest();
                     break;
 
-                case Mode.Optimization:
-                    Optimization();
-                    break;
-
                 case Mode.Live:
                     Live();
                     break;
@@ -65,9 +61,6 @@ namespace NetTrade.Abstractions
             {
                 case Mode.Backtest:
                     Settings.Backtester.Pause();
-                    break;
-
-                case Mode.Optimization:
                     break;
 
                 case Mode.Live:

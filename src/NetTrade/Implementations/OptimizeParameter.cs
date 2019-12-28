@@ -6,14 +6,14 @@ namespace NetTrade.Implementations
 {
     public class OptimizeParameter : IOptimizeParameter
     {
-        public OptimizeParameter(string name, double minValue, double maxValue, double step)
+        public OptimizeParameter(string name, object minValue, object maxValue, object step)
         {
             Name = name;
             MinValue = minValue;
             MaxValue = maxValue;
             Step = step;
 
-            Values = ParameterValueCalculator.GetAllParameterValues(this);
+            Values = OptimizerParameterValueCalculator.GetAllParameterValues(this);
         }
 
         public OptimizeParameter(string name, object defaultValue)

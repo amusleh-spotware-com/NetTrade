@@ -10,10 +10,6 @@ namespace NetTrade.Implementations
             Name = name;
         }
 
-        public ParameterAttribute()
-        {
-        }
-
         public string Name { get; set; }
 
         public object DefaultValue { get; set; }

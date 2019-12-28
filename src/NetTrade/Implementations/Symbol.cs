@@ -2,6 +2,7 @@
 using NetTrade.Helpers;
 using NetTrade.Interfaces;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NetTrade.Implementations
 {
@@ -93,5 +94,18 @@ namespace NetTrade.Implementations
         }
 
         #endregion Equality methods
+
+        #region Clone method
+
+        public object Clone()
+        {
+            var clone = new Symbol(_barsData.ToList(), Bars.Clone() as IBars);
+
+            ObjectCopy.ShallowCopy(this, clone);
+
+            return clone;
+        }
+
+        #endregion
     }
 }

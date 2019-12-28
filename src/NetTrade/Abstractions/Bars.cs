@@ -47,5 +47,7 @@ namespace NetTrade.Abstractions
 
             return index;
         }
+
+        public abstract object Clone();
     }
 }

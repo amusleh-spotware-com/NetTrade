@@ -4,7 +4,7 @@ using System;
 
 namespace NetTrade.Interfaces
 {
-    public interface ISymbol : IEquatable<ISymbol>
+    public interface ISymbol : IEquatable<ISymbol>, ICloneable
     {
         string Name { get; }
 

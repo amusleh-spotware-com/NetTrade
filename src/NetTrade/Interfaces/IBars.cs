@@ -3,7 +3,7 @@ using System;
 
 namespace NetTrade.Interfaces
 {
-    public interface IBars
+    public interface IBars: ICloneable
     {
         ISeries<DateTimeOffset> Time { get; }
 
