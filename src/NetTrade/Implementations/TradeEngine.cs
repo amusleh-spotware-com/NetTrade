@@ -1,4 +1,5 @@
 ﻿using NetTrade.Enums;
+using NetTrade.Helpers;
 using NetTrade.Interfaces;
 using NetTrade.Models;
 using System;
@@ -17,11 +18,9 @@ namespace NetTrade.Implementations
 
         #endregion Fields
 
-        public TradeEngine(IAccount account, IRobot robot)
+        public TradeEngine(IServer server)
         {
-            Account = account;
-
-            Robot = robot;
+            Server = server;
         }
 
         public IReadOnlyList<IOrder> Orders => _orders;
@@ -30,9 +29,11 @@ namespace NetTrade.Implementations
 
         public IReadOnlyList<ITradingEvent> Journal => _journal;
 
-        public IAccount Account { get; }
+        public IServer Server { get; }
 
-        public IRobot Robot { get; }
+        public event OnEquityChangedHandler OnEquityChangedHandlerEvent;
+
+        public event OnBalanceChangedHandler OnBalanceChangedHandlerEvent;
 
         public TradeResult Execute(IOrderParameters parameters)
         {
@@ -88,20 +89,12 @@ namespace NetTrade.Implementations
 
             if (totalEquityChange != 0)
             {
-                var note = $"{symbol.Name} Open Market Orders Total Net Profit Change";
-
-                var equityChange = new AccountChange(Account.Equity, totalEquityChange, Robot.Time, note);
-
-                Account.ChangeEquity(equityChange, this);
+                OnEquityChangedHandlerEvent?.Invoke(this, totalEquityChange, Server.CurrentTime);
             }
 
             if (totalBalanceChange != 0)
             {
-                var note = $"{symbol.Name} Closed Market Orders Total Net Profit Change";
-
-                var balanceChange = new AccountChange(Account.CurrentBalance, totalBalanceChange, Robot.Time, note);
-
-                Account.ChangeBalance(balanceChange, this);
+                OnBalanceChangedHandlerEvent?.Invoke(this, totalBalanceChange, Server.CurrentTime);
             }
         }
 
@@ -112,7 +105,7 @@ namespace NetTrade.Implementations
                 _orders.Remove(order);
             }
 
-            var trade = new Trade(order, Robot.Time);
+            var trade = new Trade(order, Server.CurrentTime);
 
             _trades.Add(trade);
 
@@ -193,7 +186,7 @@ namespace NetTrade.Implementations
                 parameters.EntryPrice = symbolPrice - symbolSlippageInPrice;
             }
 
-            var order = new MarketOrder(parameters, Robot.Time)
+            var order = new MarketOrder(parameters, Server.CurrentTime)
             {
                 Commission = parameters.Symbol.Commission * 2
             };
@@ -224,7 +217,7 @@ namespace NetTrade.Implementations
 
             if (isPriceValid)
             {
-                var order = new PendingOrder(parameters, Robot.Time);
+                var order = new PendingOrder(parameters, Server.CurrentTime);
 
                 AddOrder(order);
 

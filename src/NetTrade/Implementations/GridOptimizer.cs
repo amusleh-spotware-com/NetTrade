@@ -5,37 +5,36 @@ using NetTrade.Enums;
 using NetTrade.Helpers;
 using NetTrade.Interfaces;
 using System.Linq;
+using NetTrade.Abstractions;
 
 namespace NetTrade.Implementations
 {
-    public class GridOptimizer : IOptimizer
+    public class GridOptimizer : Optimizer
     {
-        public GridOptimizer(IOptimizerSettings settings)
+        public GridOptimizer(IOptimizerSettings settings): base(settings)
         {
-            Settings = settings;
         }
 
-        public IOptimizerSettings Settings { get; }
-
-        public RunningMode RunningMode { get; private set; }
-
-        public event OnOptimizationPassCompletionHandler OnOptimizationPassCompletionEvent;
-        public event OnOptimizationFinishedHandler OnOptimizationFinishedEvent;
-        public event OnOptimizationProgressChangedHandler OnOptimizationProgressChangedEvent;
-
-        public void Pause()
+        public override void Pause()
         {
             RunningMode = RunningMode.Paused;
         }
 
-        public void Start<TRobot, TBacktester>()
+        public override void Start<TRobot>()
         {
             RunningMode = RunningMode.Running;
 
             var parameterSets = OptimizerParameterSetsCalculator.GetAllParameterSets(Settings.Parameters);
+
+            foreach (var parameterSet in parameterSets)
+            {
+                var robot = OptimizerRobotCreator.GetRobot<TRobot>(parameterSet, this);
+
+                _robots.Add(robot);
+            }
         }
 
-        public void Stop()
+        public override void Stop()
         {
             RunningMode = RunningMode.Stopped;
         }

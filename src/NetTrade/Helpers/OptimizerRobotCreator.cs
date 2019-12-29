@@ -11,26 +11,24 @@ namespace NetTrade.Helpers
 {
     public static class OptimizerRobotCreator
     {
-        public static IRobot GetRobot<TRobot>(Dictionary<string, object> parameterSet, IOptimizerSettings settings)
+        public static Robot GetRobot<TRobot>(Dictionary<string, object> parameterSet, IOptimizer optimizer)
             where TRobot: Robot
         {
-            var robot = Activator.CreateInstance(typeof(TRobot), settings) as IRobot;
+            var robotSettings = optimizer.GetRobotSettings();
+
+            var robot = Activator.CreateInstance(typeof(TRobot), robotSettings) as Robot;
 
             if (parameterSet.Any())
             {
                 SetRobotParameters(robot, parameterSet);
             }
 
-            return robot as IRobot;
-        }
-
-        private static IRobotSettings GetRobotSettings(IOptimizerSettings settings)
-        {
-            Activator.CreateInstance(settings.RobotSettingsType);
+            return robot;
         }
 
 
-        private static void SetRobotParameters<TRobot>(TRobot robot, Dictionary<string, object> parameterSet) where TRobot: IRobot
+        private static void SetRobotParameters<TRobot>(TRobot robot, Dictionary<string, object> parameterSet)
+            where TRobot: IRobot
         {
             var robotParameters = typeof(IRobot).GetProperties()
             .Where(iProperty => iProperty.GetCustomAttributes(true).Any(iAttribute => iAttribute is ParameterAttribute));
@@ -47,7 +45,10 @@ namespace NetTrade.Helpers
                 var parameterValue = parameterSet.FirstOrDefault(iParameter => iParameter.Key.Equals(parameterAttribute.Name,
                     StringComparison.InvariantCultureIgnoreCase)).Value;
 
-                robotParamter.SetValue(robot, parameterValue);
+                if (parameterValue != null)
+                {
+                    robotParamter.SetValue(robot, parameterValue);
+                }
             }
         }
     }

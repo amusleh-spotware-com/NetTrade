@@ -22,10 +22,14 @@ namespace NetTrade.Implementations
             Leverage = leverage;
             BrokerName = brokerName;
             _transactions = transactions.ToList();
-            Trade = tradeEngine;
 
             CurrentBalance = _transactions.Sum(iTransaction => iTransaction.Amount);
             Equity = CurrentBalance;
+
+            Trade = tradeEngine;
+
+            Trade.OnBalanceChangedHandlerEvent += Trade_OnBalanceChangedHandlerEvent;
+            Trade.OnEquityChangedHandlerEvent += Trade_OnEquityChangedHandlerEvent;
         }
 
         public IReadOnlyList<ITransaction> Transactions => _transactions;
@@ -50,41 +54,45 @@ namespace NetTrade.Implementations
 
         public ITradeEngine Trade { get; }
 
-        public void ChangeBalance(IAccountChange change, ITradeEngine tradeEngine)
-        {
-            if (tradeEngine != Trade)
-            {
-                throw new ArgumentException("The provided trade engine doesn't match the account trade engine");
-            }
-
-            _balanceChanges.Add(change);
-
-            CurrentBalance = change.NewValue;
-        }
-
-        public void ChangeEquity(IAccountChange change, ITradeEngine tradeEngine)
-        {
-            if (tradeEngine != Trade)
-            {
-                throw new ArgumentException("The provided trade engine doesn't match the account trade engine");
-            }
-
-            _equityChanges.Add(change);
-
-            Equity = change.NewValue;
-        }
-
         public void AddTransaction(ITransaction transaction)
         {
             _transactions.Add(transaction);
 
             var balanceChange = new AccountChange(CurrentBalance, transaction.Amount, transaction.Time, transaction.Note);
 
-            ChangeBalance(balanceChange, Trade);
+            ChangeBalance(balanceChange);
 
             var equityChange = new AccountChange(Equity, transaction.Amount, transaction.Time, transaction.Note);
 
-            ChangeEquity(equityChange, Trade);
+            ChangeEquity(equityChange);
+        }
+
+        private void Trade_OnEquityChangedHandlerEvent(object sender, double amount, DateTimeOffset time)
+        {
+            var change = new AccountChange(Equity, amount, time, string.Empty);
+
+            ChangeEquity(change);
+        }
+
+        private void Trade_OnBalanceChangedHandlerEvent(object sender, double amount, DateTimeOffset time)
+        {
+            var change = new AccountChange(CurrentBalance, amount, time, string.Empty);
+
+            ChangeBalance(change);
+        }
+
+        private void ChangeBalance(IAccountChange change)
+        {
+            _balanceChanges.Add(change);
+
+            CurrentBalance = change.NewValue;
+        }
+
+        private void ChangeEquity(IAccountChange change)
+        {
+            _equityChanges.Add(change);
+
+            Equity = change.NewValue;
         }
     }
 }

@@ -9,8 +9,6 @@ namespace NetTrade.Interfaces
 
         RunningMode RunningMode { get; }
 
-        DateTimeOffset Time { get; }
-
         void Start();
 
         void Stop();

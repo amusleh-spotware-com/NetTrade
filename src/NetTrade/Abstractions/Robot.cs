@@ -1,13 +1,12 @@
 ﻿using NetTrade.Enums;
 using NetTrade.Interfaces;
 using System;
+using NetTrade.Implementations;
 
 namespace NetTrade.Abstractions
 {
     public abstract class Robot : IRobot
     {
-        private DateTimeOffset _time;
-
         public Robot(IRobotSettings settings)
         {
             Settings = settings;
@@ -16,8 +15,6 @@ namespace NetTrade.Abstractions
         public IRobotSettings Settings { get; }
 
         public RunningMode RunningMode { get; private set; }
-
-        public DateTimeOffset Time => Settings.Mode == Mode.Live ? DateTimeOffset.Now : _time;
 
         public void Start()
         {
@@ -87,7 +84,7 @@ namespace NetTrade.Abstractions
                     "the provided back tester isn't the one available on robot settings");
             }
 
-            _time = time;
+            (Settings.Server as Server).CurrentTime = time;
         }
 
         public virtual void OnTick(ISymbol symbol)

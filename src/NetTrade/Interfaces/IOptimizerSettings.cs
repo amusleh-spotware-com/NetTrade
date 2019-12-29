@@ -25,8 +25,12 @@ namespace NetTrade.Interfaces
 
         long AccountBalance { get; }
 
-        long Leverage { get; }
+        long AccountLeverage { get; }
 
         IReadOnlyList<IOptimizeParameter> Parameters { get; }
+
+        Type ServerType { get; }
+
+        object[] ServerParameters { get; }
     }
 }

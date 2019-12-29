@@ -25,10 +25,14 @@ namespace NetTrade.Implementations
 
         public long AccountBalance { get; set; }
 
-        public long Leverage { get; set; }
+        public long AccountLeverage { get; set; }
 
         public Type RobotType { get; set; }
 
         public Type RobotSettingsType { get; set; }
+
+        public Type ServerType { get; set; }
+
+        public object[] ServerParameters { get; set; }
     }
 }

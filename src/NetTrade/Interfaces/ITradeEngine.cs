@@ -1,6 +1,7 @@
 ﻿using NetTrade.Implementations;
 using NetTrade.Models;
 using System.Collections.Generic;
+using NetTrade.Helpers;
 
 namespace NetTrade.Interfaces
 {
@@ -12,9 +13,11 @@ namespace NetTrade.Interfaces
 
         IReadOnlyList<ITradingEvent> Journal { get; }
 
-        IAccount Account { get; }
+        IServer Server { get; }
 
-        IRobot Robot { get; }
+        event OnEquityChangedHandler OnEquityChangedHandlerEvent;
+
+        event OnBalanceChangedHandler OnBalanceChangedHandlerEvent;
 
         TradeResult Execute(IOrderParameters parameters);
 

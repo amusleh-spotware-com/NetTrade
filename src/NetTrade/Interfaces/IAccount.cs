@@ -25,9 +25,5 @@ namespace NetTrade.Interfaces
         string BrokerName { get; }
 
         ITradeEngine Trade { get; }
-
-        void ChangeEquity(IAccountChange change, ITradeEngine tradeEngine);
-
-        void ChangeBalance(IAccountChange change, ITradeEngine tradeEngine);
     }
 }
