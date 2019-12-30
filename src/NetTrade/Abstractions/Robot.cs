@@ -110,10 +110,6 @@ namespace NetTrade.Abstractions
             Settings.Backtester.Start(this, Settings.BacktestSettings);
         }
 
-        protected virtual void Optimization()
-        {
-        }
-
         protected virtual void Live()
         {
         }

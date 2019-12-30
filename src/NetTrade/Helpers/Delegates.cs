@@ -15,9 +15,9 @@ namespace NetTrade.Helpers
 
     public delegate void OnOptimizationPassCompletionHandler(object sender, IRobot robot);
 
-    public delegate void OnOptimizationFinishedHandler(object sender, IRobot robot);
+    public delegate void OnOptimizationStartedHandler(object sender);
 
-    public delegate void OnOptimizationProgressChangedHandler(object sender, double progress);
+    public delegate void OnOptimizationStoppedHandler(object sender);
 
     public delegate void OnEquityChangedHandler(object sender, double amount, DateTimeOffset time);
 

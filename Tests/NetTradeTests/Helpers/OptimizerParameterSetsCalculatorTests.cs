@@ -18,23 +18,23 @@ namespace NetTrade.Helpers.Tests
                 new OptimizeParameter("Fourth Parameter", 1)
             };
 
-            int totalParameterSetsNumber = 0;
+            int totalParametersGridNumber = 0;
 
             foreach (var parameter in parameters)
             {
-                if (totalParameterSetsNumber == 0)
+                if (totalParametersGridNumber == 0)
                 {
-                    totalParameterSetsNumber = parameter.Values.Count;
+                    totalParametersGridNumber = parameter.Values.Count;
                 }
                 else
                 {
-                    totalParameterSetsNumber *= parameter.Values.Count;
+                    totalParametersGridNumber *= parameter.Values.Count;
                 }
             }
 
-            var sets = OptimizerParameterSetsCalculator.GetAllParameterSets(parameters);
+            var parametersGrid = GridOptimizerParametersCalculator.GetParametersGrid(parameters);
 
-            Assert.AreEqual(totalParameterSetsNumber, sets.Count);
+            Assert.AreEqual(totalParametersGridNumber, parametersGrid.Count);
         }
     }
 }

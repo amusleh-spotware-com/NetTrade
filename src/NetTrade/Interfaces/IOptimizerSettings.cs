@@ -32,5 +32,7 @@ namespace NetTrade.Interfaces
         Type ServerType { get; }
 
         object[] ServerParameters { get; }
+
+        int MaxProcessorNumber { get; }
     }
 }

@@ -34,5 +34,7 @@ namespace NetTrade.Implementations
         public Type ServerType { get; set; }
 
         public object[] ServerParameters { get; set; }
+
+        public int MaxProcessorNumber { get; set; } = -1;
     }
 }

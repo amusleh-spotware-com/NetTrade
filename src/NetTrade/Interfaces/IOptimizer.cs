@@ -15,13 +15,11 @@ namespace NetTrade.Interfaces
 
         event OnOptimizationPassCompletionHandler OnOptimizationPassCompletionEvent;
 
-        event OnOptimizationFinishedHandler OnOptimizationFinishedEvent;
+        event OnOptimizationStartedHandler OnOptimizationStartedEvent;
 
-        event OnOptimizationProgressChangedHandler OnOptimizationProgressChangedEvent;
+        event OnOptimizationStoppedHandler OnOptimizationStoppedEvent;
 
         void Start<TRobot>() where TRobot: Robot;
-
-        void Pause();
 
         void Stop();
 

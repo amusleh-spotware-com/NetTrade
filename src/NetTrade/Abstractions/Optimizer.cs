@@ -1,17 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NetTrade.Enums;
+﻿using NetTrade.Enums;
 using NetTrade.Helpers;
-using NetTrade.Interfaces;
-using System.Linq;
 using NetTrade.Implementations;
+using NetTrade.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace NetTrade.Abstractions
 {
     public abstract class Optimizer : IOptimizer
     {
-        protected List<Robot> _robots = new List<Robot>();
+        private readonly List<Robot> _robots = new List<Robot>();
+
+        private CancellationTokenSource _cancellationTokenSource;
 
         public Optimizer(IOptimizerSettings settings)
         {
@@ -20,13 +23,15 @@ namespace NetTrade.Abstractions
 
         public IOptimizerSettings Settings { get; }
 
-        public RunningMode RunningMode { get; protected set; }
+        public RunningMode RunningMode { get; private set; }
 
         public IReadOnlyList<Robot> Robots => _robots;
 
         public event OnOptimizationPassCompletionHandler OnOptimizationPassCompletionEvent;
-        public event OnOptimizationFinishedHandler OnOptimizationFinishedEvent;
-        public event OnOptimizationProgressChangedHandler OnOptimizationProgressChangedEvent;
+
+        public event OnOptimizationStartedHandler OnOptimizationStartedEvent;
+
+        public event OnOptimizationStoppedHandler OnOptimizationStoppedEvent;
 
         public virtual IRobotSettings GetRobotSettings()
         {
@@ -69,10 +74,95 @@ namespace NetTrade.Abstractions
             return robotSettings;
         }
 
-        public abstract void Pause();
+        public void Start<TRobot>() where TRobot : Robot
+        {
+            if (RunningMode == RunningMode.Running)
+            {
+                throw new InvalidOperationException("The optimizer is already in running mode");
+            }
 
-        public abstract void Start<TRobot>() where TRobot : Robot;
+            RunningMode = RunningMode.Running;
 
-        public abstract void Stop();
+            _robots.Clear();
+
+            OnOptimizationStartedEvent?.Invoke(this);
+
+            OnStart<TRobot>();
+        }
+
+        public void Stop()
+        {
+            if (RunningMode == RunningMode.Stopped)
+            {
+                throw new InvalidOperationException("The optimizer is already stopped");
+            }
+
+            if (_cancellationTokenSource != null)
+            {
+                _cancellationTokenSource.Cancel();
+            }
+
+            RunningMode = RunningMode.Stopped;
+
+            OnOptimizationStoppedEvent?.Invoke(this);
+
+            OnStop();
+        }
+
+        protected abstract void OnStart<TRobot>() where TRobot : Robot;
+
+        protected virtual void OnStop()
+        {
+        }
+
+        protected void AddRobot(Robot robot)
+        {
+            if (RunningMode == RunningMode.Running)
+            {
+                throw new InvalidOperationException("You can't add new robot while the optimizer is running");
+            }
+
+            _robots.Add(robot);
+        }
+
+        protected virtual void StartRobots()
+        {
+            _cancellationTokenSource = new CancellationTokenSource();
+
+            var parallelOptions = new ParallelOptions
+            {
+                CancellationToken = _cancellationTokenSource.Token,
+                MaxDegreeOfParallelism = Settings.MaxProcessorNumber
+            };
+
+            try
+            {
+                Parallel.ForEach(_robots, parallelOptions, iRobot =>
+                {
+                    iRobot.Settings.Backtester.OnBacktestStopEvent += Backtester_OnBacktestStopEvent;
+
+                    iRobot.Start();
+
+                    parallelOptions.CancellationToken.ThrowIfCancellationRequested();
+                });
+
+                if (RunningMode == RunningMode.Running)
+                {
+                    Stop();
+                }
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            finally
+            {
+                _cancellationTokenSource.Dispose();
+            }
+        }
+
+        private void Backtester_OnBacktestStopEvent(object sender, IRobot robot)
+        {
+            OnOptimizationPassCompletionEvent?.Invoke(this, robot);
+        }
     }
 }

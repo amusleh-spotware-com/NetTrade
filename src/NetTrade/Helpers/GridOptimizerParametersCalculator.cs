@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace NetTrade.Helpers
 {
-    public static class OptimizerParameterSetsCalculator
+    public static class GridOptimizerParametersCalculator
     {
-        public static List<Dictionary<string, object>> GetAllParameterSets(IEnumerable<IOptimizeParameter> parameters)
+        public static List<Dictionary<string, object>> GetParametersGrid(IEnumerable<IOptimizeParameter> parameters)
         {
             if (!parameters.Any())
             {
@@ -22,28 +22,28 @@ namespace NetTrade.Helpers
 
                 foreach (var currentValue in currentParameter.Values)
                 {
-                    var currentSet = new Dictionary<string, object>
+                    var currentParameterGrid = new Dictionary<string, object>
                     { 
                         { currentParameter.Name, currentValue},
                     };
 
                     var parametersWithoutCurrentParameter = parameters.Skip(1);
 
-                    var otherParametersSets = GetAllParameterSets(parametersWithoutCurrentParameter);
+                    var otherParameterGrids = GetParametersGrid(parametersWithoutCurrentParameter);
 
-                    if (otherParametersSets.Any())
+                    if (otherParameterGrids.Any())
                     {
-                        foreach (var otherParametersSet in otherParametersSets)
+                        foreach (var otherParameterGrid in otherParameterGrids)
                         {
-                            var newSet = currentSet.Concat(otherParametersSet)
+                            var newParameterGrid = currentParameterGrid.Concat(otherParameterGrid)
                                 .ToDictionary(nameAndValue => nameAndValue.Key, nameAndValue => nameAndValue.Value);
 
-                            result.Add(newSet);
+                            result.Add(newParameterGrid);
                         }
                     }
                     else
                     {
-                        result.Add(currentSet);
+                        result.Add(currentParameterGrid);
                     }
                 }
 
