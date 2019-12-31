@@ -1,35 +1,27 @@
-﻿using NetTrade.Interfaces;
-using System;
+﻿using NetTrade.Helpers;
+using NetTrade.Interfaces;
 using System.Collections.Generic;
-using System.Linq;
+using System;
 
 namespace NetTrade.Implementations
 {
     public class Account : IAccount
     {
-        private List<ITransaction> _transactions;
+        private readonly List<ITransaction> _transactions = new List<ITransaction>();
 
-        private List<IAccountChange> _equityChanges = new List<IAccountChange>();
+        private readonly List<IAccountChange> _equityChanges = new List<IAccountChange>();
 
-        private List<IAccountChange> _balanceChanges = new List<IAccountChange>();
+        private readonly List<IAccountChange> _balanceChanges = new List<IAccountChange>();
 
-        public Account(long id, long number, string label, long leverage, string brokerName,
-            IEnumerable<ITransaction> transactions, ITradeEngine tradeEngine)
+        private readonly List<IAccountChange> _marginChanges = new List<IAccountChange>();
+
+        public Account(long id, long number, string label, long leverage, string brokerName)
         {
             Id = id;
             Number = number;
             Label = label;
             Leverage = leverage;
             BrokerName = brokerName;
-            _transactions = transactions.ToList();
-
-            CurrentBalance = _transactions.Sum(iTransaction => iTransaction.Amount);
-            Equity = CurrentBalance;
-
-            Trade = tradeEngine;
-
-            Trade.OnBalanceChangedHandlerEvent += Trade_OnBalanceChangedHandlerEvent;
-            Trade.OnEquityChangedHandlerEvent += Trade_OnEquityChangedHandlerEvent;
         }
 
         public IReadOnlyList<ITransaction> Transactions => _transactions;
@@ -38,9 +30,15 @@ namespace NetTrade.Implementations
 
         public IReadOnlyList<IAccountChange> EquityChanges => _equityChanges;
 
+        public IReadOnlyList<IAccountChange> MarginChanges => _marginChanges;
+
         public double CurrentBalance { get; private set; }
 
         public double Equity { get; private set; }
+
+        public double UsedMargin { get; private set; }
+
+        public double FreeMargin => Equity - UsedMargin;
 
         public long Id { get; }
 
@@ -52,47 +50,58 @@ namespace NetTrade.Implementations
 
         public string BrokerName { get; }
 
-        public ITradeEngine Trade { get; }
+        public double MarginCallPercentage { get; set; } = 0;
+
+        public event OnMarginCallHandler OnMarginCallEvent;
 
         public void AddTransaction(ITransaction transaction)
         {
+            ChangeBalance(transaction.Amount, transaction.Time, transaction.Note);
+
+            ChangeEquity(transaction.Amount, transaction.Time, transaction.Note);
+
+            ChangeMargin(transaction.Amount, transaction.Time, transaction.Note);
+
             _transactions.Add(transaction);
-
-            var balanceChange = new AccountChange(CurrentBalance, transaction.Amount, transaction.Time, transaction.Note);
-
-            ChangeBalance(balanceChange);
-
-            var equityChange = new AccountChange(Equity, transaction.Amount, transaction.Time, transaction.Note);
-
-            ChangeEquity(equityChange);
         }
 
-        private void Trade_OnEquityChangedHandlerEvent(object sender, double amount, DateTimeOffset time)
+        public void ChangeBalance(double amount, DateTimeOffset time, string note)
         {
-            var change = new AccountChange(Equity, amount, time, string.Empty);
+            var change = new AccountChange(CurrentBalance, amount, time, note);
 
-            ChangeEquity(change);
-        }
-
-        private void Trade_OnBalanceChangedHandlerEvent(object sender, double amount, DateTimeOffset time)
-        {
-            var change = new AccountChange(CurrentBalance, amount, time, string.Empty);
-
-            ChangeBalance(change);
-        }
-
-        private void ChangeBalance(IAccountChange change)
-        {
             _balanceChanges.Add(change);
 
             CurrentBalance = change.NewValue;
         }
 
-        private void ChangeEquity(IAccountChange change)
+        public void ChangeEquity(double amount, DateTimeOffset time, string note)
         {
+            var change = new AccountChange(Equity, amount, time, note);
+
             _equityChanges.Add(change);
 
             Equity = change.NewValue;
+        }
+
+        public void ChangeMargin(double amount, DateTimeOffset time, string note)
+        {
+            var change = new AccountChange(UsedMargin, amount, time, note);
+
+            _marginChanges.Add(change);
+
+            UsedMargin = change.NewValue;
+
+            CheckForMarginCall();
+        }
+
+        private void CheckForMarginCall()
+        {
+            var marginPercentage = (FreeMargin / CurrentBalance) * 100;
+
+            if (marginPercentage <= MarginCallPercentage)
+            {
+                OnMarginCallEvent?.Invoke(this);
+            }
         }
     }
 }

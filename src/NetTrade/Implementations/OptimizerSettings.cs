@@ -1,7 +1,6 @@
-﻿using System;
+﻿using NetTrade.Interfaces;
+using System;
 using System.Collections.Generic;
-using System.Text;
-using NetTrade.Interfaces;
 
 namespace NetTrade.Implementations
 {
@@ -15,7 +14,9 @@ namespace NetTrade.Implementations
 
         public object[] BacktesterParameters { get; set; }
 
-        public IBacktestSettings BacktestSettings { get; set; }
+        public Type BacktestSettingsType { get; set; }
+
+        public object[] BacktestSettingsParameters { get; set; }
 
         public IReadOnlyList<IOptimizeParameter> Parameters { get; set; }
 

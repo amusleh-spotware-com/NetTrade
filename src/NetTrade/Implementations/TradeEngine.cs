@@ -18,9 +18,11 @@ namespace NetTrade.Implementations
 
         #endregion Fields
 
-        public TradeEngine(IServer server)
+        public TradeEngine(IServer server, IAccount account)
         {
             Server = server;
+
+            Account = account;
         }
 
         public IReadOnlyList<IOrder> Orders => _orders;
@@ -31,9 +33,7 @@ namespace NetTrade.Implementations
 
         public IServer Server { get; }
 
-        public event OnEquityChangedHandler OnEquityChangedHandlerEvent;
-
-        public event OnBalanceChangedHandler OnBalanceChangedHandlerEvent;
+        public IAccount Account { get; }
 
         public TradeResult Execute(IOrderParameters parameters)
         {
@@ -89,12 +89,12 @@ namespace NetTrade.Implementations
 
             if (totalEquityChange != 0)
             {
-                OnEquityChangedHandlerEvent?.Invoke(this, totalEquityChange, Server.CurrentTime);
+                Account.ChangeEquity(totalEquityChange, Server.CurrentTime, string.Empty);
             }
 
             if (totalBalanceChange != 0)
             {
-                OnBalanceChangedHandlerEvent?.Invoke(this, totalBalanceChange, Server.CurrentTime);
+                Account.ChangeBalance(totalBalanceChange, Server.CurrentTime, string.Empty);
             }
         }
 
@@ -112,6 +112,8 @@ namespace NetTrade.Implementations
             var tradingEvent = new TradingEvent(TradingEventType.MarketOrderClosed, order, string.Empty);
 
             _journal.Add(tradingEvent);
+
+            Account.ChangeMargin(-order.MarginUsed, Server.CurrentTime, string.Empty);
         }
 
         public void CancelPendingOrder(PendingOrder order)
@@ -174,28 +176,38 @@ namespace NetTrade.Implementations
 
         private TradeResult ExecuteMarketOrder(MarketOrderParameters parameters)
         {
-            var symbolPrice = parameters.Symbol.GetPrice(parameters.TradeType);
-            var symbolSlippageInPrice = parameters.Symbol.Slippage * parameters.Symbol.TickSize;
+            var marginRequired = (parameters.Volume * parameters.Symbol.VolumeUnitValue) / Account.Leverage;
 
-            if (parameters.TradeType == TradeType.Buy)
+            if (marginRequired >= Account.FreeMargin)
             {
-                parameters.EntryPrice = symbolPrice + symbolSlippageInPrice;
+                return new TradeResult(OrderErrorCode.NotEnoughMargin);
             }
             else
             {
-                parameters.EntryPrice = symbolPrice - symbolSlippageInPrice;
+                var symbolPrice = parameters.Symbol.GetPrice(parameters.TradeType);
+                var symbolSlippageInPrice = parameters.Symbol.Slippage * parameters.Symbol.TickSize;
+
+                if (parameters.TradeType == TradeType.Buy)
+                {
+                    parameters.EntryPrice = symbolPrice + symbolSlippageInPrice;
+                }
+                else
+                {
+                    parameters.EntryPrice = symbolPrice - symbolSlippageInPrice;
+                }
+
+                var order = new MarketOrder(parameters, Server.CurrentTime)
+                {
+                    Commission = parameters.Symbol.Commission * 2,
+                    MarginUsed = marginRequired
+                };
+
+                AddOrder(order);
+
+                Account.ChangeMargin(marginRequired, Server.CurrentTime, string.Empty);
+
+                return new TradeResult(order);
             }
-
-            var order = new MarketOrder(parameters, Server.CurrentTime)
-            {
-                Commission = parameters.Symbol.Commission * 2
-            };
-
-            AddOrder(order);
-
-            var result = new TradeResult(order);
-
-            return result;
         }
 
         private TradeResult PlacePendingOrder(PendingOrderParameters parameters)

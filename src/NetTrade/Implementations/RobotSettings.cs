@@ -19,5 +19,7 @@ namespace NetTrade.Implementations
         public IAccount Account { get; set; }
 
         public IServer Server { get; set; }
+
+        public ITradeEngine TradeEngine { get; set; }
     }
 }

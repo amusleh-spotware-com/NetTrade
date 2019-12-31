@@ -17,6 +17,8 @@ namespace NetTrade.Interfaces
 
         IAccount Account { get; set; }
 
+        ITradeEngine TradeEngine { get; set; }
+
         IServer Server { get; set; }
     }
 }

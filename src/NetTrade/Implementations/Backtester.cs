@@ -53,7 +53,7 @@ namespace NetTrade.Implementations
 
         public IBacktestResult GetResult()
         {
-            var tradeEngine = Robot.Settings.Account.Trade;
+            var tradeEngine = Robot.Settings.TradeEngine;
             var trades = tradeEngine.Trades.ToList();
 
             var result = new BacktestResult

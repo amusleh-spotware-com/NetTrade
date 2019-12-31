@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using NetTrade.Helpers;
+using System;
 
 namespace NetTrade.Interfaces
 {
@@ -10,9 +12,15 @@ namespace NetTrade.Interfaces
 
         IReadOnlyList<IAccountChange> EquityChanges { get; }
 
+        IReadOnlyList<IAccountChange> MarginChanges { get; }
+
         double CurrentBalance { get; }
 
         double Equity { get; }
+
+        double UsedMargin { get; }
+
+        double FreeMargin { get; }
 
         long Id { get; }
 
@@ -24,6 +32,16 @@ namespace NetTrade.Interfaces
 
         string BrokerName { get; }
 
-        ITradeEngine Trade { get; }
+        double MarginCallPercentage { get; }
+
+        event OnMarginCallHandler OnMarginCallEvent;
+
+        void AddTransaction(ITransaction transaction);
+
+        void ChangeBalance(double amount, DateTimeOffset time, string note);
+
+        void ChangeEquity(double amount, DateTimeOffset time, string note);
+
+        void ChangeMargin(double amount, DateTimeOffset time, string note);
     }
 }

@@ -17,7 +17,9 @@ namespace NetTrade.Interfaces
 
         object[] BacktesterParameters { get; }
 
-        IBacktestSettings BacktestSettings { get; }
+        Type BacktestSettingsType { get; }
+
+        object[] BacktestSettingsParameters { get; }
 
         Type TradeEngineType { get; }
 

@@ -22,4 +22,8 @@ namespace NetTrade.Helpers
     public delegate void OnEquityChangedHandler(object sender, double amount, DateTimeOffset time);
 
     public delegate void OnBalanceChangedHandler(object sender, double amount, DateTimeOffset time);
+
+    public delegate void OnMarginChangedHandler(object sender, double amount, DateTimeOffset time);
+
+    public delegate void OnMarginCallHandler(object sender);
 }

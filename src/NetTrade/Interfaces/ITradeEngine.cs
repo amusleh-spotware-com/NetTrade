@@ -15,9 +15,7 @@ namespace NetTrade.Interfaces
 
         IServer Server { get; }
 
-        event OnEquityChangedHandler OnEquityChangedHandlerEvent;
-
-        event OnBalanceChangedHandler OnBalanceChangedHandlerEvent;
+        IAccount Account { get; }
 
         TradeResult Execute(IOrderParameters parameters);
 

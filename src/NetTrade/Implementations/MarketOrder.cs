@@ -17,5 +17,7 @@ namespace NetTrade.Implementations
         public double GrossProfit { get; set; }
 
         public double NetProfit { get; set; }
+
+        public double MarginUsed { get; set; }
     }
 }

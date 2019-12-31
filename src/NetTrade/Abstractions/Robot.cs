@@ -138,7 +138,7 @@ namespace NetTrade.Abstractions
         {
             var symbol = sender as ISymbol;
 
-            Settings.Account.Trade.UpdateSymbolOrders(symbol);
+            Settings.TradeEngine.UpdateSymbolOrders(symbol);
 
             OnTick(symbol);
         }

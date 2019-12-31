@@ -47,29 +47,29 @@ namespace NetTrade.Abstractions
                 robotSettings.OtherSymbols = Settings.OtherSymbols.Select(iSymbol => iSymbol.Clone() as ISymbol).ToList();
             }
 
-            robotSettings.BacktestSettings = Settings.BacktestSettings;
+            robotSettings.BacktestSettings = Activator.CreateInstance(Settings.BacktestSettingsType,
+                Settings.BacktestSettingsParameters) as IBacktestSettings;
 
             robotSettings.Backtester = Activator.CreateInstance(Settings.BacktesterType, Settings.BacktesterParameters) as
                 IBacktester;
 
-            var accountTransactions = new List<Transaction>
-            {
-                new Transaction(Settings.AccountBalance, Settings.BacktestSettings.StartTime, string.Empty)
-            };
-
             robotSettings.Server = Activator.CreateInstance(Settings.ServerType, Settings.ServerParameters) as IServer;
 
-            var tradeEngineParameters = new List<object> { robotSettings.Server };
+            robotSettings.Account = new Account(0, 0, string.Empty, Settings.AccountLeverage, "Optimizer");
+
+            var transaction = new Transaction(Settings.AccountBalance, robotSettings.BacktestSettings.StartTime, string.Empty);
+
+            robotSettings.Account.AddTransaction(transaction);
+
+            var tradeEngineParameters = new List<object> { robotSettings.Server, robotSettings.Account };
 
             if (Settings.TradeEngineParameters != null)
             {
                 tradeEngineParameters.AddRange(Settings.TradeEngineParameters);
             }
 
-            var tradeEngine = Activator.CreateInstance(Settings.TradeEngineType, tradeEngineParameters) as ITradeEngine;
-
-            robotSettings.Account = new Account(0, 0, string.Empty, Settings.AccountLeverage, "Optimizer", accountTransactions,
-                tradeEngine);
+            robotSettings.TradeEngine = Activator.CreateInstance(Settings.TradeEngineType, tradeEngineParameters) as
+                ITradeEngine;
 
             return robotSettings;
         }
