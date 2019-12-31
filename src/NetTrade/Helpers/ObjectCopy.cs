@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace NetTrade.Helpers
+﻿namespace NetTrade.Helpers
 {
     public static class ObjectCopy
     {

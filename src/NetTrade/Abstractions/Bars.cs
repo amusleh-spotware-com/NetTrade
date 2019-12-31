@@ -1,23 +1,23 @@
-﻿using NetTrade.Helpers;
-using NetTrade.Implementations;
-using NetTrade.Interfaces;
+﻿using NetTrade.Abstractions.Interfaces;
+using NetTrade.Collections;
+using NetTrade.Helpers;
 using System;
 
 namespace NetTrade.Abstractions
 {
     public abstract class Bars : IBars
     {
-        private ExpandableSeries<DateTimeOffset> _time = new ExpandableSeries<DateTimeOffset>();
+        private readonly ExpandableSeries<DateTimeOffset> _time = new ExpandableSeries<DateTimeOffset>();
 
-        private ExpandableSeries<double> _open = new ExpandableSeries<double>();
+        private readonly ExpandableSeries<double> _open = new ExpandableSeries<double>();
 
-        private ExpandableSeries<double> _high = new ExpandableSeries<double>();
+        private readonly ExpandableSeries<double> _high = new ExpandableSeries<double>();
 
-        private ExpandableSeries<double> _low = new ExpandableSeries<double>();
+        private readonly ExpandableSeries<double> _low = new ExpandableSeries<double>();
 
-        private ExpandableSeries<double> _close = new ExpandableSeries<double>();
+        private readonly ExpandableSeries<double> _close = new ExpandableSeries<double>();
 
-        private ExpandableSeries<long> _volume = new ExpandableSeries<long>();
+        private readonly ExpandableSeries<long> _volume = new ExpandableSeries<long>();
 
         public ISeries<DateTimeOffset> Time => _time;
 

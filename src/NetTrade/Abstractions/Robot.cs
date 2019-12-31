@@ -1,7 +1,7 @@
-﻿using NetTrade.Enums;
-using NetTrade.Interfaces;
+﻿using NetTrade.Abstractions.Interfaces;
+using NetTrade.Enums;
+using NetTrade.Models;
 using System;
-using NetTrade.Implementations;
 
 namespace NetTrade.Abstractions
 {

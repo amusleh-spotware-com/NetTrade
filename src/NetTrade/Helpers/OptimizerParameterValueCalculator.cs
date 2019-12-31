@@ -1,4 +1,4 @@
-﻿using NetTrade.Interfaces;
+﻿using NetTrade.Abstractions.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

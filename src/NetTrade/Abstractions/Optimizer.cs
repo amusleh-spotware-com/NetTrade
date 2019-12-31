@@ -1,7 +1,8 @@
-﻿using NetTrade.Enums;
+﻿using NetTrade.Abstractions.Interfaces;
+using NetTrade.Accounts;
+using NetTrade.Enums;
 using NetTrade.Helpers;
-using NetTrade.Implementations;
-using NetTrade.Interfaces;
+using NetTrade.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,7 +56,7 @@ namespace NetTrade.Abstractions
 
             robotSettings.Server = Activator.CreateInstance(Settings.ServerType, Settings.ServerParameters) as IServer;
 
-            robotSettings.Account = new Account(0, 0, string.Empty, Settings.AccountLeverage, "Optimizer");
+            robotSettings.Account = new DefaultAccount(0, 0, string.Empty, Settings.AccountLeverage, "Optimizer");
 
             var transaction = new Transaction(Settings.AccountBalance, robotSettings.BacktestSettings.StartTime, string.Empty);
 
