@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using NetTrade.Abstractions;
+using System.Collections.Concurrent;
 
 namespace NetTrade.Collections
 {

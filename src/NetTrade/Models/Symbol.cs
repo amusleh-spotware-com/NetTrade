@@ -101,7 +101,7 @@ namespace NetTrade.Models
         {
             var clone = new Symbol(_barsData.ToList(), Bars.Clone() as IBars);
 
-            ObjectCopy.ShallowCopy(this, clone);
+            ObjectCopy.CopyProperties(this, clone);
 
             return clone;
         }

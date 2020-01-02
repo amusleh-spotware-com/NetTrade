@@ -15,7 +15,7 @@ namespace NetTrade.Helpers.Tests
                 new OptimizeParameter("First Parameter", 1, 10, 1),
                 new OptimizeParameter("Second Parameter", -10, 100, 100),
                 new OptimizeParameter("Third Parameter", 0, 10, 0.1),
-                new OptimizeParameter("Fourth Parameter", 1)
+                new OptimizeParameter("Fourth Parameter", "Test")
             };
 
             int totalParametersGridNumber = 0;

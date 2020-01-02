@@ -38,6 +38,11 @@ namespace NetTrade.Helpers
 
             foreach (var robotParamter in robotParameters)
             {
+                if (!robotParamter.CanWrite)
+                {
+                    continue;
+                }
+
                 var parameterAttribute = robotParamter.GetCustomAttribute<ParameterAttribute>();
 
                 var parameterValue = parameterGrid.FirstOrDefault(iParameter => iParameter.Key.Equals(parameterAttribute.Name,

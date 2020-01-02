@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using NetTrade.Enums;
 
 namespace NetTrade.Abstractions.Interfaces
 {
@@ -17,5 +18,7 @@ namespace NetTrade.Abstractions.Interfaces
         object DefaultValue { get; }
 
         IReadOnlyList<object> Values { get; }
+
+        ParameterType Type { get; }
     }
 }

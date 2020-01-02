@@ -1,4 +1,5 @@
 ﻿using NetTrade.Abstractions.Interfaces;
+using NetTrade.Enums;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -9,35 +10,51 @@ namespace NetTrade.Helpers
     {
         public static List<object> GetAllParameterValues(IOptimizeParameter parameter)
         {
-            if (parameter.Step is int)
+            switch (parameter.Type)
             {
-                return GetAllIntParameterValues(parameter);
-            }
-            else if (parameter.Step is long)
-            {
-                return GetAllLongParameterValues(parameter);
-            }
-            else if (parameter.Step is double)
-            {
-                return GetAllDoubleParameterValues(parameter);
-            }
+                case ParameterType.Int:
+                case ParameterType.Long:
+                case ParameterType.Double:
+                    return GetAllNumericParameterValues(parameter);
 
-            throw new ArgumentException($"The parameter value type ({parameter.Step.GetType()}) is not supported by this method");
+                case ParameterType.Other:
+                    return new List<object> { parameter.DefaultValue };
+
+                default:
+                    throw new ArgumentException($"The parameter type ({parameter.Type}) is not supported by this method");
+            }
         }
 
-        public static List<object> GetAllDoubleParameterValues(IOptimizeParameter parameter)
+        public static long GetParameterRange(IOptimizeParameter parameter)
+        {
+            switch (parameter.Type)
+            {
+                case ParameterType.Int:
+                case ParameterType.Long:
+                case ParameterType.Double:
+                    return GetNumericParameterRange(parameter);
+
+                case ParameterType.Other:
+                    return 1;
+
+                default:
+                    throw new ArgumentException($"The parameter type ({parameter.Type}) is not supported by this method");
+            }
+        }
+
+        private static List<object> GetAllNumericParameterValues(IOptimizeParameter parameter)
         {
             var result = new List<object>();
 
-            var step = (double)parameter.Step;
+            var step = Convert.ToDouble(parameter.Step);
 
             var stepString = step.ToString(CultureInfo.InvariantCulture);
             var stepIntString = ((int)step).ToString(CultureInfo.InvariantCulture);
 
             var stepDecimalPoints = stepString.IndexOf('.') >= 0 ? stepString.Length - (stepIntString.Length + 1) : 0;
 
-            var maxValue = (double)parameter.MaxValue;
-            var minValue = (double)parameter.MinValue;
+            var maxValue = Convert.ToDouble(parameter.MaxValue);
+            var minValue = Convert.ToDouble(parameter.MinValue);
 
             for (var iValue = minValue; iValue <= maxValue; iValue += step)
             {
@@ -49,55 +66,11 @@ namespace NetTrade.Helpers
             return result;
         }
 
-        public static List<object> GetAllIntParameterValues(IOptimizeParameter parameter)
-        {
-            var result = new List<object>();
-
-            var step = (int)parameter.Step;
-
-            var maxValue = (int)parameter.MaxValue;
-            var minValue = (int)parameter.MinValue;
-
-            for (var iValue = minValue; iValue <= maxValue; iValue += step)
-            {
-                result.Add(iValue);
-            }
-
-            return result;
-        }
-
-        public static List<object> GetAllLongParameterValues(IOptimizeParameter parameter)
-        {
-            var result = new List<object>();
-
-            var step = (long)parameter.Step;
-
-            var maxValue = (long)parameter.MaxValue;
-            var minValue = (long)parameter.MinValue;
-
-            for (var iValue = minValue; iValue <= maxValue; iValue += step)
-            {
-                result.Add(iValue);
-            }
-
-            return result;
-        }
-
-        public static long GetParameterRange(IOptimizeParameter parameter)
-        {
-            if (parameter.Step is int || parameter.Step is double || parameter.Step is long)
-            {
-                return GetNumericParameterRange(parameter);
-            }
-
-            throw new NotSupportedException("The parameter value type is not supported");
-        }
-
         private static long GetNumericParameterRange(IOptimizeParameter parameter)
         {
-            var step = (double)parameter.Step;
-            var maxValue = (double)parameter.MaxValue;
-            var minValue = (double)parameter.MinValue;
+            var step = Convert.ToDouble(parameter.Step);
+            var maxValue = Convert.ToDouble(parameter.MaxValue);
+            var minValue = Convert.ToDouble(parameter.MinValue);
 
             long result = 0;
 

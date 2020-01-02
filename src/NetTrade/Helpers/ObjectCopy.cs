@@ -2,7 +2,7 @@
 {
     public static class ObjectCopy
     {
-        public static void ShallowCopy<T>(T oldObject, T newObject)
+        public static void CopyProperties<T>(T oldObject, T newObject)
         {
             var properties = oldObject.GetType().GetProperties();
 
