@@ -1,6 +1,7 @@
 ﻿using NetTrade.Abstractions.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace NetTrade.Helpers
 {
@@ -16,12 +17,12 @@ namespace NetTrade.Helpers
 
             if (troughChange != null)
             {
-                var peakValue = changesCopy.Where(iChange => iChange.Time < troughChange.Time).Max(iChange => iChange.NewValue);
+                var peakValue = changesCopy.Where(iChange => iChange.Time <= troughChange.Time).Max(iChange => iChange.NewValue);
 
                 result = (troughChange.NewValue - peakValue) / peakValue;
             }
 
-            return result;
+            return result > 0 ? 0 : Math.Round(result, 3) * 100;
         }
 
         private static IAccountChange GetTroughChange(IEnumerable<IAccountChange> changes)

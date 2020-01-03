@@ -8,14 +8,14 @@ namespace NetTrade.Helpers
 {
     public static class OptimizerParameterValueCalculator
     {
-        public static List<object> GetAllParameterValues(IOptimizeParameter parameter)
+        public static List<object> GetParameterAllValues(IOptimizeParameter parameter)
         {
             switch (parameter.Type)
             {
                 case ParameterType.Int:
                 case ParameterType.Long:
                 case ParameterType.Double:
-                    return GetAllNumericParameterValues(parameter);
+                    return GetNumericParameterAllValues(parameter);
 
                 case ParameterType.Other:
                     return new List<object> { parameter.DefaultValue };
@@ -42,7 +42,7 @@ namespace NetTrade.Helpers
             }
         }
 
-        private static List<object> GetAllNumericParameterValues(IOptimizeParameter parameter)
+        private static List<object> GetNumericParameterAllValues(IOptimizeParameter parameter)
         {
             var result = new List<object>();
 
@@ -60,7 +60,20 @@ namespace NetTrade.Helpers
             {
                 var valueRounded = Math.Round(iValue, stepDecimalPoints);
 
-                result.Add(valueRounded);
+                switch (parameter.Type)
+                {
+                    case ParameterType.Int:
+                        result.Add(Convert.ToInt32(valueRounded));
+                        break;
+                    case ParameterType.Long:
+                        result.Add(Convert.ToInt64(valueRounded));
+                        break;
+                    case ParameterType.Double:
+                        result.Add(Convert.ToDouble(valueRounded));
+                        break;
+                    default:
+                        throw new ArgumentException($"The parameter type ({parameter.Type}) is not supported by this method");
+                }
             }
 
             return result;

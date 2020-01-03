@@ -63,7 +63,7 @@ namespace NetTrade.Models
             MaxValue = maxValue;
             Step = step;
 
-            Values = OptimizerParameterValueCalculator.GetAllParameterValues(this);
+            Values = OptimizerParameterValueCalculator.GetParameterAllValues(this);
         }
     }
 }
