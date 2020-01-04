@@ -28,5 +28,21 @@ namespace NetTrade.Helpers.Tests
 
             Assert.AreEqual(expectedDrawdown, actualDrawdown);
         }
+
+        [TestMethod()]
+        public void GetMaxDrawdownZeroTest()
+        {
+            var changes = new List<IAccountChange>
+            {
+                new AccountChange(1000, 100, DateTimeOffset.Now.AddDays(-10), string.Empty),
+                new AccountChange(1100, 100, DateTimeOffset.Now.AddDays(-9), string.Empty),
+                new AccountChange(1200, 100, DateTimeOffset.Now.AddDays(-8), string.Empty),
+            };
+
+            var actualDrawdown = MaxDrawdownCalculator.GetMaxDrawdown(changes);
+            var expectedDrawdown = 0;
+
+            Assert.AreEqual(expectedDrawdown, actualDrawdown);
+        }
     }
 }

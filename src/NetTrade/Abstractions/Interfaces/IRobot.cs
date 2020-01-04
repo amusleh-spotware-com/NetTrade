@@ -19,11 +19,15 @@ namespace NetTrade.Abstractions.Interfaces
 
         void OnStart();
 
+        void OnPause();
+
+        void OnResume();
+
+        void OnStop();
+
         void OnBar(ISymbol symbol, int index);
 
         void OnTick(ISymbol symbol);
-
-        void OnStop();
 
         void SetTimeByBacktester(IBacktester backtester, DateTimeOffset time);
     }

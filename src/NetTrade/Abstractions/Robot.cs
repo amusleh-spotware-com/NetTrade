@@ -10,6 +10,8 @@ namespace NetTrade.Abstractions
         public Robot(IRobotSettings settings)
         {
             Settings = settings;
+
+            RunningMode = RunningMode.Stopped;
         }
 
         public IRobotSettings Settings { get; }
@@ -18,6 +20,11 @@ namespace NetTrade.Abstractions
 
         public void Start()
         {
+            if (RunningMode == RunningMode.Running || RunningMode == RunningMode.Paused)
+            {
+                throw new InvalidOperationException("The robot is already in running/paused mode");
+            }
+
             Settings.MainSymbol.OnTickEvent += Symbol_OnTickEvent;
             Settings.MainSymbol.Bars.OnBarEvent += SymbolBars_OnBarEvent;
 
@@ -45,6 +52,11 @@ namespace NetTrade.Abstractions
 
         public void Stop()
         {
+            if (RunningMode == RunningMode.Stopped)
+            {
+                throw new InvalidOperationException("The robot is already stopped");
+            }
+
             RunningMode = RunningMode.Stopped;
 
             OnStop();
@@ -52,6 +64,11 @@ namespace NetTrade.Abstractions
 
         public void Pause()
         {
+            if (RunningMode != RunningMode.Running)
+            {
+                throw new InvalidOperationException("The robot is not running");
+            }
+
             RunningMode = RunningMode.Paused;
 
             switch (Settings.Mode)
@@ -63,11 +80,20 @@ namespace NetTrade.Abstractions
                 case Mode.Live:
                     break;
             }
+
+            OnPause();
         }
 
         public void Resume()
         {
+            if (RunningMode != RunningMode.Paused)
+            {
+                throw new InvalidOperationException("The robot is not paused");
+            }
+
             RunningMode = RunningMode.Running;
+
+            OnResume();
         }
 
         public void SetTimeByBacktester(IBacktester backtester, DateTimeOffset time)
@@ -94,6 +120,10 @@ namespace NetTrade.Abstractions
         public virtual void OnBar(ISymbol symbol, int index)
         {
         }
+
+        public abstract void OnPause();
+
+        public abstract void OnResume();
 
         public abstract void OnStart();
 
@@ -140,14 +170,20 @@ namespace NetTrade.Abstractions
 
             Settings.TradeEngine.UpdateSymbolOrders(symbol);
 
-            OnTick(symbol);
+            if (RunningMode == RunningMode.Running)
+            {
+                OnTick(symbol);
+            }
         }
 
         private void SymbolBars_OnBarEvent(object sender, int index)
         {
             var symbol = sender as ISymbol;
 
-            OnBar(symbol, index);
+            if (RunningMode == RunningMode.Running)
+            {
+                OnBar(symbol, index);
+            }
         }
 
         #endregion Symbols on tick/bar event handlers
