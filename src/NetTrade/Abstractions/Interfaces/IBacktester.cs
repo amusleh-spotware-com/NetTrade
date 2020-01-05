@@ -1,10 +1,13 @@
 ﻿using NetTrade.Helpers;
+using System;
 
 namespace NetTrade.Abstractions.Interfaces
 {
     public interface IBacktester
     {
         IRobot Robot { get; }
+
+        TimeSpan Interval { get; set; }
 
         event OnBacktestStartHandler OnBacktestStartEvent;
 
@@ -13,10 +16,6 @@ namespace NetTrade.Abstractions.Interfaces
         event OnBacktestStopHandler OnBacktestStopEvent;
 
         void Start(IRobot robot, IBacktestSettings settings);
-
-        void Pause();
-
-        void Stop();
 
         IBacktestResult GetResult();
     }

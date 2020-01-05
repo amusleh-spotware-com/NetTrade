@@ -113,16 +113,6 @@ namespace NetTrade.Abstractions.Tests
         }
 
         [TestMethod()]
-        public void OnTickTest()
-        {
-        }
-
-        [TestMethod()]
-        public void OnBarTest()
-        {
-        }
-
-        [TestMethod()]
         public void OnStartTest()
         {
             if (_robotMock.Object.RunningMode == RunningMode.Running)

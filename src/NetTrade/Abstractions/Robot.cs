@@ -9,6 +9,8 @@ namespace NetTrade.Abstractions
     {
         public Robot(IRobotSettings settings)
         {
+            _ = settings ?? throw new ArgumentNullException(nameof(settings));
+
             Settings = settings;
 
             RunningMode = RunningMode.Stopped;
@@ -38,15 +40,9 @@ namespace NetTrade.Abstractions
 
             OnStart();
 
-            switch (Settings.Mode)
+            if (Settings.Mode == Mode.Backtest)
             {
-                case Mode.Backtest:
-                    Backtest();
-                    break;
-
-                case Mode.Live:
-                    Live();
-                    break;
+                Backtest();
             }
         }
 
@@ -71,16 +67,6 @@ namespace NetTrade.Abstractions
 
             RunningMode = RunningMode.Paused;
 
-            switch (Settings.Mode)
-            {
-                case Mode.Backtest:
-                    Settings.Backtester.Pause();
-                    break;
-
-                case Mode.Live:
-                    break;
-            }
-
             OnPause();
         }
 
@@ -98,6 +84,8 @@ namespace NetTrade.Abstractions
 
         public void SetTimeByBacktester(IBacktester backtester, DateTimeOffset time)
         {
+            _ = backtester ?? throw new ArgumentNullException(nameof(backtester));
+
             if (Settings.Mode == Mode.Live)
             {
                 throw new InvalidOperationException("You can not set the robot time with a back tester when the robot is on" +
@@ -129,39 +117,6 @@ namespace NetTrade.Abstractions
 
         public abstract void OnStop();
 
-        #region Robot different mode methods
-
-        protected virtual void Backtest()
-        {
-            Settings.Backtester.OnBacktestStartEvent += Backtester_OnBacktestStartEvent;
-            Settings.Backtester.OnBacktestPauseEvent += Backtester_OnBacktestPauseEvent;
-            Settings.Backtester.OnBacktestStopEvent += Backtester_OnBacktestStopEvent;
-
-            Settings.Backtester.Start(this, Settings.BacktestSettings);
-        }
-
-        protected virtual void Live()
-        {
-        }
-
-        #endregion Robot different mode methods
-
-        #region Backtester event handlers
-
-        protected virtual void Backtester_OnBacktestStopEvent(object sender, IRobot robot)
-        {
-        }
-
-        protected virtual void Backtester_OnBacktestPauseEvent(object sender, IRobot robot)
-        {
-        }
-
-        protected virtual void Backtester_OnBacktestStartEvent(object sender, IRobot robot)
-        {
-        }
-
-        #endregion Backtester event handlers
-
         #region Symbols on tick/bar event handlers
 
         private void Symbol_OnTickEvent(object sender)
@@ -187,5 +142,34 @@ namespace NetTrade.Abstractions
         }
 
         #endregion Symbols on tick/bar event handlers
+
+        #region Backtest methods and event handlers
+
+        private void Backtest()
+        {
+            Settings.Backtester.OnBacktestStopEvent += Backtester_OnBacktestStopEvent;
+            Settings.Backtester.OnBacktestStartEvent += Backtester_OnBacktestStartEvent;
+            Settings.Backtester.OnBacktestPauseEvent += Backtester_OnBacktestPauseEvent;
+
+            Settings.Backtester.Start(this, Settings.BacktestSettings);
+        }
+
+        protected virtual void Backtester_OnBacktestPauseEvent(object sender, IRobot robot)
+        {
+        }
+
+        protected virtual void Backtester_OnBacktestStartEvent(object sender, IRobot robot)
+        {
+        }
+
+        protected virtual void Backtester_OnBacktestStopEvent(object sender, IRobot robot)
+        {
+            if (RunningMode != RunningMode.Stopped)
+            {
+                Stop();
+            }
+        }
+
+        #endregion
     }
 }

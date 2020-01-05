@@ -11,6 +11,7 @@ namespace NetTrade.Backtesters
     public class DefaultBacktester : IBacktester
     {
         public IRobot Robot { get; private set; }
+        public TimeSpan Interval { get; set; } = TimeSpan.FromMilliseconds(1);
 
         public event OnBacktestStartHandler OnBacktestStartEvent;
 
@@ -20,36 +21,18 @@ namespace NetTrade.Backtesters
 
         public async void Start(IRobot robot, IBacktestSettings settings)
         {
-            if (Robot != null && Robot.RunningMode != RunningMode.Stopped)
-            {
-                throw new InvalidOperationException("You can only start the backtester when robot is stopped");
-            }
+            _ = robot ?? throw new ArgumentNullException(nameof(robot));
 
             Robot = robot;
+
+            if (Robot.RunningMode != RunningMode.Running)
+            {
+                throw new InvalidOperationException("You can only start the backtester when robot is in running mode");
+            }
 
             OnBacktestStartEvent?.Invoke(this, Robot);
 
             await StartDataFeed(settings.StartTime, settings.EndTime).ConfigureAwait(false);
-        }
-
-        public void Pause()
-        {
-            if (Robot != null && Robot.RunningMode != RunningMode.Running)
-            {
-                throw new InvalidOperationException("You can only pause the backtester when robot is running");
-            }
-
-            OnBacktestPauseEvent?.Invoke(this, Robot);
-        }
-
-        public void Stop()
-        {
-            if (Robot != null && Robot.RunningMode == RunningMode.Stopped)
-            {
-                throw new InvalidOperationException("You can only pause the backtester when robot is running/paused");
-            }
-
-            OnBacktestStopEvent?.Invoke(this, Robot);
         }
 
         public IBacktestResult GetResult()
@@ -63,7 +46,7 @@ namespace NetTrade.Backtesters
                 LongTradesNumber = trades.Where(iTrade => iTrade.Order.TradeType == TradeType.Buy).Count(),
                 ShortTradesNumber = trades.Where(iTrade => iTrade.Order.TradeType == TradeType.Sell).Count(),
                 NetProfit = trades.Select(iTrade => iTrade.Order.NetProfit).Sum(),
-                WinningRate = trades.Where(iTrade => iTrade.Order.NetProfit > 0).Count() / trades.Count,
+                WinningRate = trades.Count > 0 ? trades.Where(iTrade => iTrade.Order.NetProfit > 0).Count() / trades.Count : 0,
             };
 
             var grossProfit = trades.Where(iTrade => iTrade.Order.GrossProfit > 0)
@@ -84,7 +67,7 @@ namespace NetTrade.Backtesters
         {
             var symbol = Robot.Settings.MainSymbol as Symbol;
 
-            for (var currentTime = startTime; currentTime <= endTime; currentTime = currentTime.AddTicks(1))
+            for (var currentTime = startTime; currentTime <= endTime; currentTime = currentTime.Add(Interval))
             {
                 bool shouldContinueDataFeed = await ShouldContinueDataFeed();
 
@@ -115,17 +98,21 @@ namespace NetTrade.Backtesters
                 symbol.PublishBar(symbolBar);
             }
 
-            Stop();
+            OnBacktestStopEvent?.Invoke(this, Robot);
         }
 
         private async Task<bool> ShouldContinueDataFeed()
         {
             if (Robot.RunningMode == RunningMode.Stopped)
             {
+                OnBacktestStopEvent?.Invoke(this, Robot);
+
                 return false;
             }
             else if (Robot.RunningMode == RunningMode.Paused)
             {
+                OnBacktestPauseEvent?.Invoke(this, Robot);
+
                 while (Robot.RunningMode == RunningMode.Paused)
                 {
                     await Task.Delay(1000);
