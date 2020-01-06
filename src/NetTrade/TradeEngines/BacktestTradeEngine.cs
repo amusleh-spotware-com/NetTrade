@@ -52,7 +52,7 @@ namespace NetTrade.TradeEngines
 
         public void UpdateSymbolOrders(ISymbol symbol)
         {
-            var symbolOrders = _orders.Where(iOrder => iOrder.Symbol == symbol);
+            var symbolOrders = _orders.Where(iOrder => iOrder.Symbol == symbol).ToList();
 
             double totalEquityChange = 0, totalBalanceChange = 0;
 

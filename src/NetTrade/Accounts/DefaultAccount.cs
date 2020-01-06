@@ -61,9 +61,9 @@ namespace NetTrade.Accounts
 
             ChangeEquity(transaction.Amount, transaction.Time, transaction.Note);
 
-            ChangeMargin(transaction.Amount, transaction.Time, transaction.Note);
-
             _transactions.Add(transaction);
+
+            CheckForMarginCall();
         }
 
         public void ChangeBalance(double amount, DateTimeOffset time, string note)

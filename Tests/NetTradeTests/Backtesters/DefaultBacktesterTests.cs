@@ -8,6 +8,7 @@ using NetTrade.Models;
 using NetTrade.TradeEngines;
 using System;
 using System.Collections.Generic;
+using NetTrade.Timers;
 
 namespace NetTrade.Backtesters.Tests
 {
@@ -48,6 +49,7 @@ namespace NetTrade.Backtesters.Tests
             _robotSettingsMock.SetupProperty(settings => settings.Server, new Server());
             _robotSettingsMock.SetupProperty(settings => settings.Account, new Mock<IAccount>().Object);
             _robotSettingsMock.SetupProperty(settings => settings.Mode, Mode.Backtest);
+            _robotSettingsMock.SetupProperty(settings => settings.Timer, new DefaultTimer());
 
             var tradeEngine = new BacktestTradeEngine(_robotSettingsMock.Object.Server, _robotSettingsMock.Object.Account);
 
