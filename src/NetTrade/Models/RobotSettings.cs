@@ -1,6 +1,7 @@
 ﻿using NetTrade.Abstractions.Interfaces;
 using NetTrade.Enums;
 using System.Collections.Generic;
+using NetTrade.Timers;
 
 namespace NetTrade.Models
 {
@@ -18,8 +19,10 @@ namespace NetTrade.Models
 
         public IAccount Account { get; set; }
 
-        public IServer Server { get; set; }
-
         public ITradeEngine TradeEngine { get; set; }
+
+        public IServer Server { get; set; } = new Server();
+
+        public ITimer Timer { get; set; } = new DefaultTimer();
     }
 }

@@ -29,6 +29,8 @@ namespace NetTrade.Abstractions.Interfaces
 
         void OnTick(ISymbol symbol);
 
+        void OnTimer();
+
         void SetTimeByBacktester(IBacktester backtester, DateTimeOffset time);
     }
 }

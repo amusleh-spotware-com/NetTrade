@@ -20,5 +20,7 @@ namespace NetTrade.Abstractions.Interfaces
         ITradeEngine TradeEngine { get; set; }
 
         IServer Server { get; set; }
+
+        ITimer Timer { get; set; }
     }
 }

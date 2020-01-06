@@ -2,11 +2,14 @@
 using NetTrade.Enums;
 using NetTrade.Models;
 using System;
+using System.Timers;
 
 namespace NetTrade.Abstractions
 {
     public abstract class Robot : IRobot
     {
+        private Timer _timer;
+
         public Robot(IRobotSettings settings)
         {
             _ = settings ?? throw new ArgumentNullException(nameof(settings));
@@ -36,6 +39,8 @@ namespace NetTrade.Abstractions
                 symbol.Bars.OnBarEvent += SymbolBars_OnBarEvent;
             }
 
+            Settings.Timer.OnTimerElapsedEvent += timer => OnTimer();
+
             RunningMode = RunningMode.Running;
 
             OnStart();
@@ -43,6 +48,14 @@ namespace NetTrade.Abstractions
             if (Settings.Mode == Mode.Backtest)
             {
                 Backtest();
+            }
+            else
+            {
+                InitializeLiveTimer();
+
+                Settings.Timer.OnTimerIntervalChangedEvent += (timer, interval) => _timer.Interval = interval.TotalMilliseconds;
+                Settings.Timer.OnTimerStartEvent += timer => _timer.Start();
+                Settings.Timer.OnTimerStopEvent += timer => _timer.Stop();
             }
         }
 
@@ -54,6 +67,11 @@ namespace NetTrade.Abstractions
             }
 
             RunningMode = RunningMode.Stopped;
+
+            if (Settings.Mode == Mode.Live)
+            {
+                _timer.Dispose();
+            }
 
             OnStop();
         }
@@ -67,6 +85,11 @@ namespace NetTrade.Abstractions
 
             RunningMode = RunningMode.Paused;
 
+            if (Settings.Mode == Mode.Live)
+            {
+                _timer.Stop();
+            }
+
             OnPause();
         }
 
@@ -78,6 +101,11 @@ namespace NetTrade.Abstractions
             }
 
             RunningMode = RunningMode.Running;
+
+            if (Settings.Mode == Mode.Live)
+            {
+                _timer.Start();
+            }
 
             OnResume();
         }
@@ -98,6 +126,8 @@ namespace NetTrade.Abstractions
                     "the provided back tester isn't the one available on robot settings");
             }
 
+            Settings.Timer.SetCurrentTime(time);
+
             (Settings.Server as Server).CurrentTime = time;
         }
 
@@ -106,6 +136,10 @@ namespace NetTrade.Abstractions
         }
 
         public virtual void OnBar(ISymbol symbol, int index)
+        {
+        }
+
+        public virtual void OnTimer()
         {
         }
 
@@ -167,6 +201,22 @@ namespace NetTrade.Abstractions
             if (RunningMode != RunningMode.Stopped)
             {
                 Stop();
+            }
+        }
+
+        #endregion
+
+        #region Other methods
+
+        private void InitializeLiveTimer()
+        {
+            _timer = new Timer(Settings.Timer.Interval.TotalMilliseconds);
+
+            _timer.Elapsed += (sender, args) => Settings.Timer.SetCurrentTime(DateTimeOffset.Now);
+            
+            if (Settings.Timer.Enabled)
+            {
+                _timer.Start();
             }
         }
 

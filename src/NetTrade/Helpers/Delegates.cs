@@ -26,4 +26,13 @@ namespace NetTrade.Helpers
     public delegate void OnMarginChangedHandler(object sender, double amount, DateTimeOffset time);
 
     public delegate void OnMarginCallHandler(object sender);
+
+    public delegate void OnTimerElapsedHandler(object sender);
+
+    public delegate void OnTimerStartHandler(object sender);
+
+    public delegate void OnTimerStopHandler(object sender);
+
+    public delegate void OnTimerIntervalChangedHandler(object sender, TimeSpan interval);
+
 }
