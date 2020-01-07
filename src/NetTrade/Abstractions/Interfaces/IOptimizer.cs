@@ -18,7 +18,7 @@ namespace NetTrade.Abstractions.Interfaces
 
         event OnOptimizationStoppedHandler OnOptimizationStoppedEvent;
 
-        void Start<TRobot>() where TRobot : Robot;
+        void Start();
 
         void Stop();
 

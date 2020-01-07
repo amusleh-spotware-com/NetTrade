@@ -10,13 +10,13 @@ namespace NetTrade.Optimizers
         {
         }
 
-        protected override void OnStart<TRobot>()
+        protected override void OnStart()
         {
             var parametersGrid = OptimizerParameterGridCreator.GetParameterGrid(Settings.Parameters);
 
             foreach (var parameterGrid in parametersGrid)
             {
-                var robot = OptimizerRobotCreator.GetRobot<TRobot>(parameterGrid, this);
+                var robot = OptimizerRobotCreator.GetRobot(Settings.RobotType, parameterGrid, this);
 
                 AddRobot(robot);
             }

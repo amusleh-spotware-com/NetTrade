@@ -24,7 +24,7 @@ namespace NetTrade.Abstractions
 
         public IOptimizerSettings Settings { get; }
 
-        public RunningMode RunningMode { get; private set; }
+        public RunningMode RunningMode { get; private set; } = RunningMode.Stopped;
 
         public IReadOnlyList<Robot> Robots => _robots;
 
@@ -36,7 +36,7 @@ namespace NetTrade.Abstractions
 
         public virtual IRobotSettings GetRobotSettings()
         {
-            var robotSettings = Activator.CreateInstance(Settings.RobotSettingsType, Settings.RobotSettingsType) as
+            var robotSettings = Activator.CreateInstance(Settings.RobotSettingsType, Settings.RobotSettingsParameters) as
                 IRobotSettings;
 
             robotSettings.Mode = Mode.Backtest;
@@ -56,6 +56,8 @@ namespace NetTrade.Abstractions
 
             robotSettings.Server = Activator.CreateInstance(Settings.ServerType, Settings.ServerParameters) as IServer;
 
+            robotSettings.Timer = Activator.CreateInstance(Settings.TimerType, Settings.TimerParameters) as ITimer;
+
             robotSettings.Account = new DefaultAccount(0, 0, string.Empty, Settings.AccountLeverage, "Optimizer");
 
             var transaction = new Transaction(Settings.AccountBalance, robotSettings.BacktestSettings.StartTime, string.Empty);
@@ -69,26 +71,28 @@ namespace NetTrade.Abstractions
                 tradeEngineParameters.AddRange(Settings.TradeEngineParameters);
             }
 
-            robotSettings.TradeEngine = Activator.CreateInstance(Settings.TradeEngineType, tradeEngineParameters) as
+            robotSettings.TradeEngine = Activator.CreateInstance(Settings.TradeEngineType, tradeEngineParameters.ToArray()) as
                 ITradeEngine;
 
             return robotSettings;
         }
 
-        public void Start<TRobot>() where TRobot : Robot
+        public void Start()
         {
             if (RunningMode == RunningMode.Running)
             {
                 throw new InvalidOperationException("The optimizer is already in running mode");
             }
 
-            RunningMode = RunningMode.Running;
-
             _robots.Clear();
 
             OnOptimizationStartedEvent?.Invoke(this);
 
-            OnStart<TRobot>();
+            OnStart();
+
+            RunningMode = RunningMode.Running;
+
+            StartRobots();
         }
 
         public void Stop()
@@ -110,7 +114,7 @@ namespace NetTrade.Abstractions
             OnStop();
         }
 
-        protected abstract void OnStart<TRobot>() where TRobot : Robot;
+        protected abstract void OnStart();
 
         protected virtual void OnStop()
         {
@@ -146,17 +150,17 @@ namespace NetTrade.Abstractions
 
                     parallelOptions.CancellationToken.ThrowIfCancellationRequested();
                 });
-
-                if (RunningMode == RunningMode.Running)
-                {
-                    Stop();
-                }
             }
             catch (OperationCanceledException)
             {
             }
             finally
             {
+                if (RunningMode == RunningMode.Running)
+                {
+                    Stop();
+                }
+
                 _cancellationTokenSource.Dispose();
             }
         }

@@ -15,13 +15,11 @@ namespace NetTrade.Abstractions
             _ = settings ?? throw new ArgumentNullException(nameof(settings));
 
             Settings = settings;
-
-            RunningMode = RunningMode.Stopped;
         }
 
         public IRobotSettings Settings { get; }
 
-        public RunningMode RunningMode { get; private set; }
+        public RunningMode RunningMode { get; private set; } = RunningMode.Stopped;
 
         public void Start()
         {
@@ -33,10 +31,13 @@ namespace NetTrade.Abstractions
             Settings.MainSymbol.OnTickEvent += Symbol_OnTickEvent;
             Settings.MainSymbol.Bars.OnBarEvent += SymbolBars_OnBarEvent;
 
-            foreach (var symbol in Settings.OtherSymbols)
+            if (Settings.OtherSymbols != null)
             {
-                symbol.OnTickEvent += Symbol_OnTickEvent;
-                symbol.Bars.OnBarEvent += SymbolBars_OnBarEvent;
+                foreach (var symbol in Settings.OtherSymbols)
+                {
+                    symbol.OnTickEvent += Symbol_OnTickEvent;
+                    symbol.Bars.OnBarEvent += SymbolBars_OnBarEvent;
+                }
             }
 
             Settings.Timer.OnTimerElapsedEvent += timer => OnTimer();
@@ -143,13 +144,21 @@ namespace NetTrade.Abstractions
         {
         }
 
-        public abstract void OnPause();
+        public virtual void OnPause()
+        {
+        }
 
-        public abstract void OnResume();
+        public virtual void OnResume()
+        {
+        }
 
-        public abstract void OnStart();
+        public virtual void OnStart()
+        {
+        }
 
-        public abstract void OnStop();
+        public virtual void OnStop()
+        {
+        }
 
         #region Symbols on tick/bar event handlers
 
@@ -204,7 +213,7 @@ namespace NetTrade.Abstractions
             }
         }
 
-        #endregion
+        #endregion Backtest methods and event handlers
 
         #region Other methods
 
@@ -213,13 +222,13 @@ namespace NetTrade.Abstractions
             _timer = new Timer(Settings.Timer.Interval.TotalMilliseconds);
 
             _timer.Elapsed += (sender, args) => Settings.Timer.SetCurrentTime(DateTimeOffset.Now);
-            
+
             if (Settings.Timer.Enabled)
             {
                 _timer.Start();
             }
         }
 
-        #endregion
+        #endregion Other methods
     }
 }

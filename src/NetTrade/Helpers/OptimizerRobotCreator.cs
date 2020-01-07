@@ -10,12 +10,11 @@ namespace NetTrade.Helpers
 {
     public static class OptimizerRobotCreator
     {
-        public static Robot GetRobot<TRobot>(Dictionary<string, object> parameterGrid, IOptimizer optimizer)
-            where TRobot : Robot
+        public static Robot GetRobot(Type robotType, Dictionary<string, object> parameterGrid, IOptimizer optimizer)
         {
             var robotSettings = optimizer.GetRobotSettings();
 
-            var robot = Activator.CreateInstance(typeof(TRobot), robotSettings) as Robot;
+            var robot = Activator.CreateInstance(robotType, robotSettings) as Robot;
 
             if (parameterGrid.Any())
             {
@@ -28,8 +27,8 @@ namespace NetTrade.Helpers
         private static void SetRobotParameters<TRobot>(TRobot robot, Dictionary<string, object> parameterGrid)
             where TRobot : IRobot
         {
-            var robotParameters = typeof(IRobot).GetProperties()
-            .Where(iProperty => iProperty.GetCustomAttributes(true).Any(iAttribute => iAttribute is ParameterAttribute));
+            var robotParameters = robot.GetType().GetProperties()
+            .Where(iProperty => iProperty.GetCustomAttributes(true).Any()).ToList();
 
             if (!robotParameters.Any())
             {

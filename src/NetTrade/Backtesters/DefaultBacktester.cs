@@ -11,7 +11,7 @@ namespace NetTrade.Backtesters
     public class DefaultBacktester : IBacktester
     {
         public IRobot Robot { get; private set; }
-        public TimeSpan Interval { get; set; } = TimeSpan.FromMilliseconds(1);
+        public TimeSpan Interval { get; set; } = TimeSpan.FromSeconds(1);
 
         public event OnBacktestStartHandler OnBacktestStartEvent;
 

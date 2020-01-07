@@ -13,6 +13,8 @@ namespace NetTrade.Abstractions.Interfaces
 
         Type RobotSettingsType { get; }
 
+        object[] RobotSettingsParameters { get; }
+
         Type BacktesterType { get; }
 
         object[] BacktesterParameters { get; }
@@ -34,6 +36,10 @@ namespace NetTrade.Abstractions.Interfaces
         Type ServerType { get; }
 
         object[] ServerParameters { get; }
+
+        Type TimerType { get; }
+
+        object[] TimerParameters { get; }
 
         int MaxProcessorNumber { get; }
     }

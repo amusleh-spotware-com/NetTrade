@@ -1,4 +1,5 @@
 ﻿using NetTrade.Abstractions.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,6 +9,8 @@ namespace NetTrade.Helpers
     {
         public static List<Dictionary<string, object>> GetParameterGrid(IEnumerable<IOptimizeParameter> parameters)
         {
+            _ = parameters ?? throw new ArgumentNullException(nameof(parameters));
+
             if (!parameters.Any())
             {
                 return new List<Dictionary<string, object>>();

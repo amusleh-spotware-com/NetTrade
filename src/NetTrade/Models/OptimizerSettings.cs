@@ -32,9 +32,15 @@ namespace NetTrade.Models
 
         public Type RobotSettingsType { get; set; }
 
+        public object[] RobotSettingsParameters { get; set; }
+
         public Type ServerType { get; set; }
 
         public object[] ServerParameters { get; set; }
+
+        public Type TimerType { get; set; }
+
+        public object[] TimerParameters { get; set; }
 
         public int MaxProcessorNumber { get; set; } = -1;
     }
