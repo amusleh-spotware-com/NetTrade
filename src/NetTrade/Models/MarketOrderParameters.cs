@@ -9,7 +9,5 @@ namespace NetTrade.Models
         public MarketOrderParameters(ISymbol symbol) : base(OrderType.Market, symbol)
         {
         }
-
-        public double EntryPrice { get; set; }
     }
 }

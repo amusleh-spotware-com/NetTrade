@@ -37,7 +37,7 @@ namespace NetTrade.Abstractions
 
         public double? TakeProfitPrice { get; set; }
 
-        public long Volume { get; }
+        public double Volume { get; }
 
         public ISymbol Symbol { get; }
     }

@@ -14,7 +14,7 @@ namespace NetTrade.Abstractions
 
         public OrderType OrderType { get; }
 
-        public long Volume { get; set; }
+        public double Volume { get; set; }
 
         public TradeType TradeType { get; set; }
 

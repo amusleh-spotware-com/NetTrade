@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 
 namespace NetTrade.Collections
 {
-    internal class ExpandableSeries<T> : Series<T>
+    public class ExpandableSeries<T> : Series<T>
     {
         private readonly ConcurrentDictionary<int, T> _storage = new ConcurrentDictionary<int, T>();
 

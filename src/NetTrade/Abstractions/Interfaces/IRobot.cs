@@ -7,6 +7,8 @@ namespace NetTrade.Abstractions.Interfaces
     {
         IRobotSettings Settings { get; }
 
+        ITradeEngine Trade { get; }
+
         RunningMode RunningMode { get; }
 
         void Start(IRobotSettings settings);

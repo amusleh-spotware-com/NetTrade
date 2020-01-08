@@ -15,7 +15,7 @@ namespace NetTrade.Abstractions.Interfaces
 
         string Comment { get; }
 
-        long Volume { get; }
+        double Volume { get; }
 
         ISymbol Symbol { get; }
 

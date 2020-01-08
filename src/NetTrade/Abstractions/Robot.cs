@@ -12,6 +12,8 @@ namespace NetTrade.Abstractions
 
         public IRobotSettings Settings { get; private set; }
 
+        public ITradeEngine Trade => Settings.TradeEngine;
+
         public RunningMode RunningMode { get; private set; } = RunningMode.Stopped;
 
         public void Start(IRobotSettings settings)

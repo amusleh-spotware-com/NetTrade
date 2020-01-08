@@ -186,16 +186,18 @@ namespace NetTrade.TradeEngines
                 var symbolPrice = parameters.Symbol.GetPrice(parameters.TradeType);
                 var symbolSlippageInPrice = parameters.Symbol.Slippage * parameters.Symbol.TickSize;
 
+                double entryPrice;
+
                 if (parameters.TradeType == TradeType.Buy)
                 {
-                    parameters.EntryPrice = symbolPrice + symbolSlippageInPrice;
+                    entryPrice = symbolPrice + symbolSlippageInPrice;
                 }
                 else
                 {
-                    parameters.EntryPrice = symbolPrice - symbolSlippageInPrice;
+                    entryPrice = symbolPrice - symbolSlippageInPrice;
                 }
 
-                var order = new MarketOrder(parameters, Server.CurrentTime)
+                var order = new MarketOrder(entryPrice, parameters, Server.CurrentTime)
                 {
                     Commission = parameters.Symbol.Commission * 2,
                     MarginUsed = marginRequired

@@ -60,7 +60,6 @@ namespace NetTrade.TradeEngines.Tests
             var orderParameters = new MarketOrderParameters(_symbol)
             {
                 Volume = 1000,
-                EntryPrice = 1,
                 TradeType = TradeType.Buy,
                 StopLossPrice = .95,
                 TakeProfitPrice = 1.05,
@@ -77,7 +76,6 @@ namespace NetTrade.TradeEngines.Tests
             var orderParameters = new MarketOrderParameters(_symbol)
             {
                 Volume = 1000,
-                EntryPrice = 1,
                 TradeType = TradeType.Buy,
                 StopLossPrice = .95,
                 TakeProfitPrice = 1.05,
@@ -101,7 +99,6 @@ namespace NetTrade.TradeEngines.Tests
             var orderParameters = new MarketOrderParameters(_symbol)
             {
                 Volume = 1000,
-                EntryPrice = 1,
                 TradeType = TradeType.Buy,
                 StopLossPrice = .95,
                 TakeProfitPrice = 1.05,

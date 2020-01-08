@@ -10,7 +10,7 @@ namespace NetTrade.Abstractions.Interfaces
 
         OrderType OrderType { get; }
 
-        long Volume { get; }
+        double Volume { get; }
 
         string Comment { get; }
 
