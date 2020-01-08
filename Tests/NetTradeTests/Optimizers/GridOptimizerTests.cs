@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NetTrade.Abstractions.Interfaces;
 using NetTrade.Backtesters;
 using NetTrade.BarTypes;
 using NetTrade.Helpers;
@@ -39,11 +40,11 @@ namespace NetTrade.Optimizers.Tests
 
             var symbol = new Symbol(symbolData, new TimeBasedBars(TimeSpan.FromDays(1))) { Name = "Main" };
 
-            _optimizerSettings.MainSymbol = symbol;
+            _optimizerSettings.Symbols = new List<ISymbol> { symbol };
             _optimizerSettings.TradeEngineType = typeof(BacktestTradeEngine);
             _optimizerSettings.TimerType = typeof(DefaultTimer);
             _optimizerSettings.ServerType = typeof(Server);
-            _optimizerSettings.RobotSettingsType = typeof(RobotSettings);
+            _optimizerSettings.RobotSettingsType = typeof(RobotParameters);
             _optimizerSettings.RobotType = typeof(SampleBot);
             _optimizerSettings.Parameters = new List<OptimizeParameter>()
             {

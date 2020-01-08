@@ -5,12 +5,23 @@ namespace NetTrade.Models
 {
     public class Server : IServer
     {
-        private DateTimeOffset? _currentTime;
+        private IRobot _robot;
 
-        public DateTimeOffset CurrentTime
+        public DateTimeOffset CurrentTime { get; private set; }
+
+        public void SetTime(IRobot robot, DateTimeOffset time)
         {
-            get => _currentTime.HasValue ? _currentTime.Value : DateTimeOffset.Now;
-            set => _currentTime = value;
+            if (_robot == null)
+            {
+                _robot = robot;
+            }
+
+            if (_robot != robot)
+            {
+                throw new ArgumentException($"{nameof(robot)} doesn't match the server robot");
+            }
+
+            CurrentTime = time;
         }
     }
 }

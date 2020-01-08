@@ -15,34 +15,35 @@ namespace NetTrade.Abstractions.Tests
     [TestClass()]
     public class OptimizerTests
     {
-        private Mock<Optimizer> _optimizerMock;
+        private readonly Mock<Optimizer> _optimizerMock;
 
-        private OptimizerSettings _optimizerSettings;
+        private readonly OptimizerSettings _optimizerSettings;
 
         public OptimizerTests()
         {
-            _optimizerSettings = new OptimizerSettings();
-
-            _optimizerSettings.AccountBalance = 10000;
-            _optimizerSettings.AccountLeverage = 500;
-            _optimizerSettings.BacktesterType = typeof(DefaultBacktester);
-            _optimizerSettings.BacktestSettingsType = typeof(BacktestSettings);
-            _optimizerSettings.BacktestSettingsParameters = new List<object>
+            _optimizerSettings = new OptimizerSettings
+            {
+                AccountBalance = 10000,
+                AccountLeverage = 500,
+                BacktesterType = typeof(DefaultBacktester),
+                BacktestSettingsType = typeof(BacktestSettings),
+                BacktestSettingsParameters = new List<object>
             {
                 DateTimeOffset.Now.AddDays(-10),
                 DateTimeOffset.Now
-            }.ToArray();
+            }.ToArray()
+            };
 
             var symbolData = SampleDataGenerator.GetSampleData(200, DateTimeOffset.Now.AddDays(-10), DateTimeOffset.Now,
                 TimeSpan.FromDays(1));
 
             var symbol = new Symbol(symbolData, new Mock<IBars>().Object) { Name = "Main" };
 
-            _optimizerSettings.MainSymbol = symbol;
+            _optimizerSettings.Symbols = new List<ISymbol> { symbol };
             _optimizerSettings.TradeEngineType = typeof(BacktestTradeEngine);
             _optimizerSettings.TimerType = typeof(DefaultTimer);
             _optimizerSettings.ServerType = typeof(Server);
-            _optimizerSettings.RobotSettingsType = typeof(RobotSettings);
+            _optimizerSettings.RobotSettingsType = typeof(RobotParameters);
             _optimizerSettings.RobotType = typeof(SampleBot);
 
             _optimizerMock = new Mock<Optimizer>(_optimizerSettings);

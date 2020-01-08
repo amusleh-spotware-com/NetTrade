@@ -25,6 +25,6 @@ namespace NetTrade.Abstractions.Interfaces
 
         void Stop();
 
-        IRobotSettings GetRobotSettings();
+        IRobotParameters GetRobotSettings();
     }
 }

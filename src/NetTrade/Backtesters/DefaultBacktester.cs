@@ -37,7 +37,7 @@ namespace NetTrade.Backtesters
 
         public IBacktestResult GetResult()
         {
-            var tradeEngine = Robot.Settings.TradeEngine;
+            var tradeEngine = Robot.Trade;
             var trades = tradeEngine.Trades.ToList();
 
             var result = new BacktestResult
@@ -57,16 +57,14 @@ namespace NetTrade.Backtesters
 
             result.ProfitFactor = grossProfit / grossLoss;
 
-            result.MaxEquityDrawdown = MaxDrawdownCalculator.GetMaxDrawdown(Robot.Settings.Account.EquityChanges);
-            result.MaxBalanceDrawdown = MaxDrawdownCalculator.GetMaxDrawdown(Robot.Settings.Account.BalanceChanges);
+            result.MaxEquityDrawdown = MaxDrawdownCalculator.GetMaxDrawdown(Robot.Account.EquityChanges);
+            result.MaxBalanceDrawdown = MaxDrawdownCalculator.GetMaxDrawdown(Robot.Account.BalanceChanges);
 
             return result;
         }
 
         private async Task StartDataFeedAsync(DateTimeOffset startTime, DateTimeOffset endTime)
         {
-            var symbol = Robot.Settings.MainSymbol as Symbol;
-
             for (var currentTime = startTime; currentTime <= endTime; currentTime = currentTime.Add(Interval))
             {
                 bool shouldContinueDataFeed = await ShouldContinueDataFeed();
@@ -78,24 +76,15 @@ namespace NetTrade.Backtesters
 
                 Robot.SetTimeByBacktester(this, currentTime);
 
-                var symbolBar = symbol.BarsData.FirstOrDefault(iBar => iBar.Time == currentTime);
-
-                if (symbolBar == null)
+                foreach (var symbol in Robot.Symbols)
                 {
-                    continue;
-                }
+                    var bar = (symbol as Symbol).BarsData.FirstOrDefault(iBar => iBar.Time == currentTime);
 
-                foreach (var otherSymbol in Robot.Settings.OtherSymbols)
-                {
-                    var otherSymbolBar = (otherSymbol as Symbol).BarsData.FirstOrDefault(iBar => iBar.Time == symbolBar.Time);
-
-                    if (otherSymbolBar != null)
+                    if (bar != null)
                     {
-                        (otherSymbol as Symbol).PublishBar(otherSymbolBar);
+                        (symbol as Symbol).PublishBar(bar);
                     }
                 }
-
-                symbol.PublishBar(symbolBar);
             }
 
             OnBacktestStopEvent?.Invoke(this, Robot);

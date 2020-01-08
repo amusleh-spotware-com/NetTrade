@@ -16,16 +16,15 @@ namespace NetTrade.Abstractions.Tests
     {
         private readonly Mock<Robot> _robotMock;
 
-        private readonly Mock<IRobotSettings> _robotSettingsMock;
+        private readonly Mock<IRobotParameters> _robotSettingsMock;
 
         public RobotTests()
         {
-            _robotSettingsMock = new Mock<IRobotSettings>();
+            _robotSettingsMock = new Mock<IRobotParameters>();
 
             var symbolMock = new Mock<Symbol>(new List<IBar>(), new Mock<IBars>().Object);
 
-            _robotSettingsMock.SetupProperty(settings => settings.MainSymbol, symbolMock.Object);
-            _robotSettingsMock.SetupProperty(settings => settings.OtherSymbols, new List<ISymbol>());
+            _robotSettingsMock.SetupProperty(settings => settings.Symbols, new List<ISymbol> { symbolMock.Object });
             _robotSettingsMock.SetupProperty(settings => settings.Backtester, new Mock<IBacktester>().Object);
             _robotSettingsMock.SetupProperty(settings => settings.BacktestSettings, new Mock<IBacktestSettings>().Object);
             _robotSettingsMock.SetupProperty(settings => settings.Server, new Server());
@@ -97,26 +96,23 @@ namespace NetTrade.Abstractions.Tests
         [TestMethod()]
         public void SetTimeByBacktesterTest()
         {
-            if (_robotMock.Object.Settings == null)
+            if (_robotMock.Object.RunningMode == RunningMode.Running)
             {
-                if (_robotMock.Object.RunningMode == RunningMode.Running)
-                {
-                    _robotMock.Object.Stop();
-                }
-
-                if (_robotMock.Object.RunningMode == RunningMode.Stopped)
-                {
-                    _robotMock.Object.Start(_robotSettingsMock.Object);
-                }
-
                 _robotMock.Object.Stop();
             }
+
+            if (_robotMock.Object.RunningMode == RunningMode.Stopped)
+            {
+                _robotMock.Object.Start(_robotSettingsMock.Object);
+            }
+
+            _robotMock.Object.Stop();
 
             var now = DateTimeOffset.UtcNow;
 
             _robotMock.Object.SetTimeByBacktester(_robotSettingsMock.Object.Backtester, now);
 
-            Assert.AreEqual(now, _robotMock.Object.Settings.Server.CurrentTime);
+            Assert.AreEqual(now, _robotMock.Object.Server.CurrentTime);
 
             var anotherBacktester = new Mock<IBacktester>();
 

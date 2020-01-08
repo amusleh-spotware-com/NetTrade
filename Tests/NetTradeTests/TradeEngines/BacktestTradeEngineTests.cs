@@ -15,17 +15,13 @@ namespace NetTrade.TradeEngines.Tests
     [TestClass()]
     public class BacktestTradeEngineTests
     {
-        private BacktestTradeEngine _tradeEngine;
+        private readonly BacktestTradeEngine _tradeEngine;
 
-        private ISymbol _symbol;
+        private readonly ISymbol _symbol;
 
         public BacktestTradeEngineTests()
         {
-            var server = new Server
-            {
-                CurrentTime = DateTimeOffset.Now
-            };
-
+            var server = new Server();
 
             var account = new DefaultAccount(1, 1, "Demo", 500, "Tester");
 

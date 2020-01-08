@@ -24,17 +24,17 @@ namespace ConsoleTester.Robots
 
         public override void OnStart()
         {
+            if (Symbols.Count() > 1)
+            {
+                throw new InvalidOperationException("This robot is only for single symbol use, not multi symbol");
+            }
+
             _fastMa = new ExpandableSeries<double>();
             _slowMa = new ExpandableSeries<double>();
         }
 
         public override void OnBar(ISymbol symbol, int index)
         {
-            if (symbol != Settings.MainSymbol)
-            {
-                throw new InvalidOperationException("This robot is only for single symbol use, not multi symbol");
-            }
-
             _fastMa.Add(index, GetAverage(symbol.Bars.Close, FastMaPeriod));
             _slowMa.Add(index, GetAverage(symbol.Bars.Close, SlowMaPeriod));
 

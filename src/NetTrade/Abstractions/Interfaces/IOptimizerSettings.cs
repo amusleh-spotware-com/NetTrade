@@ -5,9 +5,7 @@ namespace NetTrade.Abstractions.Interfaces
 {
     public interface IOptimizerSettings
     {
-        ISymbol MainSymbol { get; }
-
-        List<ISymbol> OtherSymbols { get; }
+        IEnumerable<ISymbol> Symbols { get; }
 
         Type RobotType { get; }
 

@@ -34,47 +34,42 @@ namespace NetTrade.Abstractions
 
         public event OnOptimizationStoppedHandler OnOptimizationStoppedEvent;
 
-        public virtual IRobotSettings GetRobotSettings()
+        public virtual IRobotParameters GetRobotSettings()
         {
-            var robotSettings = Activator.CreateInstance(Settings.RobotSettingsType, Settings.RobotSettingsParameters) as
-                IRobotSettings;
+            var robotParameters = Activator.CreateInstance(Settings.RobotSettingsType, Settings.RobotSettingsParameters) as
+                IRobotParameters;
 
-            robotSettings.Mode = Mode.Backtest;
+            robotParameters.Mode = Mode.Backtest;
 
-            robotSettings.MainSymbol = Settings.MainSymbol.Clone() as ISymbol;
+            robotParameters.Symbols = Settings.Symbols.Select(iSymbol => iSymbol.Clone() as ISymbol).ToList();
 
-            if (Settings.OtherSymbols != null)
-            {
-                robotSettings.OtherSymbols = Settings.OtherSymbols.Select(iSymbol => iSymbol.Clone() as ISymbol).ToList();
-            }
-
-            robotSettings.BacktestSettings = Activator.CreateInstance(Settings.BacktestSettingsType,
+            robotParameters.BacktestSettings = Activator.CreateInstance(Settings.BacktestSettingsType,
                 Settings.BacktestSettingsParameters) as IBacktestSettings;
 
-            robotSettings.Backtester = Activator.CreateInstance(Settings.BacktesterType, Settings.BacktesterParameters) as
+            robotParameters.Backtester = Activator.CreateInstance(Settings.BacktesterType, Settings.BacktesterParameters) as
                 IBacktester;
 
-            robotSettings.Server = Activator.CreateInstance(Settings.ServerType, Settings.ServerParameters) as IServer;
+            robotParameters.Server = Activator.CreateInstance(Settings.ServerType, Settings.ServerParameters) as IServer;
 
-            robotSettings.Timer = Activator.CreateInstance(Settings.TimerType, Settings.TimerParameters) as ITimer;
+            robotParameters.Timer = Activator.CreateInstance(Settings.TimerType, Settings.TimerParameters) as ITimer;
 
-            robotSettings.Account = new DefaultAccount(0, 0, string.Empty, Settings.AccountLeverage, "Optimizer");
+            robotParameters.Account = new DefaultAccount(0, 0, string.Empty, Settings.AccountLeverage, "Optimizer");
 
-            var transaction = new Transaction(Settings.AccountBalance, robotSettings.BacktestSettings.StartTime, string.Empty);
+            var transaction = new Transaction(Settings.AccountBalance, robotParameters.BacktestSettings.StartTime, string.Empty);
 
-            robotSettings.Account.AddTransaction(transaction);
+            robotParameters.Account.AddTransaction(transaction);
 
-            var tradeEngineParameters = new List<object> { robotSettings.Server, robotSettings.Account };
+            var tradeEngineParameters = new List<object> { robotParameters.Server, robotParameters.Account };
 
             if (Settings.TradeEngineParameters != null)
             {
                 tradeEngineParameters.AddRange(Settings.TradeEngineParameters);
             }
 
-            robotSettings.TradeEngine = Activator.CreateInstance(Settings.TradeEngineType, tradeEngineParameters.ToArray()) as
+            robotParameters.TradeEngine = Activator.CreateInstance(Settings.TradeEngineType, tradeEngineParameters.ToArray()) as
                 ITradeEngine;
 
-            return robotSettings;
+            return robotParameters;
         }
 
         public void Start()
@@ -144,7 +139,7 @@ namespace NetTrade.Abstractions
 
             try
             {
-                var robotsWithSettings = new List<(IRobot, IRobotSettings)>();
+                var robotsWithSettings = new List<(IRobot, IRobotParameters)>();
 
                 foreach (var robot in _robots)
                 {

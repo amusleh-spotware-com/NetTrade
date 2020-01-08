@@ -1,48 +1,61 @@
 ﻿using NetTrade.Abstractions.Interfaces;
-using NetTrade.Enums;
-using NetTrade.Models;
-using System;
-using System.Timers;
 using NetTrade.Attributes;
+using NetTrade.Enums;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Timers;
 
 namespace NetTrade.Abstractions
 {
     public abstract class Robot : IRobot
     {
-        private Timer _timer;
+        private Timer _systemTimer;
 
-        public IRobotSettings Settings { get; private set; }
-
-        public ITradeEngine Trade => Settings.TradeEngine;
+        public ITradeEngine Trade { get; private set; }
 
         public RunningMode RunningMode { get; private set; } = RunningMode.Stopped;
 
-        public void Start(IRobotSettings settings)
+        public IAccount Account { get; private set; }
+
+        public IEnumerable<ISymbol> Symbols { get; private set; }
+
+        public Mode Mode { get; private set; }
+
+        public IBacktester Backtester { get; private set; }
+
+        public IBacktestSettings BacktestSettings { get; private set; }
+
+        public IServer Server { get; private set; }
+
+        public ITimer Timer { get; private set; }
+
+        public void Start(IRobotParameters parameters)
         {
             if (RunningMode == RunningMode.Running || RunningMode == RunningMode.Paused)
             {
                 throw new InvalidOperationException("The robot is already in running/paused mode");
             }
 
-            _ = settings ?? throw new ArgumentNullException(nameof(settings));
+            _ = parameters ?? throw new ArgumentNullException(nameof(parameters));
 
-            Settings = settings;
+            Trade = parameters.TradeEngine;
+            Account = parameters.Account;
+            Symbols = parameters.Symbols;
+            Mode = parameters.Mode;
+            Backtester = parameters.Backtester;
+            BacktestSettings = parameters.BacktestSettings;
+            Server = parameters.Server;
+            Timer = parameters.Timer;
 
-            Settings.MainSymbol.OnTickEvent += Symbol_OnTickEvent;
-            Settings.MainSymbol.Bars.OnBarEvent += SymbolBars_OnBarEvent;
-
-            if (Settings.OtherSymbols != null)
+            foreach (var symbol in Symbols)
             {
-                foreach (var symbol in Settings.OtherSymbols)
-                {
-                    symbol.OnTickEvent += Symbol_OnTickEvent;
-                    symbol.Bars.OnBarEvent += SymbolBars_OnBarEvent;
-                }
+                symbol.OnTickEvent += Symbol_OnTickEvent;
+                symbol.Bars.OnBarEvent += SymbolBars_OnBarEvent;
             }
 
-            Settings.Timer.OnTimerElapsedEvent += timer => OnTimer();
+            Timer.OnTimerElapsedEvent += timer => OnTimer();
 
             SetParameterValuesToDefault();
 
@@ -50,7 +63,7 @@ namespace NetTrade.Abstractions
 
             OnStart();
 
-            if (Settings.Mode == Mode.Backtest)
+            if (Mode == Mode.Backtest)
             {
                 Backtest();
             }
@@ -58,9 +71,9 @@ namespace NetTrade.Abstractions
             {
                 InitializeLiveTimer();
 
-                Settings.Timer.OnTimerIntervalChangedEvent += (timer, interval) => _timer.Interval = interval.TotalMilliseconds;
-                Settings.Timer.OnTimerStartEvent += timer => _timer.Start();
-                Settings.Timer.OnTimerStopEvent += timer => _timer.Stop();
+                Timer.OnTimerIntervalChangedEvent += (timer, interval) => _systemTimer.Interval = interval.TotalMilliseconds;
+                Timer.OnTimerStartEvent += timer => _systemTimer.Start();
+                Timer.OnTimerStopEvent += timer => _systemTimer.Stop();
             }
         }
 
@@ -73,9 +86,9 @@ namespace NetTrade.Abstractions
 
             RunningMode = RunningMode.Stopped;
 
-            if (Settings.Mode == Mode.Live)
+            if (Mode == Mode.Live)
             {
-                _timer.Dispose();
+                _systemTimer.Dispose();
             }
 
             OnStop();
@@ -90,9 +103,9 @@ namespace NetTrade.Abstractions
 
             RunningMode = RunningMode.Paused;
 
-            if (Settings.Mode == Mode.Live)
+            if (Mode == Mode.Live)
             {
-                _timer.Stop();
+                _systemTimer.Stop();
             }
 
             OnPause();
@@ -107,9 +120,9 @@ namespace NetTrade.Abstractions
 
             RunningMode = RunningMode.Running;
 
-            if (Settings.Mode == Mode.Live)
+            if (Mode == Mode.Live)
             {
-                _timer.Start();
+                _systemTimer.Start();
             }
 
             OnResume();
@@ -119,21 +132,21 @@ namespace NetTrade.Abstractions
         {
             _ = backtester ?? throw new ArgumentNullException(nameof(backtester));
 
-            if (Settings.Mode == Mode.Live)
+            if (Mode == Mode.Live)
             {
                 throw new InvalidOperationException("You can not set the robot time with a back tester when the robot is on" +
                     " live mode");
             }
 
-            if (Settings.Backtester != backtester)
+            if (Backtester != backtester)
             {
                 throw new InvalidOperationException("You can not set the robot time with another back tester, " +
                     "the provided back tester isn't the one available on robot settings");
             }
 
-            Settings.Timer.SetCurrentTime(time);
+            Timer.SetCurrentTime(time);
 
-            (Settings.Server as Server).CurrentTime = time;
+            Server.SetTime(this, time);
         }
 
         public virtual void OnTick(ISymbol symbol)
@@ -170,7 +183,7 @@ namespace NetTrade.Abstractions
         {
             var symbol = sender as ISymbol;
 
-            Settings.TradeEngine.UpdateSymbolOrders(symbol);
+            Trade.UpdateSymbolOrders(symbol);
 
             if (RunningMode == RunningMode.Running)
             {
@@ -194,11 +207,13 @@ namespace NetTrade.Abstractions
 
         private void Backtest()
         {
-            Settings.Backtester.OnBacktestStopEvent += Backtester_OnBacktestStopEvent;
-            Settings.Backtester.OnBacktestStartEvent += Backtester_OnBacktestStartEvent;
-            Settings.Backtester.OnBacktestPauseEvent += Backtester_OnBacktestPauseEvent;
+            _ = Backtester ?? throw new NullReferenceException(nameof(Backtester));
 
-            Settings.Backtester.StartAsync(this, Settings.BacktestSettings);
+            Backtester.OnBacktestStopEvent += Backtester_OnBacktestStopEvent;
+            Backtester.OnBacktestStartEvent += Backtester_OnBacktestStartEvent;
+            Backtester.OnBacktestPauseEvent += Backtester_OnBacktestPauseEvent;
+
+            Backtester.StartAsync(this, BacktestSettings);
         }
 
         protected virtual void Backtester_OnBacktestPauseEvent(object sender, IRobot robot)
@@ -223,13 +238,13 @@ namespace NetTrade.Abstractions
 
         private void InitializeLiveTimer()
         {
-            _timer = new Timer(Settings.Timer.Interval.TotalMilliseconds);
+            _systemTimer = new Timer(Timer.Interval.TotalMilliseconds);
 
-            _timer.Elapsed += (sender, args) => Settings.Timer.SetCurrentTime(DateTimeOffset.Now);
+            _systemTimer.Elapsed += (sender, args) => Timer.SetCurrentTime(DateTimeOffset.Now);
 
-            if (Settings.Timer.Enabled)
+            if (Timer.Enabled)
             {
-                _timer.Start();
+                _systemTimer.Start();
             }
         }
 

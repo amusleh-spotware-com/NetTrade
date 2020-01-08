@@ -5,13 +5,11 @@ using NetTrade.Timers;
 
 namespace NetTrade.Models
 {
-    public class RobotSettings : IRobotSettings
+    public class RobotParameters : IRobotParameters
     {
         public Mode Mode { get; set; }
 
-        public ISymbol MainSymbol { get; set; }
-
-        public List<ISymbol> OtherSymbols { get; set; }
+        public IEnumerable<ISymbol> Symbols { get; set; }
 
         public IBacktester Backtester { get; set; }
 

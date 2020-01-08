@@ -1,17 +1,30 @@
 ﻿using NetTrade.Enums;
 using System;
+using System.Collections.Generic;
 
 namespace NetTrade.Abstractions.Interfaces
 {
     public interface IRobot
     {
-        IRobotSettings Settings { get; }
+        IAccount Account { get; }
+
+        IEnumerable<ISymbol> Symbols { get; }
 
         ITradeEngine Trade { get; }
 
         RunningMode RunningMode { get; }
 
-        void Start(IRobotSettings settings);
+        Mode Mode { get; }
+
+        IBacktester Backtester { get; }
+
+        IBacktestSettings BacktestSettings { get; }
+
+        IServer Server { get; }
+
+        ITimer Timer { get; }
+
+        void Start(IRobotParameters settings);
 
         void Stop();
 

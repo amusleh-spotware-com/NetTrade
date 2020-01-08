@@ -3,13 +3,11 @@ using System.Collections.Generic;
 
 namespace NetTrade.Abstractions.Interfaces
 {
-    public interface IRobotSettings
+    public interface IRobotParameters
     {
         Mode Mode { get; set; }
 
-        ISymbol MainSymbol { get; set; }
-
-        List<ISymbol> OtherSymbols { get; set; }
+        IEnumerable<ISymbol> Symbols { get; set; }
 
         IBacktester Backtester { get; set; }
 
