@@ -8,6 +8,7 @@ using NetTrade.TradeEngines;
 using NetTradeTests.Samples;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace NetTrade.Optimizers.Tests
 {
@@ -79,6 +80,21 @@ namespace NetTrade.Optimizers.Tests
             };
 
             _optimizer.Start();
+
+            Assert.AreEqual(_optimizer.Robots.Count, completedPassCounter);
+        }
+
+        [TestMethod()]
+        public async Task StartAsyncTest()
+        {
+            int completedPassCounter = 0;
+
+            _optimizer.OnOptimizationPassCompletionEvent += (sender, robot) =>
+            {
+                completedPassCounter++;
+            };
+
+            await _optimizer.StartAsync();
 
             Assert.AreEqual(_optimizer.Robots.Count, completedPassCounter);
         }

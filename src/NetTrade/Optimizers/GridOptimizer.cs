@@ -16,7 +16,7 @@ namespace NetTrade.Optimizers
 
             foreach (var parameterGrid in parametersGrid)
             {
-                var robot = OptimizerRobotCreator.GetRobot(Settings.RobotType, parameterGrid, this);
+                var robot = OptimizerRobotCreator.GetRobot(Settings.RobotType, parameterGrid);
 
                 AddRobot(robot);
             }

@@ -55,13 +55,13 @@ namespace NetTrade.Backtesters.Tests
 
             _robotSettingsMock.SetupProperty(settings => settings.TradeEngine, tradeEngine);
 
-            _robotMock = new Mock<Robot>(_robotSettingsMock.Object);
+            _robotMock = new Mock<Robot>();
         }
 
         [TestMethod()]
         public void StartTest()
         {
-            _robotMock.Object.Start();
+            _robotMock.Object.Start(_robotSettingsMock.Object);
         }
 
         private List<IBar> GetData(double startPrice, IBacktestSettings backtestSettings)

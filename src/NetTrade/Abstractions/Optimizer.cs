@@ -95,6 +95,8 @@ namespace NetTrade.Abstractions
             StartRobots();
         }
 
+        public Task StartAsync() => Task.Run(Start);
+
         public void Stop()
         {
             if (RunningMode == RunningMode.Stopped)
@@ -142,11 +144,20 @@ namespace NetTrade.Abstractions
 
             try
             {
-                Parallel.ForEach(_robots, parallelOptions, iRobot =>
-                {
-                    iRobot.Settings.Backtester.OnBacktestStopEvent += Backtester_OnBacktestStopEvent;
+                var robotsWithSettings = new List<(IRobot, IRobotSettings)>();
 
-                    iRobot.Start();
+                foreach (var robot in _robots)
+                {
+                    var robotSettings = GetRobotSettings();
+
+                    robotsWithSettings.Add((robot, robotSettings));
+                }
+
+                Parallel.ForEach(robotsWithSettings, parallelOptions, iRobotWithSettings =>
+                {
+                    iRobotWithSettings.Item2.Backtester.OnBacktestStopEvent += Backtester_OnBacktestStopEvent;
+
+                    iRobotWithSettings.Item1.Start(iRobotWithSettings.Item2);
 
                     parallelOptions.CancellationToken.ThrowIfCancellationRequested();
                 });

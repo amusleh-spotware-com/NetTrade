@@ -10,11 +10,9 @@ namespace NetTrade.Helpers
 {
     public static class OptimizerRobotCreator
     {
-        public static Robot GetRobot(Type robotType, Dictionary<string, object> parameterGrid, IOptimizer optimizer)
+        public static Robot GetRobot(Type robotType, Dictionary<string, object> parameterGrid)
         {
-            var robotSettings = optimizer.GetRobotSettings();
-
-            var robot = Activator.CreateInstance(robotType, robotSettings) as Robot;
+            var robot = Activator.CreateInstance(robotType) as Robot;
 
             if (parameterGrid.Any())
             {

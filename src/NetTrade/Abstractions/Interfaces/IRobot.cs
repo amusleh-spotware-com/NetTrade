@@ -9,7 +9,7 @@ namespace NetTrade.Abstractions.Interfaces
 
         RunningMode RunningMode { get; }
 
-        void Start();
+        void Start(IRobotSettings settings);
 
         void Stop();
 

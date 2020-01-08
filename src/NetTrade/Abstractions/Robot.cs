@@ -10,23 +10,20 @@ namespace NetTrade.Abstractions
     {
         private Timer _timer;
 
-        public Robot(IRobotSettings settings)
-        {
-            _ = settings ?? throw new ArgumentNullException(nameof(settings));
-
-            Settings = settings;
-        }
-
-        public IRobotSettings Settings { get; }
+        public IRobotSettings Settings { get; private set; }
 
         public RunningMode RunningMode { get; private set; } = RunningMode.Stopped;
 
-        public void Start()
+        public void Start(IRobotSettings settings)
         {
             if (RunningMode == RunningMode.Running || RunningMode == RunningMode.Paused)
             {
                 throw new InvalidOperationException("The robot is already in running/paused mode");
             }
+
+            _ = settings ?? throw new ArgumentNullException(nameof(settings));
+
+            Settings = settings;
 
             Settings.MainSymbol.OnTickEvent += Symbol_OnTickEvent;
             Settings.MainSymbol.Bars.OnBarEvent += SymbolBars_OnBarEvent;
@@ -194,7 +191,7 @@ namespace NetTrade.Abstractions
             Settings.Backtester.OnBacktestStartEvent += Backtester_OnBacktestStartEvent;
             Settings.Backtester.OnBacktestPauseEvent += Backtester_OnBacktestPauseEvent;
 
-            Settings.Backtester.Start(this, Settings.BacktestSettings);
+            Settings.Backtester.StartAsync(this, Settings.BacktestSettings);
         }
 
         protected virtual void Backtester_OnBacktestPauseEvent(object sender, IRobot robot)

@@ -34,13 +34,7 @@ namespace NetTrade.Abstractions.Tests
             _robotSettingsMock.SetupProperty(settings => settings.Mode, Mode.Backtest);
             _robotSettingsMock.SetupProperty(settings => settings.Timer, new DefaultTimer());
 
-            _robotMock = new Mock<Robot>(_robotSettingsMock.Object);
-        }
-
-        [TestMethod()]
-        public void RobotTest()
-        {
-            Assert.AreEqual(_robotMock.Object.Settings, _robotSettingsMock.Object);
+            _robotMock = new Mock<Robot>();
         }
 
         [TestMethod()]
@@ -51,7 +45,7 @@ namespace NetTrade.Abstractions.Tests
                 _robotMock.Object.Stop();
             }
 
-            _robotMock.Object.Start();
+            _robotMock.Object.Start(_robotSettingsMock.Object);
 
             Assert.AreEqual(_robotMock.Object.RunningMode, RunningMode.Running);
         }
@@ -61,7 +55,7 @@ namespace NetTrade.Abstractions.Tests
         {
             if (_robotMock.Object.RunningMode != RunningMode.Running)
             {
-                _robotMock.Object.Start();
+                _robotMock.Object.Start(_robotSettingsMock.Object);
             }
 
             _robotMock.Object.Stop();
@@ -74,7 +68,7 @@ namespace NetTrade.Abstractions.Tests
         {
             if (_robotMock.Object.RunningMode != RunningMode.Running)
             {
-                _robotMock.Object.Start();
+                _robotMock.Object.Start(_robotSettingsMock.Object);
             }
 
             _robotMock.Object.Pause();
@@ -87,7 +81,7 @@ namespace NetTrade.Abstractions.Tests
         {
             if (_robotMock.Object.RunningMode == RunningMode.Stopped)
             {
-                _robotMock.Object.Start();
+                _robotMock.Object.Start(_robotSettingsMock.Object);
             }
 
             if (_robotMock.Object.RunningMode == RunningMode.Running)
@@ -103,6 +97,21 @@ namespace NetTrade.Abstractions.Tests
         [TestMethod()]
         public void SetTimeByBacktesterTest()
         {
+            if (_robotMock.Object.Settings == null)
+            {
+                if (_robotMock.Object.RunningMode == RunningMode.Running)
+                {
+                    _robotMock.Object.Stop();
+                }
+
+                if (_robotMock.Object.RunningMode == RunningMode.Stopped)
+                {
+                    _robotMock.Object.Start(_robotSettingsMock.Object);
+                }
+
+                _robotMock.Object.Stop();
+            }
+
             var now = DateTimeOffset.UtcNow;
 
             _robotMock.Object.SetTimeByBacktester(_robotSettingsMock.Object.Backtester, now);
@@ -122,7 +131,7 @@ namespace NetTrade.Abstractions.Tests
                 _robotMock.Object.Stop();
             }
 
-            _robotMock.Object.Start();
+            _robotMock.Object.Start(_robotSettingsMock.Object);
 
             _robotMock.Verify(robot => robot.OnStart(), Times.Once);
         }
@@ -132,7 +141,7 @@ namespace NetTrade.Abstractions.Tests
         {
             if (_robotMock.Object.RunningMode != RunningMode.Running)
             {
-                _robotMock.Object.Start();
+                _robotMock.Object.Start(_robotSettingsMock.Object);
             }
 
             _robotMock.Object.Pause();
@@ -145,7 +154,7 @@ namespace NetTrade.Abstractions.Tests
         {
             if (_robotMock.Object.RunningMode == RunningMode.Stopped)
             {
-                _robotMock.Object.Start();
+                _robotMock.Object.Start(_robotSettingsMock.Object);
             }
 
             if (_robotMock.Object.RunningMode == RunningMode.Running)
@@ -163,7 +172,7 @@ namespace NetTrade.Abstractions.Tests
         {
             if (_robotMock.Object.RunningMode != RunningMode.Running)
             {
-                _robotMock.Object.Start();
+                _robotMock.Object.Start(_robotSettingsMock.Object);
             }
 
             _robotMock.Object.Stop();

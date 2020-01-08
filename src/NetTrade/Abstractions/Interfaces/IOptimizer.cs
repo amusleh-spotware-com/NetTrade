@@ -1,6 +1,7 @@
 ﻿using NetTrade.Enums;
 using NetTrade.Helpers;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace NetTrade.Abstractions.Interfaces
 {
@@ -19,6 +20,8 @@ namespace NetTrade.Abstractions.Interfaces
         event OnOptimizationStoppedHandler OnOptimizationStoppedEvent;
 
         void Start();
+
+        Task StartAsync();
 
         void Stop();
 

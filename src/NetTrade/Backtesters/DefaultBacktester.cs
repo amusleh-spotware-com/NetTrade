@@ -19,7 +19,7 @@ namespace NetTrade.Backtesters
 
         public event OnBacktestStopHandler OnBacktestStopEvent;
 
-        public async void Start(IRobot robot, IBacktestSettings settings)
+        public Task StartAsync(IRobot robot, IBacktestSettings settings)
         {
             _ = robot ?? throw new ArgumentNullException(nameof(robot));
 
@@ -32,7 +32,7 @@ namespace NetTrade.Backtesters
 
             OnBacktestStartEvent?.Invoke(this, Robot);
 
-            await StartDataFeed(settings.StartTime, settings.EndTime).ConfigureAwait(false);
+            return StartDataFeedAsync(settings.StartTime, settings.EndTime);
         }
 
         public IBacktestResult GetResult()
@@ -63,7 +63,7 @@ namespace NetTrade.Backtesters
             return result;
         }
 
-        private async Task StartDataFeed(DateTimeOffset startTime, DateTimeOffset endTime)
+        private async Task StartDataFeedAsync(DateTimeOffset startTime, DateTimeOffset endTime)
         {
             var symbol = Robot.Settings.MainSymbol as Symbol;
 
