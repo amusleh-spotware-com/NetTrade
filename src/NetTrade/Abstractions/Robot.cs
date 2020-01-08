@@ -3,6 +3,9 @@ using NetTrade.Enums;
 using NetTrade.Models;
 using System;
 using System.Timers;
+using NetTrade.Attributes;
+using System.Linq;
+using System.Reflection;
 
 namespace NetTrade.Abstractions
 {
@@ -40,6 +43,8 @@ namespace NetTrade.Abstractions
             }
 
             Settings.Timer.OnTimerElapsedEvent += timer => OnTimer();
+
+            SetParameterValuesToDefault();
 
             RunningMode = RunningMode.Running;
 
@@ -225,6 +230,32 @@ namespace NetTrade.Abstractions
             if (Settings.Timer.Enabled)
             {
                 _timer.Start();
+            }
+        }
+
+        private void SetParameterValuesToDefault()
+        {
+            var robotParameters = this.GetType().GetProperties()
+                .Where(iProperty => iProperty.GetCustomAttributes(true).Any()).ToList();
+
+            if (!robotParameters.Any())
+            {
+                return;
+            }
+
+            foreach (var robotParamter in robotParameters)
+            {
+                if (!robotParamter.CanWrite)
+                {
+                    continue;
+                }
+
+                var parameterAttribute = robotParamter.GetCustomAttribute<ParameterAttribute>();
+
+                if (parameterAttribute.DefaultValue != null)
+                {
+                    robotParamter.SetValue(this, parameterAttribute.DefaultValue);
+                }
             }
         }
 
