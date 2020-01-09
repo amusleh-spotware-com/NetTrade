@@ -63,6 +63,8 @@ namespace NetTrade.Abstractions
 
             Timer.OnTimerElapsedEvent += timer => OnTimer();
 
+            Account.OnMarginCallEvent += Account_OnMarginCallEvent;
+
             RunningMode = RunningMode.Running;
 
             try
@@ -294,13 +296,19 @@ namespace NetTrade.Abstractions
 
         protected virtual void Backtester_OnBacktestStopEvent(object sender, IRobot robot)
         {
-            if (RunningMode != RunningMode.Stopped)
-            {
-                Stop();
-            }
+            Stop();
         }
 
         #endregion Backtest methods and event handlers
+
+        #region Account event handlers
+
+        protected virtual void Account_OnMarginCallEvent(object sender)
+        {
+            Stop();
+        }
+
+        #endregion
 
         #region Other methods
 

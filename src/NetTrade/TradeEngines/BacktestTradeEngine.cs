@@ -54,7 +54,7 @@ namespace NetTrade.TradeEngines
         {
             var symbolOrders = _orders.Where(iOrder => iOrder.Symbol == symbol).ToList();
 
-            double totalEquityChange = 0, totalBalanceChange = 0;
+            double totalEquityChange = 0;
 
             foreach (var order in symbolOrders)
             {
@@ -68,8 +68,6 @@ namespace NetTrade.TradeEngines
 
                     if (closeOrder)
                     {
-                        totalBalanceChange += marketOrder.NetProfit;
-
                         CloseMarketOrder(marketOrder);
                     }
                 }
@@ -89,11 +87,6 @@ namespace NetTrade.TradeEngines
             if (totalEquityChange != 0)
             {
                 Account.ChangeEquity(totalEquityChange, Server.CurrentTime, string.Empty);
-            }
-
-            if (totalBalanceChange != 0)
-            {
-                Account.ChangeBalance(totalBalanceChange, Server.CurrentTime, string.Empty);
             }
         }
 
@@ -116,6 +109,8 @@ namespace NetTrade.TradeEngines
             _journal.Add(tradingEvent);
 
             Account.ChangeMargin(-order.MarginUsed, Server.CurrentTime, string.Empty);
+
+            Account.ChangeBalance(order.NetProfit, Server.CurrentTime, string.Empty);
         }
 
         public void CancelPendingOrder(PendingOrder order)
@@ -264,7 +259,7 @@ namespace NetTrade.TradeEngines
 
             grossProfitInTicks *= Math.Pow(10, order.Symbol.Digits);
 
-            order.GrossProfit = grossProfitInTicks * order.Symbol.TickValue;
+            order.GrossProfit = grossProfitInTicks * order.Symbol.TickValue * order.Volume;
 
             var netProfit = order.GrossProfit - (order.Commission * order.Volume);
 

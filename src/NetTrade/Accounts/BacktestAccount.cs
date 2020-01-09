@@ -82,6 +82,8 @@ namespace NetTrade.Accounts
             _equityChanges.Add(change);
 
             Equity = change.NewValue;
+
+            CheckForMarginCall();
         }
 
         public void ChangeMargin(double amount, DateTimeOffset time, string note)

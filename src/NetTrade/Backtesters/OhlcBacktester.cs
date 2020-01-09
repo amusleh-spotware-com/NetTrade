@@ -47,7 +47,7 @@ namespace NetTrade.Backtesters
                 LongTradesNumber = trades.Where(iTrade => iTrade.Order.TradeType == TradeType.Buy).Count(),
                 ShortTradesNumber = trades.Where(iTrade => iTrade.Order.TradeType == TradeType.Sell).Count(),
                 NetProfit = trades.Select(iTrade => iTrade.Order.NetProfit).Sum(),
-                WinningRate = trades.Count > 0 ? trades.Where(iTrade => iTrade.Order.NetProfit > 0).Count() / trades.Count : 0,
+                WinningRate = trades.Count > 0 ? trades.Where(iTrade => iTrade.Order.NetProfit > 0).Count() / (double)trades.Count : 0,
             };
 
             var grossProfit = trades.Where(iTrade => iTrade.Order.GrossProfit > 0)

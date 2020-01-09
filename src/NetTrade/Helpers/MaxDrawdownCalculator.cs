@@ -11,27 +11,27 @@ namespace NetTrade.Helpers
         {
             var changesCopy = changes.ToList();
 
-            var troughChange = GetTroughChange(changesCopy);
+            var peakChange = GetPeakChange(changesCopy);
+
+            var troughChange = GetTroughChange(changesCopy, peakChange);
 
             double result = 0;
 
             if (troughChange != null)
             {
-                var peakValue = changesCopy.Where(iChange => iChange.Time <= troughChange.Time).Max(iChange => iChange.NewValue);
-
-                result = (troughChange.NewValue - peakValue) / peakValue;
+                result = (troughChange.NewValue - peakChange.NewValue) / peakChange.NewValue;
             }
 
             return result > 0 ? 0 : Math.Round(result, 3) * 100;
         }
 
-        private static IAccountChange GetTroughChange(IEnumerable<IAccountChange> changes)
+        private static IAccountChange GetTroughChange(IEnumerable<IAccountChange> changes, IAccountChange peakChange)
         {
             var troughValue = double.MaxValue;
 
             IAccountChange troughChange = null;
 
-            var changesOrdered = changes.OrderBy(iChange => iChange.Time);
+            var changesOrdered = changes.Where(iChange => iChange.Time > peakChange.Time).OrderBy(iChange => iChange.Time);
 
             foreach (var change in changesOrdered)
             {
@@ -47,5 +47,29 @@ namespace NetTrade.Helpers
 
             return troughChange;
         }
+
+        private static IAccountChange GetPeakChange(IEnumerable<IAccountChange> changes)
+        {
+            var peakValue = double.MinValue;
+
+            IAccountChange result = null;
+
+            var changesOrdered = changes.OrderBy(iChange => iChange.Time);
+
+            foreach (var change in changesOrdered)
+            {
+                if (change.NewValue < peakValue)
+                {
+                    continue;
+                }
+
+                peakValue = change.NewValue;
+
+                result = change;
+            }
+
+            return result;
+        }
+
     }
 }

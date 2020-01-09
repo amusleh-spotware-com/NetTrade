@@ -13,7 +13,7 @@ namespace NetTrade.Models
         {
             Symbol = symbol;
 
-            _data = data.ToList();
+            _data = data.OrderBy(iBar => iBar.Time).ToList();
         }
 
         public ISymbol Symbol { get; }

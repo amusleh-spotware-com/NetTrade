@@ -12,6 +12,9 @@ using NetTrade.BarTypes;
 using System.Collections.Generic;
 using NetTrade.Backtesters;
 using NetTrade.Accounts;
+using System.IO;
+using CsvHelper;
+using System.Linq;
 
 namespace ConsoleTester
 {
@@ -21,8 +24,8 @@ namespace ConsoleTester
         {
             var symbol = new OhlcSymbol(new TimeBasedBars(TimeSpan.FromDays(1)))
             {
-                Digits = 5,
-                TickSize = 0.00001,
+                Digits = 2,
+                TickSize = 0.1,
                 TickValue = 1,
                 VolumeStep = 1000,
                 MaxVolume = 100000000,
@@ -33,10 +36,10 @@ namespace ConsoleTester
                 Slippage = 0.0001
             };
 
-            var startTime = DateTimeOffset.Now.AddDays(-360);
-            var endTime = DateTimeOffset.Now;
+            var data = GetData("Data\\daily_AMZN.csv");
 
-            var data = SampleDataGenerator.GetSampleData(1, startTime, endTime, TimeSpan.FromDays(1), 0);
+            var startTime = data.Min(iBar => iBar.Time);
+            var endTime = data.Max(iBar => iBar.Time);
 
             var symbolsData = new List<ISymbolBacktestData> { new SymbolBacktestData(symbol, data) };
 
@@ -80,6 +83,16 @@ namespace ConsoleTester
             Console.WriteLine($"Net Profit: {result.NetProfit}");
 
             Console.ReadLine();
+        }
+
+        private static IEnumerable<Bar> GetData(string fileName)
+        {
+            using (var reader = new StreamReader(fileName))
+            using (var csv = new CsvReader(reader))
+            {
+                csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower();
+                return csv.GetRecords<Bar>().ToList();
+            }
         }
     }
 }
