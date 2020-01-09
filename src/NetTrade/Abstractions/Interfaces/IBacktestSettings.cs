@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace NetTrade.Abstractions.Interfaces
 {
@@ -7,5 +8,7 @@ namespace NetTrade.Abstractions.Interfaces
         DateTimeOffset StartTime { get; }
 
         DateTimeOffset EndTime { get; }
+
+        IReadOnlyList<ISymbolBacktestData> SymbolsData { get; }
     }
 }

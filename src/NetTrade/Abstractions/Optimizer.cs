@@ -41,7 +41,7 @@ namespace NetTrade.Abstractions
 
             robotParameters.Mode = Mode.Backtest;
 
-            robotParameters.Symbols = Settings.Symbols.Select(iSymbol => iSymbol.Clone() as ISymbol).ToList();
+            robotParameters.Symbols = Settings.SymbolsData.Select(iSymbolData => iSymbolData.Symbol.Clone() as ISymbol).ToList();
 
             robotParameters.BacktestSettings = Activator.CreateInstance(Settings.BacktestSettingsType,
                 Settings.BacktestSettingsParameters) as IBacktestSettings;

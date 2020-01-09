@@ -9,6 +9,7 @@ using NetTrade.TradeEngines;
 using NetTradeTests.Samples;
 using System;
 using System.Collections.Generic;
+using NetTrade.Symbols;
 
 namespace NetTrade.Abstractions.Tests
 {
@@ -21,25 +22,29 @@ namespace NetTrade.Abstractions.Tests
 
         public OptimizerTests()
         {
+            var startTime = DateTimeOffset.Now.AddDays(-10);
+            var endTime = DateTimeOffset.Now;
+
             _optimizerSettings = new OptimizerSettings
             {
                 AccountBalance = 10000,
                 AccountLeverage = 500,
-                BacktesterType = typeof(DefaultBacktester),
+                BacktesterType = typeof(OhlcBacktester),
                 BacktestSettingsType = typeof(BacktestSettings),
-                BacktestSettingsParameters = new List<object>
-            {
-                DateTimeOffset.Now.AddDays(-10),
-                DateTimeOffset.Now
-            }.ToArray()
             };
 
-            var symbolData = SampleDataGenerator.GetSampleData(200, DateTimeOffset.Now.AddDays(-10), DateTimeOffset.Now,
-                TimeSpan.FromDays(1));
+            var data = SampleDataGenerator.GetSampleData(200, startTime, endTime, TimeSpan.FromDays(1));
 
-            var symbol = new Symbol(symbolData, new Mock<IBars>().Object) { Name = "Main" };
+            var symbol = new OhlcSymbol(new Mock<IBars>().Object) { Name = "Main" };
+            var symbolData = new SymbolBacktestData(symbol, data);
 
-            _optimizerSettings.Symbols = new List<ISymbol> { symbol };
+            _optimizerSettings.SymbolsData = new List<ISymbolBacktestData> { symbolData };
+            _optimizerSettings.BacktestSettingsParameters = new List<object> 
+            { 
+                startTime,
+                endTime,
+                _optimizerSettings.SymbolsData
+            }.ToArray();
             _optimizerSettings.TradeEngineType = typeof(BacktestTradeEngine);
             _optimizerSettings.TimerType = typeof(DefaultTimer);
             _optimizerSettings.ServerType = typeof(Server);

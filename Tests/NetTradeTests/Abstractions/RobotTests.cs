@@ -8,6 +8,7 @@ using Moq;
 using NetTrade.Enums;
 using NetTrade.Models;
 using NetTrade.Timers;
+using NetTrade.Symbols;
 
 namespace NetTrade.Abstractions.Tests
 {
@@ -22,7 +23,7 @@ namespace NetTrade.Abstractions.Tests
         {
             _robotSettingsMock = new Mock<IRobotParameters>();
 
-            var symbolMock = new Mock<Symbol>(new List<IBar>(), new Mock<IBars>().Object);
+            var symbolMock = new Mock<OhlcSymbol>(new Mock<IBars>().Object);
 
             _robotSettingsMock.SetupProperty(settings => settings.Symbols, new List<ISymbol> { symbolMock.Object });
             _robotSettingsMock.SetupProperty(settings => settings.Backtester, new Mock<IBacktester>().Object);

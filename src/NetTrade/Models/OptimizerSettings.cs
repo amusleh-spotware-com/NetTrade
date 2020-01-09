@@ -6,7 +6,7 @@ namespace NetTrade.Models
 {
     public class OptimizerSettings : IOptimizerSettings
     {
-        public IEnumerable<ISymbol> Symbols { get; set; }
+        public IEnumerable<ISymbolBacktestData> SymbolsData { get; set; }
 
         public Type BacktesterType { get; set; }
 

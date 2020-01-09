@@ -5,10 +5,11 @@ using NetTrade.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using NetTrade.Symbols;
 
 namespace NetTrade.Backtesters
 {
-    public class DefaultBacktester : IBacktester
+    public class OhlcBacktester : IBacktester
     {
         public IRobot Robot { get; private set; }
         public TimeSpan Interval { get; set; } = TimeSpan.FromSeconds(1);
@@ -32,7 +33,7 @@ namespace NetTrade.Backtesters
 
             OnBacktestStartEvent?.Invoke(this, Robot);
 
-            return StartDataFeedAsync(settings.StartTime, settings.EndTime);
+            return StartDataFeedAsync(settings);
         }
 
         public IBacktestResult GetResult()
@@ -63,9 +64,9 @@ namespace NetTrade.Backtesters
             return result;
         }
 
-        private async Task StartDataFeedAsync(DateTimeOffset startTime, DateTimeOffset endTime)
+        private async Task StartDataFeedAsync(IBacktestSettings settings)
         {
-            for (var currentTime = startTime; currentTime <= endTime; currentTime = currentTime.Add(Interval))
+            for (var currentTime = settings.StartTime; currentTime <= settings.EndTime; currentTime = currentTime.Add(Interval))
             {
                 bool shouldContinueDataFeed = await ShouldContinueDataFeed();
 
@@ -76,13 +77,13 @@ namespace NetTrade.Backtesters
 
                 Robot.SetTimeByBacktester(this, currentTime);
 
-                foreach (var symbol in Robot.Symbols)
+                foreach (var symbolData in settings.SymbolsData)
                 {
-                    var bar = (symbol as Symbol).BarsData.FirstOrDefault(iBar => iBar.Time == currentTime);
+                    var bar = symbolData.GetBar(currentTime);
 
                     if (bar != null)
                     {
-                        (symbol as Symbol).PublishBar(bar);
+                        (symbolData.Symbol as OhlcSymbol).PublishBar(bar);
                     }
                 }
             }

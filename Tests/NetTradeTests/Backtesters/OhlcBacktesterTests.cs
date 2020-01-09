@@ -9,35 +9,50 @@ using NetTrade.Timers;
 using NetTrade.TradeEngines;
 using System;
 using System.Collections.Generic;
+using NetTrade.Symbols;
 
 namespace NetTrade.Backtesters.Tests
 {
     [TestClass()]
-    public class DefaultBacktesterTests
+    public class OhlcBacktesterTests
     {
         private readonly Mock<Robot> _robotMock;
 
         private readonly Mock<IRobotParameters> _robotSettingsMock;
 
-        private readonly DefaultBacktester _backtester;
+        private readonly OhlcBacktester _backtester;
 
         private readonly BacktestSettings _backtestSettings;
 
-        public DefaultBacktesterTests()
+        public OhlcBacktesterTests()
         {
             _robotSettingsMock = new Mock<IRobotParameters>();
 
-            _backtestSettings = new BacktestSettings(DateTimeOffset.Now.AddDays(-30), DateTimeOffset.Now);
-
             var symbols = new List<ISymbol>
             {
-                new Symbol(GetData(100, _backtestSettings), new Mock<IBars>().Object) { Name = "Main" },
-                new Symbol(GetData(200, _backtestSettings), new Mock<IBars>().Object) { Name = "First"},
-                new Symbol(GetData(300, _backtestSettings), new Mock<IBars>().Object) { Name = "Second"},
-                new Symbol(GetData(400, _backtestSettings), new Mock<IBars>().Object) { Name = "Third"},
+                new OhlcSymbol(new Mock<IBars>().Object) { Name = "Main" },
+                new OhlcSymbol(new Mock<IBars>().Object) { Name = "First"},
+                new OhlcSymbol(new Mock<IBars>().Object) { Name = "Second"},
+                new OhlcSymbol(new Mock<IBars>().Object) { Name = "Third"},
             };
 
-            _backtester = new DefaultBacktester { Interval = TimeSpan.FromHours(1) };
+            var startTime = DateTimeOffset.Now.AddDays(-30);
+            var endTime = DateTimeOffset.Now;
+
+            var symbolsData = new List<ISymbolBacktestData>();
+
+            var random = new Random(0);
+
+            symbols.ForEach(iSymbol => 
+            {
+                var symbolData = new SymbolBacktestData(iSymbol, GetData(100 * random.Next(1, 5), startTime, endTime));
+
+                symbolsData.Add(symbolData);
+            });
+
+            _backtestSettings = new BacktestSettings(startTime, endTime, symbolsData);
+
+            _backtester = new OhlcBacktester { Interval = TimeSpan.FromHours(1) };
 
             _robotSettingsMock.SetupProperty(settings => settings.Symbols, symbols);
             _robotSettingsMock.SetupProperty(settings => settings.Backtester, _backtester);
@@ -60,11 +75,11 @@ namespace NetTrade.Backtesters.Tests
             _robotMock.Object.Start(_robotSettingsMock.Object);
         }
 
-        private List<IBar> GetData(double startPrice, IBacktestSettings backtestSettings)
+        private List<IBar> GetData(double startPrice, DateTimeOffset startTime, DateTimeOffset endTime)
         {
             var interval = TimeSpan.FromDays(1);
 
-            return SampleDataGenerator.GetSampleData(startPrice, backtestSettings.StartTime, backtestSettings.EndTime, interval);
+            return SampleDataGenerator.GetSampleData(startPrice, startTime, endTime, interval);
         }
     }
 }

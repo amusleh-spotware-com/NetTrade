@@ -2,22 +2,15 @@
 using NetTrade.Enums;
 using NetTrade.Helpers;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace NetTrade.Models
+namespace NetTrade.Symbols
 {
-    public class Symbol : ISymbol
+    public class OhlcSymbol : ISymbol
     {
-        private readonly List<IBar> _barsData;
-
-        public Symbol(List<IBar> barsData, IBars bars)
+        public OhlcSymbol(IBars bars)
         {
-            _barsData = barsData;
-
             Bars = bars;
         }
-
-        public IReadOnlyList<IBar> BarsData => _barsData;
 
         public string Name { get; set; }
 
@@ -70,7 +63,7 @@ namespace NetTrade.Models
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as Symbol);
+            return Equals(obj as OhlcSymbol);
         }
 
         public bool Equals(ISymbol other)
@@ -83,12 +76,12 @@ namespace NetTrade.Models
             return 539060726 + EqualityComparer<string>.Default.GetHashCode(Name);
         }
 
-        public static bool operator ==(Symbol left, Symbol right)
+        public static bool operator ==(OhlcSymbol left, OhlcSymbol right)
         {
-            return EqualityComparer<Symbol>.Default.Equals(left, right);
+            return EqualityComparer<OhlcSymbol>.Default.Equals(left, right);
         }
 
-        public static bool operator !=(Symbol left, Symbol right)
+        public static bool operator !=(OhlcSymbol left, OhlcSymbol right)
         {
             return !(left == right);
         }
@@ -99,7 +92,7 @@ namespace NetTrade.Models
 
         public object Clone()
         {
-            var clone = new Symbol(_barsData.ToList(), Bars.Clone() as IBars);
+            var clone = new OhlcSymbol(Bars.Clone() as IBars);
 
             ObjectCopy.CopyProperties(this, clone);
 

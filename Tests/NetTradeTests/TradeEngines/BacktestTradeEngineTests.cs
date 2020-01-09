@@ -9,6 +9,7 @@ using NetTrade.Models;
 using NetTrade.Enums;
 using System.Linq;
 using NetTrade.Accounts;
+using NetTrade.Symbols;
 
 namespace NetTrade.TradeEngines.Tests
 {
@@ -27,7 +28,7 @@ namespace NetTrade.TradeEngines.Tests
 
             account.AddTransaction(new Transaction(10000, DateTimeOffset.Now, string.Empty));
 
-            _symbol = new Symbol(new List<IBar>(), new Mock<IBars>().Object)
+            _symbol = new OhlcSymbol(new Mock<IBars>().Object)
             {
                 Digits = 5,
                 TickSize = 0.00001,
@@ -82,7 +83,7 @@ namespace NetTrade.TradeEngines.Tests
             Assert.IsTrue(result.IsSuccessful);
             Assert.IsTrue(_tradeEngine.Orders.Contains(result.Order));
 
-            (_symbol as Symbol).PublishBar(new Bar(DateTimeOffset.Now, 1, 1, 1, 1.1, 1000));
+            (_symbol as OhlcSymbol).PublishBar(new Bar(DateTimeOffset.Now, 1, 1, 1, 1.1, 1000));
 
             _tradeEngine.UpdateSymbolOrders(_symbol);
 
@@ -113,7 +114,7 @@ namespace NetTrade.TradeEngines.Tests
         [TestMethod()]
         public void CancelPendingOrderTest()
         {
-            (_symbol as Symbol).PublishBar(new Bar(DateTimeOffset.Now, 1, 1, 1, 1.5, 1000));
+            (_symbol as OhlcSymbol).PublishBar(new Bar(DateTimeOffset.Now, 1, 1, 1, 1.5, 1000));
 
             var orderParameters = new PendingOrderParameters(OrderType.Limit, _symbol)
             {
