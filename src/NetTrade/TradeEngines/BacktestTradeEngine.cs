@@ -24,11 +24,11 @@ namespace NetTrade.TradeEngines
             Account = account;
         }
 
-        public IReadOnlyList<IOrder> Orders => _orders;
+        public IReadOnlyList<IOrder> Orders => _orders.ToList();
 
-        public IReadOnlyList<ITrade> Trades => _trades;
+        public IReadOnlyList<ITrade> Trades => _trades.ToList();
 
-        public IReadOnlyList<ITradingEvent> Journal => _journal;
+        public IReadOnlyList<ITradingEvent> Journal => _journal.ToList();
 
         public IServer Server { get; }
 
@@ -104,7 +104,10 @@ namespace NetTrade.TradeEngines
                 _orders.Remove(order);
             }
 
-            var trade = new Trade(order, Server.CurrentTime);
+            var exitPrice = order.TradeType == TradeType.Buy ? order.Symbol.GetPrice(TradeType.Sell) :
+                order.Symbol.GetPrice(TradeType.Buy);
+
+            var trade = new Trade(order, Server.CurrentTime, exitPrice);
 
             _trades.Add(trade);
 

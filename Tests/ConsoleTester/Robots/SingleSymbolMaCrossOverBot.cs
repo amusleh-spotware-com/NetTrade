@@ -13,13 +13,13 @@ namespace ConsoleTester.Robots
     {
         private ExpandableSeries<double> _fastMa, _slowMa;
 
-        [Parameter("Fast MA Period", DefaultValue = 10)]
+        [Parameter("Fast MA Period", DefaultValue = 5)]
         public int FastMaPeriod { get; set; }
 
-        [Parameter("Slow MA Period", DefaultValue = 20)]
+        [Parameter("Slow MA Period", DefaultValue = 10)]
         public int SlowMaPeriod { get; set; }
 
-        [Parameter("Volume", DefaultValue = 1000)]
+        [Parameter("Volume", DefaultValue = 1)]
         public double Volume { get; set; }
 
         public override void OnStart()

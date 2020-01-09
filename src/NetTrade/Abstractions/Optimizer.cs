@@ -53,7 +53,7 @@ namespace NetTrade.Abstractions
 
             robotParameters.Timer = Activator.CreateInstance(Settings.TimerType, Settings.TimerParameters) as ITimer;
 
-            robotParameters.Account = new DefaultAccount(0, 0, string.Empty, Settings.AccountLeverage, "Optimizer");
+            robotParameters.Account = new BacktestAccount(0, 0, string.Empty, Settings.AccountLeverage, "Optimizer");
 
             var transaction = new Transaction(Settings.AccountBalance, robotParameters.BacktestSettings.StartTime, string.Empty);
 

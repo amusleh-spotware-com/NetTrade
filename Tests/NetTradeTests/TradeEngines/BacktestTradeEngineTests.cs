@@ -24,7 +24,7 @@ namespace NetTrade.TradeEngines.Tests
         {
             var server = new Server();
 
-            var account = new DefaultAccount(1, 1, "Demo", 500, "Tester");
+            var account = new BacktestAccount(1, 1, "Demo", 500, "Tester");
 
             account.AddTransaction(new Transaction(10000, DateTimeOffset.Now, string.Empty));
 

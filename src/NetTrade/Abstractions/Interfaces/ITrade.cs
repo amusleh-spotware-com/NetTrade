@@ -8,5 +8,7 @@ namespace NetTrade.Abstractions.Interfaces
         MarketOrder Order { get; }
 
         DateTimeOffset ExitTime { get; }
+
+        double ExitPrice { get; }
     }
 }

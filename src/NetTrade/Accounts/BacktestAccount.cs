@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace NetTrade.Accounts
 {
-    public class DefaultAccount : IAccount
+    public class BacktestAccount : IAccount
     {
         private readonly List<ITransaction> _transactions = new List<ITransaction>();
 
@@ -16,7 +16,7 @@ namespace NetTrade.Accounts
 
         private readonly List<IAccountChange> _marginChanges = new List<IAccountChange>();
 
-        public DefaultAccount(long id, long number, string label, long leverage, string brokerName)
+        public BacktestAccount(long id, long number, string label, long leverage, string brokerName)
         {
             Id = id;
             Number = number;

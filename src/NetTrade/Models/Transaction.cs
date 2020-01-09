@@ -5,6 +5,10 @@ namespace NetTrade.Models
 {
     public class Transaction : ITransaction
     {
+        public Transaction(double amount, DateTimeOffset time): this(amount, time, string.Empty)
+        {
+        }
+
         public Transaction(double amount, DateTimeOffset time, string note)
         {
             Amount = amount;

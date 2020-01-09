@@ -6,12 +6,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Timers;
+using NetTrade.Exceptions;
 
 namespace NetTrade.Abstractions
 {
     public abstract class Robot : IRobot
     {
         private Timer _systemTimer;
+
+        public Robot()
+        {
+            SetParameterValuesToDefault();
+        }
 
         public ITradeEngine Trade { get; private set; }
 
@@ -52,16 +58,23 @@ namespace NetTrade.Abstractions
             foreach (var symbol in Symbols)
             {
                 symbol.OnTickEvent += Symbol_OnTickEvent;
-                symbol.Bars.OnBarEvent += SymbolBars_OnBarEvent;
+                symbol.OnBarEvent += SymbolBars_OnBarEvent;
             }
 
             Timer.OnTimerElapsedEvent += timer => OnTimer();
 
-            SetParameterValuesToDefault();
-
             RunningMode = RunningMode.Running;
 
-            OnStart();
+            try
+            {
+                OnStart();
+            }
+            catch (Exception ex)
+            {
+                Stop();
+
+                throw new RobotException(RobotExceptionSource.OnStart, ex);
+            }
 
             if (Mode == Mode.Backtest)
             {
@@ -81,7 +94,7 @@ namespace NetTrade.Abstractions
         {
             if (RunningMode == RunningMode.Stopped)
             {
-                throw new InvalidOperationException("The robot is already stopped");
+                return;
             }
 
             RunningMode = RunningMode.Stopped;
@@ -91,7 +104,14 @@ namespace NetTrade.Abstractions
                 _systemTimer.Dispose();
             }
 
-            OnStop();
+            try
+            {
+                OnStop();
+            }
+            catch (Exception ex)
+            {
+                throw new RobotException(RobotExceptionSource.OnStop, ex);
+            }
         }
 
         public void Pause()
@@ -108,7 +128,19 @@ namespace NetTrade.Abstractions
                 _systemTimer.Stop();
             }
 
-            OnPause();
+            try
+            {
+                OnPause();
+            }
+            catch (Exception ex)
+            {
+                if (RunningMode != RunningMode.Stopped)
+                {
+                    Stop();
+                }
+
+                throw new RobotException(RobotExceptionSource.OnPause, ex);
+            }
         }
 
         public void Resume()
@@ -125,7 +157,19 @@ namespace NetTrade.Abstractions
                 _systemTimer.Start();
             }
 
-            OnResume();
+            try
+            {
+                OnResume();
+            }
+            catch (Exception ex)
+            {
+                if (RunningMode != RunningMode.Stopped)
+                {
+                    Stop();
+                }
+
+                throw new RobotException(RobotExceptionSource.OnResume, ex);
+            }
         }
 
         public void SetTimeByBacktester(IBacktester backtester, DateTimeOffset time)
@@ -185,9 +229,21 @@ namespace NetTrade.Abstractions
 
             Trade.UpdateSymbolOrders(symbol);
 
-            if (RunningMode == RunningMode.Running)
+            try
             {
-                OnTick(symbol);
+                if (RunningMode == RunningMode.Running)
+                {
+                    OnTick(symbol);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (RunningMode != RunningMode.Stopped)
+                {
+                    Stop();
+                }
+
+                throw new RobotException(RobotExceptionSource.OnBar, ex);
             }
         }
 
@@ -195,9 +251,21 @@ namespace NetTrade.Abstractions
         {
             var symbol = sender as ISymbol;
 
-            if (RunningMode == RunningMode.Running)
+            try
             {
-                OnBar(symbol, index);
+                if (RunningMode == RunningMode.Running)
+                {
+                    OnBar(symbol, index);
+                }
+            }
+            catch (Exception ex)
+            {
+                if (RunningMode != RunningMode.Stopped)
+                {
+                    Stop();
+                }
+
+                throw new RobotException(RobotExceptionSource.OnBar, ex);
             }
         }
 
@@ -205,7 +273,7 @@ namespace NetTrade.Abstractions
 
         #region Backtest methods and event handlers
 
-        private void Backtest()
+        private async void Backtest()
         {
             _ = Backtester ?? throw new NullReferenceException(nameof(Backtester));
 
@@ -213,7 +281,7 @@ namespace NetTrade.Abstractions
             Backtester.OnBacktestStartEvent += Backtester_OnBacktestStartEvent;
             Backtester.OnBacktestPauseEvent += Backtester_OnBacktestPauseEvent;
 
-            Backtester.StartAsync(this, BacktestSettings);
+            await Backtester.StartAsync(this, BacktestSettings);
         }
 
         protected virtual void Backtester_OnBacktestPauseEvent(object sender, IRobot robot)

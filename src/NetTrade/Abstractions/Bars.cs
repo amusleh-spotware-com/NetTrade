@@ -31,8 +31,6 @@ namespace NetTrade.Abstractions
 
         public ISeries<long> Volume => _volume;
 
-        public event OnBarHandler OnBarEvent;
-
         public virtual int AddBar(IBar bar)
         {
             int index = _time.Count;
@@ -41,9 +39,8 @@ namespace NetTrade.Abstractions
             _open.Add(index, bar.Open);
             _high.Add(index, bar.High);
             _low.Add(index, bar.Low);
+            _close.Add(index, bar.Close);
             _volume.Add(index, bar.Volume);
-
-            OnBarEvent?.Invoke(this, index);
 
             return index;
         }

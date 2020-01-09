@@ -17,8 +17,6 @@ namespace NetTrade.Abstractions.Interfaces
 
         ISeries<long> Volume { get; }
 
-        event OnBarHandler OnBarEvent;
-
         int AddBar(IBar bar);
     }
 }

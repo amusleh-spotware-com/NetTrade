@@ -41,6 +41,7 @@ namespace NetTrade.Symbols
         public double Spread => Ask - Bid;
 
         public event OnTickHandler OnTickEvent;
+        public event OnBarHandler OnBarEvent;
 
         public double GetPrice(TradeType tradeType) => tradeType == TradeType.Buy ? Ask : Bid;
 
@@ -56,7 +57,9 @@ namespace NetTrade.Symbols
         {
             SetBidAsk(bar.Close, bar.Close);
 
-            Bars.AddBar(bar);
+            int index = Bars.AddBar(bar);
+
+            OnBarEvent?.Invoke(this, index);
         }
 
         #region Equality methods

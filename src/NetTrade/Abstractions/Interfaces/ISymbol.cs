@@ -36,6 +36,8 @@ namespace NetTrade.Abstractions.Interfaces
 
         event OnTickHandler OnTickEvent;
 
+        event OnBarHandler OnBarEvent;
+
         double GetPrice(TradeType tradeType);
     }
 }

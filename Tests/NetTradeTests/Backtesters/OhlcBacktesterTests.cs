@@ -18,7 +18,7 @@ namespace NetTrade.Backtesters.Tests
     {
         private readonly Mock<Robot> _robotMock;
 
-        private readonly Mock<IRobotParameters> _robotSettingsMock;
+        private readonly Mock<IRobotParameters> _robotParametersMock;
 
         private readonly OhlcBacktester _backtester;
 
@@ -26,7 +26,7 @@ namespace NetTrade.Backtesters.Tests
 
         public OhlcBacktesterTests()
         {
-            _robotSettingsMock = new Mock<IRobotParameters>();
+            _robotParametersMock = new Mock<IRobotParameters>();
 
             var symbols = new List<ISymbol>
             {
@@ -54,17 +54,17 @@ namespace NetTrade.Backtesters.Tests
 
             _backtester = new OhlcBacktester { Interval = TimeSpan.FromHours(1) };
 
-            _robotSettingsMock.SetupProperty(settings => settings.Symbols, symbols);
-            _robotSettingsMock.SetupProperty(settings => settings.Backtester, _backtester);
-            _robotSettingsMock.SetupProperty(settings => settings.BacktestSettings, _backtestSettings);
-            _robotSettingsMock.SetupProperty(settings => settings.Server, new Server());
-            _robotSettingsMock.SetupProperty(settings => settings.Account, new Mock<IAccount>().Object);
-            _robotSettingsMock.SetupProperty(settings => settings.Mode, Mode.Backtest);
-            _robotSettingsMock.SetupProperty(settings => settings.Timer, new DefaultTimer());
+            _robotParametersMock.SetupProperty(settings => settings.Symbols, symbols);
+            _robotParametersMock.SetupProperty(settings => settings.Backtester, _backtester);
+            _robotParametersMock.SetupProperty(settings => settings.BacktestSettings, _backtestSettings);
+            _robotParametersMock.SetupProperty(settings => settings.Server, new Server());
+            _robotParametersMock.SetupProperty(settings => settings.Account, new Mock<IAccount>().Object);
+            _robotParametersMock.SetupProperty(settings => settings.Mode, Mode.Backtest);
+            _robotParametersMock.SetupProperty(settings => settings.Timer, new DefaultTimer());
 
-            var tradeEngine = new BacktestTradeEngine(_robotSettingsMock.Object.Server, _robotSettingsMock.Object.Account);
+            var tradeEngine = new BacktestTradeEngine(_robotParametersMock.Object.Server, _robotParametersMock.Object.Account);
 
-            _robotSettingsMock.SetupProperty(settings => settings.TradeEngine, tradeEngine);
+            _robotParametersMock.SetupProperty(settings => settings.TradeEngine, tradeEngine);
 
             _robotMock = new Mock<Robot>();
         }
@@ -72,7 +72,7 @@ namespace NetTrade.Backtesters.Tests
         [TestMethod()]
         public void StartTest()
         {
-            _robotMock.Object.Start(_robotSettingsMock.Object);
+            _robotMock.Object.Start(_robotParametersMock.Object);
         }
 
         private List<IBar> GetData(double startPrice, DateTimeOffset startTime, DateTimeOffset endTime)
