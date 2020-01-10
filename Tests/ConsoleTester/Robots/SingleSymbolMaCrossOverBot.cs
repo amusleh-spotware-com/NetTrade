@@ -4,8 +4,8 @@ using NetTrade.Attributes;
 using NetTrade.Collections;
 using NetTrade.Enums;
 using NetTrade.Models;
-using System.Linq;
 using System;
+using System.Linq;
 
 namespace ConsoleTester.Robots
 {

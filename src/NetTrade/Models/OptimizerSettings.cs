@@ -16,6 +16,8 @@ namespace NetTrade.Models
 
         public object[] BacktestSettingsParameters { get; set; }
 
+        public TimeSpan BacktesterInterval { get; set; }
+
         public IReadOnlyList<IOptimizeParameter> Parameters { get; set; }
 
         public Type TradeEngineType { get; set; }

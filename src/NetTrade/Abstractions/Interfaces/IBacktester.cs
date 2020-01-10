@@ -1,6 +1,7 @@
 ﻿using NetTrade.Helpers;
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace NetTrade.Abstractions.Interfaces
 {
@@ -16,7 +17,9 @@ namespace NetTrade.Abstractions.Interfaces
 
         event OnBacktestStopHandler OnBacktestStopEvent;
 
-        Task StartAsync(IRobot robot, IBacktestSettings settings);
+        event OnBacktestProgressChangedHandler OnBacktestProgressChangedEvent;
+
+        Task StartAsync(IRobot robot, IBacktestSettings settings, IEnumerable<ISymbolBacktestData> symbolsBacktestData);
 
         IBacktestResult GetResult();
     }

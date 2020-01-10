@@ -50,17 +50,18 @@ namespace NetTrade.Backtesters.Tests
                 symbolsData.Add(symbolData);
             });
 
-            _backtestSettings = new BacktestSettings(startTime, endTime, symbolsData);
+            _backtestSettings = new BacktestSettings(startTime, endTime);
 
             _backtester = new OhlcBacktester { Interval = TimeSpan.FromHours(1) };
 
-            _robotParametersMock.SetupProperty(settings => settings.Symbols, symbols);
-            _robotParametersMock.SetupProperty(settings => settings.Backtester, _backtester);
-            _robotParametersMock.SetupProperty(settings => settings.BacktestSettings, _backtestSettings);
-            _robotParametersMock.SetupProperty(settings => settings.Server, new Server());
-            _robotParametersMock.SetupProperty(settings => settings.Account, new Mock<IAccount>().Object);
-            _robotParametersMock.SetupProperty(settings => settings.Mode, Mode.Backtest);
-            _robotParametersMock.SetupProperty(settings => settings.Timer, new DefaultTimer());
+            _robotParametersMock.SetupProperty(robotParameters => robotParameters.Symbols, symbols);
+            _robotParametersMock.SetupProperty(robotParameters => robotParameters.SymbolsBacktestData, symbolsData);
+            _robotParametersMock.SetupProperty(robotParameters => robotParameters.Backtester, _backtester);
+            _robotParametersMock.SetupProperty(robotParameters => robotParameters.BacktestSettings, _backtestSettings);
+            _robotParametersMock.SetupProperty(robotParameters => robotParameters.Server, new Server());
+            _robotParametersMock.SetupProperty(robotParameters => robotParameters.Account, new Mock<IAccount>().Object);
+            _robotParametersMock.SetupProperty(robotParameters => robotParameters.Mode, Mode.Backtest);
+            _robotParametersMock.SetupProperty(robotParameters => robotParameters.Timer, new DefaultTimer());
 
             var tradeEngine = new BacktestTradeEngine(_robotParametersMock.Object.Server, _robotParametersMock.Object.Account);
 

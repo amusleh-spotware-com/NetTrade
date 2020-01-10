@@ -2,10 +2,11 @@
 using NetTrade.Enums;
 using NetTrade.Helpers;
 using NetTrade.Models;
+using NetTrade.Symbols;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using NetTrade.Symbols;
 
 namespace NetTrade.Backtesters
 {
@@ -20,7 +21,9 @@ namespace NetTrade.Backtesters
 
         public event OnBacktestStopHandler OnBacktestStopEvent;
 
-        public Task StartAsync(IRobot robot, IBacktestSettings settings)
+        public event OnBacktestProgressChangedHandler OnBacktestProgressChangedEvent;
+
+        public Task StartAsync(IRobot robot, IBacktestSettings settings, IEnumerable<ISymbolBacktestData> symbolsBacktestData)
         {
             _ = robot ?? throw new ArgumentNullException(nameof(robot));
 
@@ -33,7 +36,7 @@ namespace NetTrade.Backtesters
 
             OnBacktestStartEvent?.Invoke(this, Robot);
 
-            return StartDataFeed(settings);
+            return StartDataFeed(settings, symbolsBacktestData);
         }
 
         public IBacktestResult GetResult()
@@ -64,7 +67,7 @@ namespace NetTrade.Backtesters
             return result;
         }
 
-        private async Task StartDataFeed(IBacktestSettings settings)
+        private async Task StartDataFeed(IBacktestSettings settings, IEnumerable<ISymbolBacktestData> symbolsBacktestData)
         {
             for (var currentTime = settings.StartTime; currentTime <= settings.EndTime; currentTime = currentTime.Add(Interval))
             {
@@ -77,7 +80,7 @@ namespace NetTrade.Backtesters
 
                 Robot.SetTimeByBacktester(this, currentTime);
 
-                foreach (var symbolData in settings.SymbolsData)
+                foreach (var symbolData in symbolsBacktestData)
                 {
                     var bar = symbolData.GetBar(currentTime);
 
@@ -86,6 +89,8 @@ namespace NetTrade.Backtesters
                         (symbolData.Symbol as OhlcSymbol).PublishBar(bar);
                     }
                 }
+
+                OnBacktestProgressChangedEvent?.Invoke(this, currentTime);
             }
 
             OnBacktestStopEvent?.Invoke(this, Robot);

@@ -43,7 +43,6 @@ namespace NetTrade.Abstractions.Tests
             { 
                 startTime,
                 endTime,
-                _optimizerSettings.SymbolsData
             }.ToArray();
             _optimizerSettings.TradeEngineType = typeof(BacktestTradeEngine);
             _optimizerSettings.TimerType = typeof(DefaultTimer);

@@ -21,6 +21,8 @@ namespace NetTrade.Abstractions.Interfaces
 
         object[] BacktestSettingsParameters { get; }
 
+        TimeSpan BacktesterInterval { get; }
+
         Type TradeEngineType { get; }
 
         object[] TradeEngineParameters { get; }

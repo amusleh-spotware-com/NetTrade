@@ -80,7 +80,7 @@ namespace NetTrade.Abstractions
 
             if (Mode == Mode.Backtest)
             {
-                Backtest();
+                Backtest(parameters.SymbolsBacktestData);
             }
             else
             {
@@ -275,7 +275,7 @@ namespace NetTrade.Abstractions
 
         #region Backtest methods and event handlers
 
-        private async void Backtest()
+        private async void Backtest(IEnumerable<ISymbolBacktestData> symbolsBacktestData)
         {
             _ = Backtester ?? throw new NullReferenceException(nameof(Backtester));
 
@@ -283,7 +283,7 @@ namespace NetTrade.Abstractions
             Backtester.OnBacktestStartEvent += Backtester_OnBacktestStartEvent;
             Backtester.OnBacktestPauseEvent += Backtester_OnBacktestPauseEvent;
 
-            await Backtester.StartAsync(this, BacktestSettings);
+            await Backtester.StartAsync(this, BacktestSettings, symbolsBacktestData);
         }
 
         protected virtual void Backtester_OnBacktestPauseEvent(object sender, IRobot robot)

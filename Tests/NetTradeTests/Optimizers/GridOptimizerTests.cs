@@ -44,7 +44,6 @@ namespace NetTrade.Optimizers.Tests
             { 
                 startTime,
                 endTime,
-                _optimizerSettings.SymbolsData
             }.ToArray();
             _optimizerSettings.TradeEngineType = typeof(BacktestTradeEngine);
             _optimizerSettings.TimerType = typeof(DefaultTimer);
@@ -53,10 +52,11 @@ namespace NetTrade.Optimizers.Tests
             _optimizerSettings.RobotType = typeof(SampleBot);
             _optimizerSettings.Parameters = new List<OptimizeParameter>()
             {
-                new OptimizeParameter("Periods", 20, 50, 10),
-                new OptimizeParameter("Deviation", 2, 3, 1),
+                new OptimizeParameter("Periods", 30, 50, 10),
+                new OptimizeParameter("Deviation", 2),
                 new OptimizeParameter("Range", 2000, 6000, 2000)
             };
+            _optimizerSettings.BacktesterInterval = TimeSpan.FromHours(1);
 
             _optimizer = new GridOptimizer(_optimizerSettings);
         }
@@ -70,9 +70,9 @@ namespace NetTrade.Optimizers.Tests
         [TestMethod()]
         public void GetRobotSettingsTest()
         {
-            var robotSettings = _optimizer.GetRobotSettings();
+            var robotParameters = _optimizer.GetRobotParameters();
 
-            Assert.IsNotNull(robotSettings);
+            Assert.IsNotNull(robotParameters);
         }
 
         [TestMethod()]

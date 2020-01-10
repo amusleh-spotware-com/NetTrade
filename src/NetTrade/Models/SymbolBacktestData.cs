@@ -19,5 +19,7 @@ namespace NetTrade.Models
         public ISymbol Symbol { get; }
 
         public IBar GetBar(DateTimeOffset time) => _data.FirstOrDefault(iBar => iBar.Time == time);
+
+        public object Clone() => new SymbolBacktestData(Symbol.Clone() as ISymbol, _data.ToList());
     }
 }

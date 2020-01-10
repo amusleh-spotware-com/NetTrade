@@ -22,5 +22,6 @@ namespace NetTrade.Models
         public IServer Server { get; set; } = new Server();
 
         public ITimer Timer { get; set; } = new DefaultTimer();
+        public IEnumerable<ISymbolBacktestData> SymbolsBacktestData { get; set; }
     }
 }

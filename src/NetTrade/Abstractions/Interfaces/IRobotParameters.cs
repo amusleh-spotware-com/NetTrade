@@ -20,5 +20,7 @@ namespace NetTrade.Abstractions.Interfaces
         IServer Server { get; set; }
 
         ITimer Timer { get; set; }
+
+        IEnumerable<ISymbolBacktestData> SymbolsBacktestData { get; set; }
     }
 }

@@ -34,20 +34,24 @@ namespace NetTrade.Abstractions
 
         public event OnOptimizationStoppedHandler OnOptimizationStoppedEvent;
 
-        public virtual IRobotParameters GetRobotSettings()
+        public virtual IRobotParameters GetRobotParameters()
         {
             var robotParameters = Activator.CreateInstance(Settings.RobotSettingsType, Settings.RobotSettingsParameters) as
                 IRobotParameters;
 
             robotParameters.Mode = Mode.Backtest;
 
-            robotParameters.Symbols = Settings.SymbolsData.Select(iSymbolData => iSymbolData.Symbol.Clone() as ISymbol).ToList();
+            robotParameters.SymbolsBacktestData = Settings.SymbolsData.Select(iSymbolData => iSymbolData.Clone() as ISymbolBacktestData).ToList();
+
+            robotParameters.Symbols = robotParameters.SymbolsBacktestData.Select(iSymbolData => iSymbolData.Symbol).ToList();
 
             robotParameters.BacktestSettings = Activator.CreateInstance(Settings.BacktestSettingsType,
                 Settings.BacktestSettingsParameters) as IBacktestSettings;
 
             robotParameters.Backtester = Activator.CreateInstance(Settings.BacktesterType, Settings.BacktesterParameters) as
                 IBacktester;
+
+            robotParameters.Backtester.Interval = Settings.BacktesterInterval;
 
             robotParameters.Server = Activator.CreateInstance(Settings.ServerType, Settings.ServerParameters) as IServer;
 
@@ -143,9 +147,9 @@ namespace NetTrade.Abstractions
 
                 foreach (var robot in _robots)
                 {
-                    var robotSettings = GetRobotSettings();
+                    var robotParameters = GetRobotParameters();
 
-                    robotsWithSettings.Add((robot, robotSettings));
+                    robotsWithSettings.Add((robot, robotParameters));
                 }
 
                 Parallel.ForEach(robotsWithSettings, parallelOptions, iRobotWithSettings =>

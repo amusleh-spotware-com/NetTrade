@@ -2,7 +2,7 @@
 
 namespace NetTrade.Abstractions.Interfaces
 {
-    public interface ISymbolBacktestData
+    public interface ISymbolBacktestData: ICloneable
     {
         ISymbol Symbol { get; }
 
