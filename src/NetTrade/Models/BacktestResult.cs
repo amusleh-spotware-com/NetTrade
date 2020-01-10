@@ -19,5 +19,7 @@ namespace NetTrade.Models
         public double NetProfit { get; set; }
 
         public double ProfitFactor { get; set; }
+
+        public double Commission { get; set; }
     }
 }

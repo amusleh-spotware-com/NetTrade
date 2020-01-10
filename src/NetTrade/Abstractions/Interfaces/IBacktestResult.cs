@@ -17,5 +17,7 @@
         double NetProfit { get; }
 
         double ProfitFactor { get; }
+
+        double Commission { get; }
     }
 }

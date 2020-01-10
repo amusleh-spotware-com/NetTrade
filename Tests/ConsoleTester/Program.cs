@@ -24,7 +24,7 @@ namespace ConsoleTester
         {
             var symbol = new OhlcSymbol(new TimeBasedBars(TimeSpan.FromDays(1)))
             {
-                Digits = 2,
+                Digits = 0,
                 TickSize = 0.1,
                 TickValue = 1,
                 VolumeStep = 1000,
@@ -32,8 +32,8 @@ namespace ConsoleTester
                 MinVolume = 1000,
                 VolumeUnitValue = 1,
                 Commission = 1,
-                Name = "EURUSD",
-                Slippage = 0.0001
+                Name = "AMZN",
+                Slippage = 0
             };
 
             var data = GetData("Data\\daily_AMZN.csv");
@@ -81,6 +81,7 @@ namespace ConsoleTester
             Console.WriteLine($"Max Balance Drawdown: {result.MaxBalanceDrawdown}");
             Console.WriteLine($"Max Equity Drawdown: {result.MaxEquityDrawdown}");
             Console.WriteLine($"Net Profit: {result.NetProfit}");
+            Console.WriteLine($"Commission: {result.Commission}");
 
             Console.ReadLine();
         }

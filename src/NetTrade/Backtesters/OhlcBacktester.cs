@@ -33,7 +33,7 @@ namespace NetTrade.Backtesters
 
             OnBacktestStartEvent?.Invoke(this, Robot);
 
-            return StartDataFeedAsync(settings);
+            return StartDataFeed(settings);
         }
 
         public IBacktestResult GetResult()
@@ -50,21 +50,21 @@ namespace NetTrade.Backtesters
                 WinningRate = trades.Count > 0 ? trades.Where(iTrade => iTrade.Order.NetProfit > 0).Count() / (double)trades.Count : 0,
             };
 
-            var grossProfit = trades.Where(iTrade => iTrade.Order.GrossProfit > 0)
-                .Select(iTrade => iTrade.Order.GrossProfit).Sum();
+            var grossProfit = trades.Where(iTrade => iTrade.Order.GrossProfit > 0).Sum(iTrade => iTrade.Order.GrossProfit);
 
-            var grossLoss = trades.Where(iTrade => iTrade.Order.GrossProfit < 0)
-                .Select(iTrade => iTrade.Order.GrossProfit).Sum();
+            var grossLoss = trades.Where(iTrade => iTrade.Order.GrossProfit < 0).Sum(iTrade => Math.Abs(iTrade.Order.GrossProfit));
 
             result.ProfitFactor = grossProfit / grossLoss;
 
             result.MaxEquityDrawdown = MaxDrawdownCalculator.GetMaxDrawdown(Robot.Account.EquityChanges);
             result.MaxBalanceDrawdown = MaxDrawdownCalculator.GetMaxDrawdown(Robot.Account.BalanceChanges);
 
+            result.Commission = trades.Sum(iTrade => iTrade.Order.Commission);
+
             return result;
         }
 
-        private async Task StartDataFeedAsync(IBacktestSettings settings)
+        private async Task StartDataFeed(IBacktestSettings settings)
         {
             for (var currentTime = settings.StartTime; currentTime <= settings.EndTime; currentTime = currentTime.Add(Interval))
             {

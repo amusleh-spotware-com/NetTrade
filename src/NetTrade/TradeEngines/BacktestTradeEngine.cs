@@ -259,7 +259,7 @@ namespace NetTrade.TradeEngines
 
             grossProfitInTicks *= Math.Pow(10, order.Symbol.Digits);
 
-            order.GrossProfit = grossProfitInTicks * order.Symbol.TickValue * order.Volume;
+            order.GrossProfit = grossProfitInTicks * order.Symbol.TickValue * order.Volume * order.Symbol.VolumeUnitValue;
 
             var netProfit = order.GrossProfit - (order.Commission * order.Volume);
 
