@@ -9,6 +9,7 @@ using System.Linq;
 
 namespace ConsoleTester.Robots
 {
+    [Robot(Name = "Single Symbol Ma Cross Over Bot", Group = "Sample")]
     public class SingleSymbolMaCrossOverBot : Robot
     {
         private ExpandableSeries<double> _fastMa, _slowMa;

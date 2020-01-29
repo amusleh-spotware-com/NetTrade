@@ -15,6 +15,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Reflection;
+using NetTrade.Attributes;
 
 namespace ConsoleTester
 {
@@ -24,6 +26,12 @@ namespace ConsoleTester
 
         private static void Main(string[] args)
         {
+            var robotType = typeof(SingleSymbolMaCrossOverBot);
+
+            var robotAttribute = robotType.GetCustomAttribute<RobotAttribute>();
+
+            Console.WriteLine($"Testing {robotAttribute.Name}");
+
             Console.WriteLine("Please provide the symbol name (MSFT or AMZN)");
 
             var symbolName = Console.ReadLine().ToUpperInvariant();
