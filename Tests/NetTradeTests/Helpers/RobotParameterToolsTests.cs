@@ -9,14 +9,14 @@ using System.Linq;
 namespace NetTrade.Helpers.Tests
 {
     [TestClass()]
-    public class RobotParameterExtractorTests
+    public class RobotParameterToolsTests
     {
         [TestMethod()]
         public void GetParametersTest()
         {
             var sampleBot = new SampleBot();
 
-            var robotParameters = RobotParameterExtractor.GetParameters(sampleBot);
+            var robotParameters = RobotParameterTools.GetParameters(sampleBot);
 
             Assert.AreEqual(3, robotParameters.Count());
         }

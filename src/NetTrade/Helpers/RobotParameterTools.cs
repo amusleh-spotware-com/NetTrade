@@ -7,7 +7,7 @@ using NetTrade.Enums;
 
 namespace NetTrade.Helpers
 {
-    public static class RobotParameterExtractor
+    public static class RobotParameterTools
     {
         public static IEnumerable<ParameterAttribute> GetParameters(Robot robot)
         {
@@ -25,6 +25,7 @@ namespace NetTrade.Helpers
                 var parameterAttribute = property.GetCustomAttribute<ParameterAttribute>();
 
                 parameterAttribute.Type = GetParameterType(property);
+                parameterAttribute.Property = property;
 
                 parameters.Add(parameterAttribute);
             }
