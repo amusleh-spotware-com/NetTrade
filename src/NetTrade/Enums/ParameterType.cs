@@ -5,6 +5,8 @@
         Int,
         Long,
         Double,
+        Boolean,
+        Enum,
         Other
     }
 }

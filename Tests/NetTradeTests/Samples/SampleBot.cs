@@ -1,5 +1,6 @@
 ﻿using NetTrade.Abstractions;
 using NetTrade.Attributes;
+using NetTrade.Enums;
 
 namespace NetTradeTests.Samples
 {

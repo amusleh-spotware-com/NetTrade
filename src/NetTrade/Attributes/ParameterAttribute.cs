@@ -1,4 +1,5 @@
 ﻿using System;
+using NetTrade.Enums;
 
 namespace NetTrade.Attributes
 {
@@ -10,7 +11,9 @@ namespace NetTrade.Attributes
             Name = name;
         }
 
-        public string Name { get; set; }
+        public string Name { get;}
+
+        public ParameterType Type { get; internal set; }
 
         public object DefaultValue { get; set; }
 
