@@ -2,6 +2,7 @@
 using CsvHelper;
 using NetTrade.Abstractions.Interfaces;
 using NetTrade.Accounts;
+using NetTrade.Attributes;
 using NetTrade.Backtesters;
 using NetTrade.BarTypes;
 using NetTrade.Enums;
@@ -14,9 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Reflection;
-using NetTrade.Attributes;
 
 namespace ConsoleTester
 {

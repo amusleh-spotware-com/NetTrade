@@ -15,8 +15,6 @@ namespace NetTrade.Abstractions.Interfaces
 
         bool Optimize { get; }
 
-        object DefaultValue { get; }
-
         IReadOnlyList<object> Values { get; }
 
         ParameterType Type { get; }

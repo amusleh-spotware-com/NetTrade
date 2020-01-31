@@ -1,9 +1,10 @@
 ﻿using NetTrade.Abstractions;
 using NetTrade.Attributes;
+using NetTrade.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using NetTrade.Enums;
 
 namespace NetTrade.Helpers
 {
@@ -50,6 +51,14 @@ namespace NetTrade.Helpers
             else if (property.PropertyType == typeof(bool))
             {
                 return ParameterType.Boolean;
+            }
+            else if (property.PropertyType == typeof(TimeSpan))
+            {
+                return ParameterType.Time;
+            }
+            else if (property.PropertyType == typeof(DateTimeOffset))
+            {
+                return ParameterType.DateTime;
             }
             else if (property.PropertyType.IsEnum)
             {

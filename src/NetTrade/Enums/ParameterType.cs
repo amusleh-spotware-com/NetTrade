@@ -5,8 +5,11 @@
         Int,
         Long,
         Double,
+        Time,
+        DateTime,
         Boolean,
         Enum,
+        String,
         Other
     }
 }

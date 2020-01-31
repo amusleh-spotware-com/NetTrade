@@ -3,6 +3,7 @@ using NetTrade.Enums;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 namespace NetTrade.Helpers
 {
@@ -16,12 +17,13 @@ namespace NetTrade.Helpers
                 case ParameterType.Long:
                 case ParameterType.Double:
                     return GetNumericParameterAllValues(parameter);
-
-                case ParameterType.Other:
-                    return new List<object> { parameter.DefaultValue };
+                case ParameterType.DateTime:
+                    return GetDateTimeParameterAllValues(parameter);
+                case ParameterType.Time:
+                    return GetTimeParameterAllValues(parameter);
 
                 default:
-                    throw new ArgumentException($"The parameter type ({parameter.Type}) is not supported by this method");
+                    return parameter.Values.ToList();
             }
         }
 
@@ -33,12 +35,13 @@ namespace NetTrade.Helpers
                 case ParameterType.Long:
                 case ParameterType.Double:
                     return GetNumericParameterRange(parameter);
-
-                case ParameterType.Other:
-                    return 1;
+                case ParameterType.DateTime:
+                    return GetDateTimeParameterRange(parameter);
+                case ParameterType.Time:
+                    return GetTimeParameterRange(parameter);
 
                 default:
-                    throw new ArgumentException($"The parameter type ({parameter.Type}) is not supported by this method");
+                    return parameter.Values.Count;
             }
         }
 
@@ -79,6 +82,40 @@ namespace NetTrade.Helpers
             return result;
         }
 
+        private static List<object> GetDateTimeParameterAllValues(IOptimizeParameter parameter)
+        {
+            var result = new List<object>();
+
+            var step = (TimeSpan)parameter.Step;
+
+            var maxValue = (DateTimeOffset)parameter.MaxValue;
+            var minValue = (DateTimeOffset)parameter.MinValue;
+
+            for (var iValue = minValue; iValue <= maxValue; iValue = iValue.Add(step))
+            {
+                result.Add(iValue);
+            }
+
+            return result;
+        }
+
+        private static List<object> GetTimeParameterAllValues(IOptimizeParameter parameter)
+        {
+            var result = new List<object>();
+
+            var step = (TimeSpan)parameter.Step;
+
+            var maxValue = (TimeSpan)parameter.MaxValue;
+            var minValue = (TimeSpan)parameter.MinValue;
+
+            for (var iValue = minValue; iValue <= maxValue; iValue = iValue.Add(step))
+            {
+                result.Add(iValue);
+            }
+
+            return result;
+        }
+
         private static long GetNumericParameterRange(IOptimizeParameter parameter)
         {
             var step = Convert.ToDouble(parameter.Step);
@@ -94,5 +131,38 @@ namespace NetTrade.Helpers
 
             return result;
         }
+
+        private static long GetDateTimeParameterRange(IOptimizeParameter parameter)
+        {
+            var step = (TimeSpan)parameter.Step;
+            var maxValue = (DateTimeOffset)parameter.MaxValue;
+            var minValue = (DateTimeOffset)parameter.MinValue;
+
+            long result = 0;
+
+            for (var iValue = minValue; iValue <= maxValue; iValue = iValue.Add(step))
+            {
+                result++;
+            }
+
+            return result;
+        }
+
+        private static long GetTimeParameterRange(IOptimizeParameter parameter)
+        {
+            var step = (TimeSpan)parameter.Step;
+            var maxValue = (TimeSpan)parameter.MaxValue;
+            var minValue = (TimeSpan)parameter.MinValue;
+
+            long result = 0;
+
+            for (var iValue = minValue; iValue <= maxValue; iValue = iValue.Add(step))
+            {
+                result++;
+            }
+
+            return result;
+        }
+
     }
 }
