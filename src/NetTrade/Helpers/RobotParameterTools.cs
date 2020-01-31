@@ -3,6 +3,7 @@ using NetTrade.Attributes;
 using NetTrade.Enums;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
@@ -34,6 +35,49 @@ namespace NetTrade.Helpers
             return parameters;
         }
 
+        public static void SetParameterValuesToDefault(Robot robot)
+        {
+            var robotParameters = GetParameters(robot);
+
+            if (!robotParameters.Any())
+            {
+                return;
+            }
+
+            foreach (var robotParamter in robotParameters)
+            {
+                if (!robotParamter.Property.CanWrite || robotParamter.DefaultValue == null)
+                {
+                    continue;
+                }
+
+                object defaultValue = null;
+
+                switch (robotParamter.Type)
+                {
+                    case ParameterType.DateTime:
+                        defaultValue = DateTimeOffset.ParseExact(robotParamter.DefaultValue.ToString(), "o", CultureInfo.InvariantCulture);
+                        break;
+
+                    case ParameterType.Time:
+                        defaultValue = TimeSpan.Parse(robotParamter.DefaultValue.ToString(), CultureInfo.InvariantCulture);
+                        break;
+
+                    case ParameterType.Boolean:
+                    case ParameterType.Double:
+                    case ParameterType.Int:
+                    case ParameterType.Long:
+                    case ParameterType.Enum:
+                    case ParameterType.String:
+                    case ParameterType.Other:
+                        defaultValue = robotParamter.DefaultValue;
+                        break;
+                }
+
+                robotParamter.Property.SetValue(robot, defaultValue);
+            }
+        }
+
         private static ParameterType GetParameterType(PropertyInfo property)
         {
             if (property.PropertyType == typeof(int))
@@ -59,6 +103,10 @@ namespace NetTrade.Helpers
             else if (property.PropertyType == typeof(DateTimeOffset))
             {
                 return ParameterType.DateTime;
+            }
+            else if (property.PropertyType == typeof(string))
+            {
+                return ParameterType.String;
             }
             else if (property.PropertyType.IsEnum)
             {

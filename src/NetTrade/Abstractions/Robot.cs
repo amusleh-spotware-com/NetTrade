@@ -1,12 +1,10 @@
 ﻿using NetTrade.Abstractions.Interfaces;
-using NetTrade.Attributes;
 using NetTrade.Enums;
+using NetTrade.Exceptions;
+using NetTrade.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Timers;
-using NetTrade.Exceptions;
 
 namespace NetTrade.Abstractions
 {
@@ -16,7 +14,7 @@ namespace NetTrade.Abstractions
 
         public Robot()
         {
-            SetParameterValuesToDefault();
+            RobotParameterTools.SetParameterValuesToDefault(this);
         }
 
         public ITradeEngine Trade { get; private set; }
@@ -308,7 +306,7 @@ namespace NetTrade.Abstractions
             Stop();
         }
 
-        #endregion
+        #endregion Account event handlers
 
         #region Other methods
 
@@ -321,32 +319,6 @@ namespace NetTrade.Abstractions
             if (Timer.Enabled)
             {
                 _systemTimer.Start();
-            }
-        }
-
-        private void SetParameterValuesToDefault()
-        {
-            var robotParameters = this.GetType().GetProperties()
-                .Where(iProperty => iProperty.GetCustomAttributes(true).Any()).ToList();
-
-            if (!robotParameters.Any())
-            {
-                return;
-            }
-
-            foreach (var robotParamter in robotParameters)
-            {
-                if (!robotParamter.CanWrite)
-                {
-                    continue;
-                }
-
-                var parameterAttribute = robotParamter.GetCustomAttribute<ParameterAttribute>();
-
-                if (parameterAttribute.DefaultValue != null)
-                {
-                    robotParamter.SetValue(this, parameterAttribute.DefaultValue);
-                }
             }
         }
 
