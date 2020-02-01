@@ -21,7 +21,7 @@ namespace ConsoleTester
 {
     internal class Program
     {
-        private static object _optimizerLock = new object();
+        private readonly static object _optimizerLock = new object();
 
         private static void Main(string[] args)
         {
@@ -71,7 +71,7 @@ namespace ConsoleTester
 
         #region Backtest methods
 
-        private static void Backtest(ISymbol symbol, IEnumerable<IBar> data)
+        private async static void Backtest(ISymbol symbol, IEnumerable<IBar> data)
         {
             var startTime = data.Min(iBar => iBar.Time);
             var endTime = data.Max(iBar => iBar.Time);
@@ -97,7 +97,7 @@ namespace ConsoleTester
 
             var robot = new SingleSymbolMaCrossOverBot();
 
-            robot.Start(robotParmeters);
+            await robot.StartAsync(robotParmeters);
         }
 
         private static void Backtester_OnBacktestProgressChangedEvent(object sender, DateTimeOffset time)
@@ -205,12 +205,10 @@ namespace ConsoleTester
 
         private static IEnumerable<Bar> GetData(string fileName)
         {
-            using (var reader = new StreamReader(fileName))
-            using (var csv = new CsvReader(reader))
-            {
-                csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower();
-                return csv.GetRecords<Bar>().ToList();
-            }
+            using var reader = new StreamReader(fileName);
+            using var csv = new CsvReader(reader);
+            csv.Configuration.PrepareHeaderForMatch = (string header, int index) => header.ToLower();
+            return csv.GetRecords<Bar>().ToList();
         }
     }
 }

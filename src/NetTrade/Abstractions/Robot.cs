@@ -5,6 +5,7 @@ using NetTrade.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Timers;
+using System.Threading.Tasks;
 
 namespace NetTrade.Abstractions
 {
@@ -35,7 +36,7 @@ namespace NetTrade.Abstractions
 
         public ITimer Timer { get; private set; }
 
-        public void Start(IRobotParameters parameters)
+        public async Task StartAsync(IRobotParameters parameters)
         {
             if (RunningMode == RunningMode.Running || RunningMode == RunningMode.Paused)
             {
@@ -78,7 +79,7 @@ namespace NetTrade.Abstractions
 
             if (Mode == Mode.Backtest)
             {
-                Backtest(parameters.SymbolsBacktestData);
+                await Backtest(parameters.SymbolsBacktestData).ConfigureAwait(false);
             }
             else
             {
@@ -273,7 +274,7 @@ namespace NetTrade.Abstractions
 
         #region Backtest methods and event handlers
 
-        private async void Backtest(IEnumerable<ISymbolBacktestData> symbolsBacktestData)
+        private Task Backtest(IEnumerable<ISymbolBacktestData> symbolsBacktestData)
         {
             _ = Backtester ?? throw new NullReferenceException(nameof(Backtester));
 
@@ -281,7 +282,7 @@ namespace NetTrade.Abstractions
             Backtester.OnBacktestStartEvent += Backtester_OnBacktestStartEvent;
             Backtester.OnBacktestPauseEvent += Backtester_OnBacktestPauseEvent;
 
-            await Backtester.StartAsync(this, BacktestSettings, symbolsBacktestData);
+            return Backtester.StartAsync(this, BacktestSettings, symbolsBacktestData);
         }
 
         protected virtual void Backtester_OnBacktestPauseEvent(object sender, IRobot robot)

@@ -10,6 +10,7 @@ using NetTrade.TradeEngines;
 using System;
 using System.Collections.Generic;
 using NetTrade.Symbols;
+using System.Threading.Tasks;
 
 namespace NetTrade.Backtesters.Tests
 {
@@ -71,9 +72,9 @@ namespace NetTrade.Backtesters.Tests
         }
 
         [TestMethod()]
-        public void StartTest()
+        public async Task StartTest()
         {
-            _robotMock.Object.Start(_robotParametersMock.Object);
+            await _robotMock.Object.StartAsync(_robotParametersMock.Object);
         }
 
         private List<IBar> GetData(double startPrice, DateTimeOffset startTime, DateTimeOffset endTime)

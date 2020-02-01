@@ -1,6 +1,7 @@
 ﻿using NetTrade.Enums;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace NetTrade.Abstractions.Interfaces
 {
@@ -24,7 +25,7 @@ namespace NetTrade.Abstractions.Interfaces
 
         ITimer Timer { get; }
 
-        void Start(IRobotParameters settings);
+        Task StartAsync(IRobotParameters settings);
 
         void Stop();
 

@@ -9,6 +9,7 @@ using NetTrade.Enums;
 using NetTrade.Models;
 using NetTrade.Timers;
 using NetTrade.Symbols;
+using System.Threading.Tasks;
 
 namespace NetTrade.Abstractions.Tests
 {
@@ -38,24 +39,24 @@ namespace NetTrade.Abstractions.Tests
         }
 
         [TestMethod()]
-        public void StartTest()
+        public async Task StartTest()
         {
             if (_robotMock.Object.RunningMode == RunningMode.Running)
             {
                 _robotMock.Object.Stop();
             }
 
-            _robotMock.Object.Start(_robotSettingsMock.Object);
+            await _robotMock.Object.StartAsync(_robotSettingsMock.Object);
 
             Assert.AreEqual(_robotMock.Object.RunningMode, RunningMode.Running);
         }
 
         [TestMethod()]
-        public void StopTest()
+        public async Task StopTest()
         {
             if (_robotMock.Object.RunningMode != RunningMode.Running)
             {
-                _robotMock.Object.Start(_robotSettingsMock.Object);
+                await _robotMock.Object.StartAsync(_robotSettingsMock.Object);
             }
 
             _robotMock.Object.Stop();
@@ -64,11 +65,11 @@ namespace NetTrade.Abstractions.Tests
         }
 
         [TestMethod()]
-        public void PauseTest()
+        public async Task PauseTest()
         {
             if (_robotMock.Object.RunningMode != RunningMode.Running)
             {
-                _robotMock.Object.Start(_robotSettingsMock.Object);
+                await _robotMock.Object.StartAsync(_robotSettingsMock.Object);
             }
 
             _robotMock.Object.Pause();
@@ -77,11 +78,11 @@ namespace NetTrade.Abstractions.Tests
         }
 
         [TestMethod()]
-        public void ResumeTest()
+        public async Task ResumeTest()
         {
             if (_robotMock.Object.RunningMode == RunningMode.Stopped)
             {
-                _robotMock.Object.Start(_robotSettingsMock.Object);
+                await _robotMock.Object.StartAsync(_robotSettingsMock.Object);
             }
 
             if (_robotMock.Object.RunningMode == RunningMode.Running)
@@ -95,7 +96,7 @@ namespace NetTrade.Abstractions.Tests
         }
 
         [TestMethod()]
-        public void SetTimeByBacktesterTest()
+        public async Task SetTimeByBacktesterTest()
         {
             if (_robotMock.Object.RunningMode == RunningMode.Running)
             {
@@ -104,7 +105,7 @@ namespace NetTrade.Abstractions.Tests
 
             if (_robotMock.Object.RunningMode == RunningMode.Stopped)
             {
-                _robotMock.Object.Start(_robotSettingsMock.Object);
+                await _robotMock.Object.StartAsync(_robotSettingsMock.Object);
             }
 
             _robotMock.Object.Stop();
@@ -121,24 +122,24 @@ namespace NetTrade.Abstractions.Tests
         }
 
         [TestMethod()]
-        public void OnStartTest()
+        public async Task OnStartTest()
         {
             if (_robotMock.Object.RunningMode == RunningMode.Running)
             {
                 _robotMock.Object.Stop();
             }
 
-            _robotMock.Object.Start(_robotSettingsMock.Object);
+            await _robotMock.Object.StartAsync(_robotSettingsMock.Object);
 
             _robotMock.Verify(robot => robot.OnStart(), Times.Once);
         }
 
         [TestMethod()]
-        public void OnPauseTest()
+        public async Task OnPauseTest()
         {
             if (_robotMock.Object.RunningMode != RunningMode.Running)
             {
-                _robotMock.Object.Start(_robotSettingsMock.Object);
+                await _robotMock.Object.StartAsync(_robotSettingsMock.Object);
             }
 
             _robotMock.Object.Pause();
@@ -147,11 +148,11 @@ namespace NetTrade.Abstractions.Tests
         }
 
         [TestMethod()]
-        public void OnResumeTest()
+        public async Task OnResumeTest()
         {
             if (_robotMock.Object.RunningMode == RunningMode.Stopped)
             {
-                _robotMock.Object.Start(_robotSettingsMock.Object);
+                await _robotMock.Object.StartAsync(_robotSettingsMock.Object);
             }
 
             if (_robotMock.Object.RunningMode == RunningMode.Running)
@@ -165,11 +166,11 @@ namespace NetTrade.Abstractions.Tests
         }
 
         [TestMethod()]
-        public void OnStopTest()
+        public async Task OnStopTest()
         {
             if (_robotMock.Object.RunningMode != RunningMode.Running)
             {
-                _robotMock.Object.Start(_robotSettingsMock.Object);
+                await _robotMock.Object.StartAsync(_robotSettingsMock.Object);
             }
 
             _robotMock.Object.Stop();
