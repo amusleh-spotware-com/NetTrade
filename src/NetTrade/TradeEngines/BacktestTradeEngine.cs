@@ -104,7 +104,7 @@ namespace NetTrade.TradeEngines
 
             _trades.Add(trade);
 
-            var tradingEvent = new TradingEvent(TradingEventType.MarketOrderClosed, order, string.Empty);
+            var tradingEvent = new TradingEvent(Server.CurrentTime, TradingEventType.MarketOrderClosed, order, string.Empty);
 
             _journal.Add(tradingEvent);
 
@@ -120,7 +120,7 @@ namespace NetTrade.TradeEngines
                 _orders.Remove(order);
             }
 
-            var tradingEvent = new TradingEvent(TradingEventType.PendingOrderCanceled, order, string.Empty);
+            var tradingEvent = new TradingEvent(Server.CurrentTime, TradingEventType.PendingOrderCanceled, order, string.Empty);
 
             _journal.Add(tradingEvent);
         }
@@ -132,7 +132,7 @@ namespace NetTrade.TradeEngines
             switch (order.OrderType)
             {
                 case OrderType.Market:
-                    var tradingEvent = new TradingEvent(TradingEventType.MarketOrderExecuted, order, string.Empty);
+                    var tradingEvent = new TradingEvent(Server.CurrentTime, TradingEventType.MarketOrderExecuted, order, string.Empty);
 
                     _journal.Add(tradingEvent);
 
@@ -140,7 +140,7 @@ namespace NetTrade.TradeEngines
 
                 case OrderType.Limit:
                 case OrderType.Stop:
-                    tradingEvent = new TradingEvent(TradingEventType.PendingOrderPlaced, order, string.Empty);
+                    tradingEvent = new TradingEvent(Server.CurrentTime, TradingEventType.PendingOrderPlaced, order, string.Empty);
 
                     _journal.Add(tradingEvent);
 
@@ -164,7 +164,7 @@ namespace NetTrade.TradeEngines
                 Comment = order.Comment,
             };
 
-            var tradingEvent = new TradingEvent(TradingEventType.PendingOrderFilled, order, string.Empty);
+            var tradingEvent = new TradingEvent(Server.CurrentTime, TradingEventType.PendingOrderFilled, order, string.Empty);
 
             _journal.Add(tradingEvent);
 

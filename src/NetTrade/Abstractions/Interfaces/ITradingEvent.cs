@@ -1,4 +1,5 @@
 ﻿using NetTrade.Enums;
+using System;
 
 namespace NetTrade.Abstractions.Interfaces
 {
@@ -9,5 +10,7 @@ namespace NetTrade.Abstractions.Interfaces
         IOrder Order { get; }
 
         string Description { get; }
+
+        DateTimeOffset Time { get; }
     }
 }

@@ -1,11 +1,12 @@
 ﻿using NetTrade.Abstractions.Interfaces;
 using NetTrade.Enums;
+using System;
 
 namespace NetTrade.Models
 {
     public class TradingEvent : ITradingEvent
     {
-        public TradingEvent(TradingEventType type, IOrder order, string description)
+        public TradingEvent(DateTimeOffset time, TradingEventType type, IOrder order, string description)
         {
             Type = type;
 
@@ -19,5 +20,7 @@ namespace NetTrade.Models
         public IOrder Order { get; }
 
         public string Description { get; }
+
+        public DateTimeOffset Time { get; }
     }
 }
