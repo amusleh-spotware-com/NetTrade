@@ -8,6 +8,8 @@ namespace NetTrade.Models
     {
         public TradingEvent(DateTimeOffset time, TradingEventType type, IOrder order, string description)
         {
+            Time = time;
+
             Type = type;
 
             Order = order;
