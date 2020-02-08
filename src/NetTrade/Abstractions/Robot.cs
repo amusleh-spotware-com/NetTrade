@@ -93,6 +93,11 @@ namespace NetTrade.Abstractions
 
         public void Stop()
         {
+            if (Mode == Mode.Backtest)
+            {
+                Trade.CloseAllMarketOrders();
+            }
+
             if (RunningMode == RunningMode.Stopped)
             {
                 return;

@@ -319,5 +319,31 @@ namespace NetTrade.TradeEngines
 
             return result;
         }
+
+        public void CloseAllMarketOrders()
+        {
+            foreach (var order in Orders)
+            {
+                if (order.OrderType != OrderType.Market)
+                {
+                    continue;
+                }
+
+                CloseMarketOrder(order as MarketOrder);
+            }
+        }
+
+        public void CloseAllMarketOrders(TradeType tradeType)
+        {
+            foreach (var order in Orders)
+            {
+                if (order.OrderType != OrderType.Market || order.TradeType != tradeType)
+                {
+                    continue;
+                }
+
+                CloseMarketOrder(order as MarketOrder);
+            }
+        }
     }
 }

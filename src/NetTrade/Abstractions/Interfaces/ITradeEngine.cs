@@ -1,5 +1,6 @@
 ﻿using NetTrade.Models;
 using System.Collections.Generic;
+using NetTrade.Enums;
 
 namespace NetTrade.Abstractions.Interfaces
 {
@@ -20,6 +21,10 @@ namespace NetTrade.Abstractions.Interfaces
         void UpdateSymbolOrders(ISymbol symbol);
 
         void CloseMarketOrder(MarketOrder order);
+
+        void CloseAllMarketOrders();
+
+        void CloseAllMarketOrders(TradeType tradeType);
 
         void CancelPendingOrder(PendingOrder order);
     }
