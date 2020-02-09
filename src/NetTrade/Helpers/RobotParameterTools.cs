@@ -11,9 +11,9 @@ namespace NetTrade.Helpers
 {
     public static class RobotParameterTools
     {
-        public static IEnumerable<ParameterAttribute> GetParameters(Robot robot)
+        public static IEnumerable<ParameterAttribute> GetParameters(Type robotType)
         {
-            var properties = robot.GetType().GetProperties().Where(iProperty => iProperty.GetCustomAttributes(true).Any());
+            var properties = robotType.GetProperties().Where(iProperty => iProperty.GetCustomAttributes(true).Any());
 
             var parameters = new List<ParameterAttribute>();
 
@@ -37,7 +37,7 @@ namespace NetTrade.Helpers
 
         public static void SetParameterValuesToDefault(Robot robot)
         {
-            var robotParameters = GetParameters(robot);
+            var robotParameters = GetParameters(robot.GetType());
 
             if (!robotParameters.Any())
             {
