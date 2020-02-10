@@ -48,8 +48,6 @@ namespace NetTrade.Models
         {
             Name = name;
 
-            Optimize = false;
-
             Values = values.ToList();
 
             Type = ParameterType.Other;
@@ -62,8 +60,6 @@ namespace NetTrade.Models
         public object MaxValue { get; private set; }
 
         public object Step { get; private set; }
-
-        public bool Optimize { get; }
 
         public IReadOnlyList<object> Values { get; private set; }
 

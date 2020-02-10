@@ -13,8 +13,6 @@ namespace NetTrade.Abstractions.Interfaces
 
         object Step { get; }
 
-        bool Optimize { get; }
-
         IReadOnlyList<object> Values { get; }
 
         ParameterType Type { get; }
