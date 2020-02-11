@@ -16,7 +16,7 @@ namespace NetTrade.Helpers.Tests
         {
             var sampleBot = new SampleBot();
 
-            var robotParameters = RobotParameterTools.GetParameters(sampleBot);
+            var robotParameters = RobotParameterTools.GetParameters(sampleBot.GetType());
 
             Assert.AreEqual(3, robotParameters.Count());
         }
