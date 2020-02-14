@@ -7,5 +7,7 @@ namespace NetTrade.Abstractions.Interfaces
         ISymbol Symbol { get; }
 
         IBar GetBar(DateTimeOffset time);
+
+        IBar GetNearestBar(DateTimeOffset time);
     }
 }
