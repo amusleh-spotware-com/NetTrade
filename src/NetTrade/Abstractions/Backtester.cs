@@ -74,7 +74,7 @@ namespace NetTrade.Abstractions
 
             if (Robot.Account.CurrentBalance > 0)
             {
-                var returns = Robot.Account.BalanceChanges.Select(iChange => iChange.Amount / Robot.Account.CurrentBalance * 100).ToList();
+                var returns = Robot.Account.BalanceChanges.Skip(1).Select(iChange => iChange.Amount / iChange.PreviousValue * 100).ToList();
 
                 var data = SymbolsData.Select(iSymbol => iSymbol.Data.Select(iBar => iBar.Close)).ToList();
 
@@ -91,9 +91,9 @@ namespace NetTrade.Abstractions
 
                 var dailyRiskFreeReturn = annualRiskFreeReturn / 365;
 
-                var totalRiskFreeReturn = dailyRiskFreeReturn * (Settings.StartTime - Settings.EndTime).TotalDays;
+                var totalRiskFreeReturn = dailyRiskFreeReturn * (Settings.EndTime - Settings.StartTime).TotalDays;
 
-                result.SharpeRatio = ((result.NetProfit / Robot.Account.CurrentBalance * 100) - totalRiskFreeReturn) / standardDeviation;
+                result.SharpeRatio = (returns.Sum() - totalRiskFreeReturn) / standardDeviation;
             }
 
             var winningTrades = tradeEngine.Trades.Where(iTrade => iTrade.Order.NetProfit > 0);
