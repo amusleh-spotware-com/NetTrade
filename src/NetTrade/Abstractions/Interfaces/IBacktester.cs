@@ -11,6 +11,10 @@ namespace NetTrade.Abstractions.Interfaces
 
         TimeSpan Interval { get; set; }
 
+        IBacktestSettings Settings { get; }
+
+        IEnumerable<ISymbolBacktestData> SymbolsData { get; }
+
         event OnBacktestStartHandler OnBacktestStartEvent;
 
         event OnBacktestPauseHandler OnBacktestPauseEvent;
@@ -21,6 +25,6 @@ namespace NetTrade.Abstractions.Interfaces
 
         Task StartAsync(IRobot robot, IBacktestSettings settings, IEnumerable<ISymbolBacktestData> symbolsBacktestData);
 
-        IBacktestResult GetResult();
+        IBacktestResult GetResult(double riskFreeReturnPercentage);
     }
 }

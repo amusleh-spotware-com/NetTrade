@@ -21,5 +21,15 @@ namespace NetTrade.Models
         public double ProfitFactor { get; set; }
 
         public double Commission { get; set; }
+
+        public double SharpeRatio { get; set; }
+
+        public double AverageProfit { get; set; }
+
+        public double AverageLoss { get; set; }
+
+        public double AverageReturn { get; set; }
+
+        public double VsBuyHoldRatio { get; set; }
     }
 }

@@ -7,18 +7,18 @@ namespace NetTrade.Models
 {
     public class SymbolBacktestData : ISymbolBacktestData
     {
-        private readonly IEnumerable<IBar> _data;
-
         public SymbolBacktestData(ISymbol symbol, IEnumerable<IBar> data)
         {
             Symbol = symbol;
 
-            _data = data.OrderBy(iBar => iBar.Time).ToList();
+            Data = data.OrderBy(iBar => iBar.Time).ToList();
         }
 
         public ISymbol Symbol { get; }
 
-        public IBar GetBar(DateTimeOffset time) => _data.FirstOrDefault(iBar => iBar.Time == time);
+        public IEnumerable<IBar> Data { get; }
+
+        public IBar GetBar(DateTimeOffset time) => Data.FirstOrDefault(iBar => iBar.Time == time);
 
         public IBar GetNearestBar(DateTimeOffset time)
         {
@@ -26,7 +26,7 @@ namespace NetTrade.Models
 
             IBar result = null;
 
-            foreach (var bar in _data)
+            foreach (var bar in Data)
             {
                 var distance = Math.Abs((bar.Time - time).TotalHours);
 
@@ -46,6 +46,6 @@ namespace NetTrade.Models
             return result;
         }
 
-        public object Clone() => new SymbolBacktestData(Symbol.Clone() as ISymbol, _data.ToList());
+        public object Clone() => new SymbolBacktestData(Symbol.Clone() as ISymbol, Data.ToList());
     }
 }

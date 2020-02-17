@@ -13,7 +13,7 @@ namespace NetTrade.Abstractions
         }
 
         private ConcurrentDictionary<int, T> Storage { get; }
-        public T this[int index] => Storage[index];
+        public T this[int index] => Storage.ContainsKey(index) ? Storage[index] : default;
 
         public int Count => Storage.Count;
 

@@ -19,5 +19,15 @@
         double ProfitFactor { get; }
 
         double Commission { get; }
+
+        double SharpeRatio { get; }
+
+        double AverageProfit { get; }
+
+        double AverageLoss { get; }
+
+        double AverageReturn { get; }
+
+        double VsBuyHoldRatio { get; }
     }
 }
