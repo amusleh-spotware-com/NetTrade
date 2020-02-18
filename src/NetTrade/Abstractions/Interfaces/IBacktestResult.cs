@@ -22,6 +22,8 @@
 
         double SharpeRatio { get; }
 
+        double SortinoRatio { get; }
+
         double AverageProfit { get; }
 
         double AverageLoss { get; }

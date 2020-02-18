@@ -40,14 +40,14 @@ namespace NetTrade.Abstractions
 
             InvokeOnBacktestStartEvent();
 
-             Settings = settings;
+            Settings = settings;
 
             SymbolsData = symbolsBacktestData;
 
             return StartDataFeed();
         }
 
-        public virtual IBacktestResult GetResult(double annualRiskFreeReturn)
+        public virtual IBacktestResult GetResult()
         {
             var tradeEngine = Robot.Trade;
             var trades = tradeEngine.Trades.ToList();
@@ -58,14 +58,14 @@ namespace NetTrade.Abstractions
                 LongTradesNumber = trades.Where(iTrade => iTrade.Order.TradeType == TradeType.Buy).Count(),
                 ShortTradesNumber = trades.Where(iTrade => iTrade.Order.TradeType == TradeType.Sell).Count(),
                 NetProfit = trades.Select(iTrade => iTrade.Order.NetProfit).Sum(),
-                WinningRate = trades.Count > 0 ? trades.Where(iTrade => iTrade.Order.NetProfit > 0).Count() / (double)trades.Count : 0,
+                WinningRate = trades.Count > 0 ? trades.Where(iTrade => iTrade.Order.NetProfit > 0).Count() / (double)trades.Count * 100 : 0,
             };
 
             var grossProfit = trades.Where(iTrade => iTrade.Order.GrossProfit > 0).Sum(iTrade => iTrade.Order.GrossProfit);
 
             var grossLoss = trades.Where(iTrade => iTrade.Order.GrossProfit < 0).Sum(iTrade => Math.Abs(iTrade.Order.GrossProfit));
 
-            result.ProfitFactor = grossProfit / grossLoss;
+            result.ProfitFactor = grossLoss > 0 ? grossProfit / grossLoss : grossProfit;
 
             result.MaxEquityDrawdown = MaxDrawdownCalculator.GetMaxDrawdown(Robot.Account.EquityChanges);
             result.MaxBalanceDrawdown = MaxDrawdownCalculator.GetMaxDrawdown(Robot.Account.BalanceChanges);
@@ -74,26 +74,27 @@ namespace NetTrade.Abstractions
 
             if (Robot.Account.CurrentBalance > 0)
             {
-                var returns = Robot.Account.BalanceChanges.Skip(1).Select(iChange => iChange.Amount / iChange.PreviousValue * 100).ToList();
-
                 var data = SymbolsData.Select(iSymbol => iSymbol.Data.Select(iBar => iBar.Close)).ToList();
 
                 var dataReturns = data.Select(iSymbol => iSymbol.Skip(1)
-                    .Zip(iSymbol, (current, previous) => previous == 0 ? 0 : Math.Round((current - previous) / previous * 100, 2))
+                    .Zip(iSymbol, (current, previous) => previous == 0 ? 0 : Math.Round((current - previous) / previous, 2))
                     .Sum())
                     .Sum();
 
-                result.VsBuyHoldRatio = returns.Sum() / dataReturns;
+                var returns = Robot.Account.BalanceChanges.Skip(1).Select(iChange => iChange.Amount / iChange.PreviousValue).ToList();
 
-                var variance = returns.Select(iValue => Math.Pow(iValue - returns.Average(), 2)).Sum() / returns.Count;
+                result.VsBuyHoldRatio = returns.Sum() / dataReturns * 100;
+
+                var variance = returns.Select(iValue => Math.Pow(iValue - returns.Average(), 2)).Sum() / (returns.Count - 1);
 
                 var standardDeviation = Math.Sqrt(variance);
 
-                var dailyRiskFreeReturn = annualRiskFreeReturn / 365;
+                result.SharpeRatio = returns.Average() / standardDeviation;
 
-                var totalRiskFreeReturn = dailyRiskFreeReturn * (Settings.EndTime - Settings.StartTime).TotalDays;
+                var downReturnsStd = returns.Where(iReturn => iReturn < 0).Select(iReturn => Math.Sqrt(Math.Pow(iReturn, 2)))
+                    .Average();
 
-                result.SharpeRatio = (returns.Sum() - totalRiskFreeReturn) / standardDeviation;
+                result.SortinoRatio = returns.Average() / downReturnsStd;
             }
 
             var winningTrades = tradeEngine.Trades.Where(iTrade => iTrade.Order.NetProfit > 0);

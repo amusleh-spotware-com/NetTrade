@@ -24,6 +24,8 @@ namespace NetTrade.Models
 
         public double SharpeRatio { get; set; }
 
+        public double SortinoRatio { get; set; }
+
         public double AverageProfit { get; set; }
 
         public double AverageLoss { get; set; }

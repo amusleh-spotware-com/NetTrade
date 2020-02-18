@@ -1,5 +1,4 @@
-﻿using NetTrade.Helpers;
-using System;
+﻿using System;
 
 namespace NetTrade.Abstractions.Interfaces
 {

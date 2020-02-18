@@ -1,6 +1,6 @@
-﻿using NetTrade.Models;
+﻿using NetTrade.Enums;
+using NetTrade.Models;
 using System.Collections.Generic;
-using NetTrade.Enums;
 
 namespace NetTrade.Abstractions.Interfaces
 {

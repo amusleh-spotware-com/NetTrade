@@ -5,7 +5,7 @@ namespace NetTrade.Models
 {
     public class MarketOrder : Order
     {
-        public MarketOrder(double entryPrice, MarketOrderParameters parameters, DateTimeOffset openTime) : 
+        public MarketOrder(double entryPrice, MarketOrderParameters parameters, DateTimeOffset openTime) :
             base(parameters, openTime)
         {
             EntryPrice = entryPrice;

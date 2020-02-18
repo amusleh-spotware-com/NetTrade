@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NetTrade.Enums;
+﻿using NetTrade.Enums;
+using System;
 
 namespace NetTrade.Exceptions
 {
-    public class RobotException: Exception
+    public class RobotException : Exception
     {
-        public RobotException(RobotExceptionSource source, Exception innerException): base(source.ToString(), innerException)
+        public RobotException(RobotExceptionSource source, Exception innerException) : base(source.ToString(), innerException)
         {
             RobotExceptionSource = source;
         }

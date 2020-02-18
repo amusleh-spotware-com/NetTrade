@@ -41,6 +41,7 @@ namespace NetTrade.Symbols
         public double Spread => Ask - Bid;
 
         public event OnTickHandler OnTickEvent;
+
         public event OnBarHandler OnBarEvent;
 
         public double GetPrice(TradeType tradeType) => tradeType == TradeType.Buy ? Ask : Bid;

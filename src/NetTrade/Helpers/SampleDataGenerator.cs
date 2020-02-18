@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using NetTrade.Abstractions.Interfaces;
+﻿using NetTrade.Abstractions.Interfaces;
 using NetTrade.Models;
+using System;
+using System.Collections.Generic;
 
 namespace NetTrade.Helpers
 {
     public static class SampleDataGenerator
     {
-        public static List<IBar> GetSampleData(double startPrice, DateTimeOffset startTime,  DateTimeOffset endTime,
+        public static List<IBar> GetSampleData(double startPrice, DateTimeOffset startTime, DateTimeOffset endTime,
             TimeSpan interval, int randomSeed = 1)
         {
             var random = new Random(randomSeed);

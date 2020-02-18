@@ -1,7 +1,7 @@
 ﻿using NetTrade.Helpers;
 using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace NetTrade.Abstractions.Interfaces
 {
@@ -25,6 +25,6 @@ namespace NetTrade.Abstractions.Interfaces
 
         Task StartAsync(IRobot robot, IBacktestSettings settings, IEnumerable<ISymbolBacktestData> symbolsBacktestData);
 
-        IBacktestResult GetResult(double riskFreeReturnPercentage);
+        IBacktestResult GetResult();
     }
 }

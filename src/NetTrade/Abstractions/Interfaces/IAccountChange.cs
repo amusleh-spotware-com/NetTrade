@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NetTrade.Enums;
+using System;
 
 namespace NetTrade.Abstractions.Interfaces
 {
@@ -13,5 +14,7 @@ namespace NetTrade.Abstractions.Interfaces
         double PreviousValue { get; }
 
         double NewValue { get; }
+
+        AccountChangeType Type { get; }
     }
 }

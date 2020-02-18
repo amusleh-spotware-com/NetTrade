@@ -1,7 +1,7 @@
 ﻿using NetTrade.Abstractions.Interfaces;
 using NetTrade.Enums;
-using System.Collections.Generic;
 using NetTrade.Timers;
+using System.Collections.Generic;
 
 namespace NetTrade.Models
 {

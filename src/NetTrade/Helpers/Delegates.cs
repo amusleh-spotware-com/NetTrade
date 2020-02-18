@@ -36,5 +36,4 @@ namespace NetTrade.Helpers
     public delegate void OnTimerIntervalChangedHandler(object sender, TimeSpan interval);
 
     public delegate void OnBacktestProgressChangedHandler(object sender, DateTimeOffset time);
-
 }

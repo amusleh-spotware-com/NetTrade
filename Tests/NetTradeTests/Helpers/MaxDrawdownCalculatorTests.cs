@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using NetTrade.Models;
 using NetTrade.Abstractions.Interfaces;
+using NetTrade.Enums;
 
 namespace NetTrade.Helpers.Tests
 {
@@ -16,11 +17,11 @@ namespace NetTrade.Helpers.Tests
         {
             var changes = new List<IAccountChange>
             {
-                new AccountChange(1000, 100, DateTimeOffset.Now.AddDays(-10), string.Empty),
-                new AccountChange(1100, 100, DateTimeOffset.Now.AddDays(-9), string.Empty),
-                new AccountChange(1200, 100, DateTimeOffset.Now.AddDays(-8), string.Empty),
-                new AccountChange(1300, -400, DateTimeOffset.Now.AddDays(-7), string.Empty),
-                new AccountChange(900, 100, DateTimeOffset.Now.AddDays(-6), string.Empty),
+                new AccountChange(1000, 100, DateTimeOffset.Now.AddDays(-10), string.Empty, AccountChangeType.Deposit),
+                new AccountChange(1100, 100, DateTimeOffset.Now.AddDays(-9), string.Empty, AccountChangeType.Trading),
+                new AccountChange(1200, 100, DateTimeOffset.Now.AddDays(-8), string.Empty, AccountChangeType.Trading),
+                new AccountChange(1300, -400, DateTimeOffset.Now.AddDays(-7), string.Empty, AccountChangeType.Trading),
+                new AccountChange(900, 100, DateTimeOffset.Now.AddDays(-6), string.Empty, AccountChangeType.Trading),
             };
 
             var actualDrawdown = MaxDrawdownCalculator.GetMaxDrawdown(changes);
@@ -34,9 +35,9 @@ namespace NetTrade.Helpers.Tests
         {
             var changes = new List<IAccountChange>
             {
-                new AccountChange(1000, 100, DateTimeOffset.Now.AddDays(-10), string.Empty),
-                new AccountChange(1100, 100, DateTimeOffset.Now.AddDays(-9), string.Empty),
-                new AccountChange(1200, 100, DateTimeOffset.Now.AddDays(-8), string.Empty),
+                new AccountChange(1000, 100, DateTimeOffset.Now.AddDays(-10), string.Empty, AccountChangeType.Deposit),
+                new AccountChange(1100, 100, DateTimeOffset.Now.AddDays(-9), string.Empty, AccountChangeType.Trading),
+                new AccountChange(1200, 100, DateTimeOffset.Now.AddDays(-8), string.Empty, AccountChangeType.Trading),
             };
 
             var actualDrawdown = MaxDrawdownCalculator.GetMaxDrawdown(changes);

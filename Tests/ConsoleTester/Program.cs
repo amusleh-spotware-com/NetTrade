@@ -109,7 +109,7 @@ namespace ConsoleTester
         {
             Console.WriteLine("Backtest stopped");
 
-            var result = robot.Backtester.GetResult(7);
+            var result = robot.Backtester.GetResult();
 
             Console.WriteLine($"Total Trades: {result.TotalTradesNumber}");
             Console.WriteLine($"Long Trades Number: {result.LongTradesNumber}");
@@ -185,7 +185,7 @@ namespace ConsoleTester
             {
                 Console.WriteLine("Optimization Pass Completed");
 
-                var result = robot.Backtester.GetResult(7);
+                var result = robot.Backtester.GetResult();
 
                 Console.WriteLine($"Total Trades: {result.TotalTradesNumber}");
                 Console.WriteLine($"Long Trades Number: {result.LongTradesNumber}");

@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using NetTrade.Enums;
+﻿using NetTrade.Enums;
+using System.Collections.Generic;
 
 namespace NetTrade.Abstractions.Interfaces
 {

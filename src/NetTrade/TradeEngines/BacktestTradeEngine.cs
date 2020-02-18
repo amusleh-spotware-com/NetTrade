@@ -86,7 +86,7 @@ namespace NetTrade.TradeEngines
 
             if (totalEquityChange != 0)
             {
-                Account.ChangeEquity(totalEquityChange, Server.CurrentTime, string.Empty);
+                Account.ChangeEquity(totalEquityChange, Server.CurrentTime, string.Empty, AccountChangeType.Trading);
             }
         }
 
@@ -108,9 +108,9 @@ namespace NetTrade.TradeEngines
 
             _journal.Add(tradingEvent);
 
-            Account.ChangeMargin(-order.MarginUsed, Server.CurrentTime, string.Empty);
+            Account.ChangeMargin(-order.MarginUsed, Server.CurrentTime, string.Empty, AccountChangeType.Trading);
 
-            Account.ChangeBalance(order.NetProfit, Server.CurrentTime, string.Empty);
+            Account.ChangeBalance(order.NetProfit, Server.CurrentTime, string.Empty, AccountChangeType.Trading);
         }
 
         public void CancelPendingOrder(PendingOrder order)
@@ -203,7 +203,7 @@ namespace NetTrade.TradeEngines
 
                 AddOrder(order);
 
-                Account.ChangeMargin(marginRequired, Server.CurrentTime, string.Empty);
+                Account.ChangeMargin(marginRequired, Server.CurrentTime, string.Empty, AccountChangeType.Trading);
 
                 return new TradeResult(order);
             }

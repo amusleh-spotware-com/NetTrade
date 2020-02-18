@@ -1,4 +1,5 @@
 ﻿using NetTrade.Abstractions.Interfaces;
+using NetTrade.Enums;
 using NetTrade.Helpers;
 using NetTrade.Models;
 using System;
@@ -57,27 +58,29 @@ namespace NetTrade.Accounts
 
         public void AddTransaction(ITransaction transaction)
         {
-            ChangeBalance(transaction.Amount, transaction.Time, transaction.Note);
+            var changeType = transaction.Amount > 0 ? AccountChangeType.Deposit : AccountChangeType.Withdrawal;
 
-            ChangeEquity(transaction.Amount, transaction.Time, transaction.Note);
+            ChangeBalance(transaction.Amount, transaction.Time, transaction.Note, changeType);
+
+            ChangeEquity(transaction.Amount, transaction.Time, transaction.Note, changeType);
 
             _transactions.Add(transaction);
 
             CheckForMarginCall();
         }
 
-        public void ChangeBalance(double amount, DateTimeOffset time, string note)
+        public void ChangeBalance(double amount, DateTimeOffset time, string note, AccountChangeType type)
         {
-            var change = new AccountChange(CurrentBalance, amount, time, note);
+            var change = new AccountChange(CurrentBalance, amount, time, note, type);
 
             _balanceChanges.Add(change);
 
             CurrentBalance = change.NewValue;
         }
 
-        public void ChangeEquity(double amount, DateTimeOffset time, string note)
+        public void ChangeEquity(double amount, DateTimeOffset time, string note, AccountChangeType type)
         {
-            var change = new AccountChange(Equity, amount, time, note);
+            var change = new AccountChange(Equity, amount, time, note, type);
 
             _equityChanges.Add(change);
 
@@ -86,9 +89,9 @@ namespace NetTrade.Accounts
             CheckForMarginCall();
         }
 
-        public void ChangeMargin(double amount, DateTimeOffset time, string note)
+        public void ChangeMargin(double amount, DateTimeOffset time, string note, AccountChangeType type)
         {
-            var change = new AccountChange(UsedMargin, amount, time, note);
+            var change = new AccountChange(UsedMargin, amount, time, note, type);
 
             _marginChanges.Add(change);
 

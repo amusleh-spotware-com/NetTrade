@@ -17,8 +17,10 @@ namespace NetTrade.Helpers
                 case ParameterType.Long:
                 case ParameterType.Double:
                     return GetNumericParameterAllValues(parameter);
+
                 case ParameterType.DateTime:
                     return GetDateTimeParameterAllValues(parameter);
+
                 case ParameterType.Time:
                     return GetTimeParameterAllValues(parameter);
 
@@ -35,8 +37,10 @@ namespace NetTrade.Helpers
                 case ParameterType.Long:
                 case ParameterType.Double:
                     return GetNumericParameterRange(parameter);
+
                 case ParameterType.DateTime:
                     return GetDateTimeParameterRange(parameter);
+
                 case ParameterType.Time:
                     return GetTimeParameterRange(parameter);
 
@@ -68,12 +72,15 @@ namespace NetTrade.Helpers
                     case ParameterType.Int:
                         result.Add(Convert.ToInt32(valueRounded));
                         break;
+
                     case ParameterType.Long:
                         result.Add(Convert.ToInt64(valueRounded));
                         break;
+
                     case ParameterType.Double:
                         result.Add(Convert.ToDouble(valueRounded));
                         break;
+
                     default:
                         throw new ArgumentException($"The parameter type ({parameter.Type}) is not supported by this method");
                 }
@@ -163,6 +170,5 @@ namespace NetTrade.Helpers
 
             return result;
         }
-
     }
 }

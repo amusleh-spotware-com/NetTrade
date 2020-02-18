@@ -4,8 +4,8 @@ using NetTrade.Exceptions;
 using NetTrade.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Timers;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace NetTrade.Abstractions
 {

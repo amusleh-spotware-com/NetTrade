@@ -1,7 +1,7 @@
 ﻿using NetTrade.Abstractions.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 
 namespace NetTrade.Helpers
 {
@@ -70,6 +70,5 @@ namespace NetTrade.Helpers
 
             return result;
         }
-
     }
 }

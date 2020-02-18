@@ -1,4 +1,5 @@
-﻿using NetTrade.Helpers;
+﻿using NetTrade.Enums;
+using NetTrade.Helpers;
 using System;
 using System.Collections.Generic;
 
@@ -38,10 +39,10 @@ namespace NetTrade.Abstractions.Interfaces
 
         void AddTransaction(ITransaction transaction);
 
-        void ChangeBalance(double amount, DateTimeOffset time, string note);
+        void ChangeBalance(double amount, DateTimeOffset time, string note, AccountChangeType type);
 
-        void ChangeEquity(double amount, DateTimeOffset time, string note);
+        void ChangeEquity(double amount, DateTimeOffset time, string note, AccountChangeType type);
 
-        void ChangeMargin(double amount, DateTimeOffset time, string note);
+        void ChangeMargin(double amount, DateTimeOffset time, string note, AccountChangeType type);
     }
 }
