@@ -77,7 +77,7 @@ namespace NetTrade.Abstractions
                 var data = SymbolsData.Select(iSymbol => iSymbol.Data.Select(iBar => iBar.Close)).ToList();
 
                 var dataReturns = data.Select(iSymbol => iSymbol.Skip(1)
-                    .Zip(iSymbol, (current, previous) => previous == 0 ? 0 : Math.Round((current - previous) / previous, 2))
+                    .Zip(iSymbol, (current, previous) => previous == 0 ? 0 : Math.Round((current - previous) / previous * 100, 2))
                     .Sum())
                     .Sum();
 
@@ -87,9 +87,9 @@ namespace NetTrade.Abstractions
                 {
                     var initialDeposit = depositTransaction.Amount;
 
-                    var returns = tradeEngine.Trades.Select(iTrade => iTrade.Order.NetProfit / initialDeposit).ToList();
+                    var returns = tradeEngine.Trades.Select(iTrade => iTrade.Order.NetProfit / initialDeposit * 100).ToList();
 
-                    result.VsBuyHoldRatio = returns.Sum() / dataReturns * 100;
+                    result.VsBuyHoldRatio = returns.Sum() / dataReturns;
 
                     var variance = returns.Select(iValue => Math.Pow(iValue - returns.Average(), 2)).Sum() / returns.Count > 1 ? (returns.Count - 1) : 1;
 
