@@ -83,11 +83,11 @@ namespace NetTrade.Abstractions
 
                 var depositTransaction = Robot.Account.Transactions.FirstOrDefault(iTransaction => iTransaction.Amount > 0);
 
-                if (depositTransaction != null && tradeEngine.Trades.Any())
+                if (depositTransaction != null && trades.Any())
                 {
                     var initialDeposit = depositTransaction.Amount;
 
-                    var returns = tradeEngine.Trades.Select(iTrade => iTrade.Order.NetProfit / initialDeposit * 100).ToList();
+                    var returns = trades.Select(iTrade => iTrade.Order.NetProfit / initialDeposit * 100).ToList();
 
                     result.VsBuyHoldRatio = returns.Sum() / dataReturns;
 
@@ -97,19 +97,23 @@ namespace NetTrade.Abstractions
 
                     result.SharpeRatio = returns.Average() / standardDeviation;
 
-                    var downReturnsStd = returns.Where(iReturn => iReturn < 0).Select(iReturn => Math.Sqrt(Math.Pow(iReturn, 2)))
-                        .Average();
+                    var negativeReturns = returns.Where(iReturn => iReturn < 0);
 
-                    result.SortinoRatio = returns.Average() / downReturnsStd;
+                    if (negativeReturns.Any())
+                    {
+                        var negativeReturnsStd = negativeReturns.Select(iReturn => Math.Sqrt(Math.Pow(iReturn, 2))).Average();
+
+                        result.SortinoRatio = returns.Average() / negativeReturnsStd;
+                    }
                 }
             }
 
-            var winningTrades = tradeEngine.Trades.Where(iTrade => iTrade.Order.NetProfit > 0);
-            var losingTrades = tradeEngine.Trades.Where(iTrade => iTrade.Order.NetProfit < 0);
+            var winningTrades = trades.Where(iTrade => iTrade.Order.NetProfit > 0);
+            var losingTrades = trades.Where(iTrade => iTrade.Order.NetProfit < 0);
 
             result.AverageProfit = winningTrades.Count() > 0 ? winningTrades.Average(iTrade => iTrade.Order.NetProfit) : 0;
             result.AverageLoss = losingTrades.Count() > 0 ? losingTrades.Average(iTrade => iTrade.Order.NetProfit) : 0;
-            result.AverageReturn = tradeEngine.Trades.Count > 0 ? tradeEngine.Trades.Average(iTrade => iTrade.Order.NetProfit) : 0;
+            result.AverageReturn = trades.Count > 0 ? trades.Average(iTrade => iTrade.Order.NetProfit) : 0;
 
             return result;
         }
