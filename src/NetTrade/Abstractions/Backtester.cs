@@ -81,20 +81,27 @@ namespace NetTrade.Abstractions
                     .Sum())
                     .Sum();
 
-                var returns = Robot.Account.BalanceChanges.Skip(1).Select(iChange => iChange.Amount / iChange.PreviousValue).ToList();
+                var depositTransaction = Robot.Account.Transactions.FirstOrDefault(iTransaction => iTransaction.Amount > 0);
 
-                result.VsBuyHoldRatio = returns.Sum() / dataReturns * 100;
+                if (depositTransaction != null && tradeEngine.Trades.Any())
+                {
+                    var initialDeposit = depositTransaction.Amount;
 
-                var variance = returns.Select(iValue => Math.Pow(iValue - returns.Average(), 2)).Sum() / (returns.Count - 1);
+                    var returns = tradeEngine.Trades.Select(iTrade => iTrade.Order.NetProfit / initialDeposit).ToList();
 
-                var standardDeviation = Math.Sqrt(variance);
+                    result.VsBuyHoldRatio = returns.Sum() / dataReturns * 100;
 
-                result.SharpeRatio = returns.Average() / standardDeviation;
+                    var variance = returns.Select(iValue => Math.Pow(iValue - returns.Average(), 2)).Sum() / returns.Count > 1 ? (returns.Count - 1) : 1;
 
-                var downReturnsStd = returns.Where(iReturn => iReturn < 0).Select(iReturn => Math.Sqrt(Math.Pow(iReturn, 2)))
-                    .Average();
+                    var standardDeviation = Math.Sqrt(variance);
 
-                result.SortinoRatio = returns.Average() / downReturnsStd;
+                    result.SharpeRatio = returns.Average() / standardDeviation;
+
+                    var downReturnsStd = returns.Where(iReturn => iReturn < 0).Select(iReturn => Math.Sqrt(Math.Pow(iReturn, 2)))
+                        .Average();
+
+                    result.SortinoRatio = returns.Average() / downReturnsStd;
+                }
             }
 
             var winningTrades = tradeEngine.Trades.Where(iTrade => iTrade.Order.NetProfit > 0);
