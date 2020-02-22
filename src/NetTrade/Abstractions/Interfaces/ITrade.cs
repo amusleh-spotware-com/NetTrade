@@ -10,5 +10,15 @@ namespace NetTrade.Abstractions.Interfaces
         DateTimeOffset ExitTime { get; }
 
         double ExitPrice { get; }
+
+        double Equity { get; }
+
+        double Balance { get; }
+
+        double SharpeRatio { get; }
+
+        double SortinoRatio { get; }
+
+        TimeSpan Duration { get; }
     }
 }

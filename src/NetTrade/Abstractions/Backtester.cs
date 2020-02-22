@@ -74,9 +74,9 @@ namespace NetTrade.Abstractions
 
             if (Robot.Account.CurrentBalance > 0)
             {
-                var data = SymbolsData.Select(iSymbol => iSymbol.Data.Select(iBar => iBar.Close)).ToList();
+                var symbolsData = SymbolsData.Select(iSymbol => iSymbol.Data.Select(iBar => iBar.Close)).ToList();
 
-                var dataReturns = data.Select(iSymbol => iSymbol.Skip(1)
+                var dataReturns = symbolsData.Select(iSymbol => iSymbol.Skip(1)
                     .Zip(iSymbol, (current, previous) => previous == 0 ? 0 : Math.Round((current - previous) / previous * 100, 2))
                     .Sum())
                     .Sum();
@@ -87,24 +87,14 @@ namespace NetTrade.Abstractions
                 {
                     var initialDeposit = depositTransaction.Amount;
 
-                    var returns = trades.Select(iTrade => iTrade.Order.NetProfit / initialDeposit * 100).ToList();
+                    var tradeData = trades.Select(iTrade => iTrade.Order.NetProfit);
 
-                    result.VsBuyHoldRatio = returns.Sum() / dataReturns;
+                    var tradeReturns = trades.Select(iTrade => iTrade.Order.NetProfit / initialDeposit * 100).ToList();
 
-                    var variance = returns.Select(iValue => Math.Pow(iValue - returns.Average(), 2)).Sum() / returns.Count > 1 ? (returns.Count - 1) : 1;
+                    result.VsBuyHoldRatio = tradeReturns.Sum() / dataReturns;
 
-                    var standardDeviation = Math.Sqrt(variance);
-
-                    result.SharpeRatio = returns.Average() / standardDeviation;
-
-                    var negativeReturns = returns.Where(iReturn => iReturn < 0);
-
-                    if (negativeReturns.Any())
-                    {
-                        var negativeReturnsStd = negativeReturns.Select(iReturn => Math.Sqrt(Math.Pow(iReturn, 2))).Average();
-
-                        result.SortinoRatio = returns.Average() / negativeReturnsStd;
-                    }
+                    result.SharpeRatio = SharpeRatioCalculator.GetSharpeRatio(initialDeposit, tradeData);
+                    result.SortinoRatio = SortinoRatioCalculator.GetSortinoRatio(initialDeposit, tradeData);
                 }
             }
 
@@ -114,6 +104,13 @@ namespace NetTrade.Abstractions
             result.AverageProfit = winningTrades.Count() > 0 ? winningTrades.Average(iTrade => iTrade.Order.NetProfit) : 0;
             result.AverageLoss = losingTrades.Count() > 0 ? losingTrades.Average(iTrade => iTrade.Order.NetProfit) : 0;
             result.AverageReturn = trades.Count > 0 ? trades.Average(iTrade => iTrade.Order.NetProfit) : 0;
+
+            if (trades.Any())
+            {
+                var durationAverageInHours = trades.Select(iTrade => iTrade.Duration.TotalHours).Average();
+
+                result.AverageTradeDuration = TimeSpan.FromHours(durationAverageInHours);
+            }
 
             return result;
         }

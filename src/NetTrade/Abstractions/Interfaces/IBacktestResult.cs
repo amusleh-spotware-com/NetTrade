@@ -1,4 +1,6 @@
-﻿namespace NetTrade.Abstractions.Interfaces
+﻿using System;
+
+namespace NetTrade.Abstractions.Interfaces
 {
     public interface IBacktestResult
     {
@@ -31,5 +33,7 @@
         double AverageReturn { get; }
 
         double VsBuyHoldRatio { get; }
+
+        TimeSpan AverageTradeDuration { get; }
     }
 }

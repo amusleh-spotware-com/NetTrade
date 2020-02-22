@@ -4,6 +4,7 @@ using NetTrade.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NetTrade.Helpers;
 
 namespace NetTrade.TradeEngines
 {
@@ -100,10 +101,6 @@ namespace NetTrade.TradeEngines
             var exitPrice = order.TradeType == TradeType.Buy ? order.Symbol.GetPrice(TradeType.Sell) :
                 order.Symbol.GetPrice(TradeType.Buy);
 
-            var trade = new Trade(order, Server.CurrentTime, exitPrice);
-
-            _trades.Add(trade);
-
             var tradingEvent = new TradingEvent(Server.CurrentTime, TradingEventType.MarketOrderClosed, order, string.Empty);
 
             _journal.Add(tradingEvent);
@@ -111,6 +108,27 @@ namespace NetTrade.TradeEngines
             Account.ChangeMargin(-order.MarginUsed, Server.CurrentTime, string.Empty, AccountChangeType.Trading);
 
             Account.ChangeBalance(order.NetProfit, Server.CurrentTime, string.Empty, AccountChangeType.Trading);
+
+            var depositTransaction = Account.Transactions.FirstOrDefault(iTransaction => iTransaction.Amount > 0);
+
+            ITrade trade;
+
+            if (depositTransaction != null)
+            {
+                var tradeData = Trades.Select(iTrade => iTrade.Order.NetProfit);
+
+                var sharpeRatio = SharpeRatioCalculator.GetSharpeRatio(depositTransaction.Amount, tradeData);
+                var sortinoRatio = SortinoRatioCalculator.GetSortinoRatio(depositTransaction.Amount, tradeData);
+
+                trade = new Trade(order, Server.CurrentTime, exitPrice, Account.Equity, Account.CurrentBalance, sharpeRatio,
+                    sortinoRatio);
+            }
+            else
+            {
+                trade = new Trade(order, Server.CurrentTime, exitPrice, Account.Equity, Account.CurrentBalance, 0, 0);
+            }
+
+            _trades.Add(trade);
         }
 
         public void CancelPendingOrder(PendingOrder order)
