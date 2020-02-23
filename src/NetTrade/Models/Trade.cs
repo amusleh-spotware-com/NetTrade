@@ -6,7 +6,7 @@ namespace NetTrade.Models
     public class Trade : ITrade
     {
         public Trade(MarketOrder order, DateTimeOffset exitTime, double exitPrice, double equity, double balance,
-            double sharpeRatio, double sortinoRatio)
+            double sharpeRatio, double sortinoRatio, double maxDrawDown)
         {
             Order = order;
 
@@ -21,6 +21,8 @@ namespace NetTrade.Models
             SharpeRatio = sharpeRatio;
 
             SortinoRatio = sortinoRatio;
+
+            MaxDrawDown = maxDrawDown;
         }
 
         public MarketOrder Order { get; }
@@ -36,6 +38,8 @@ namespace NetTrade.Models
         public double SharpeRatio { get; }
 
         public double SortinoRatio { get; }
+
+        public double MaxDrawDown { get; }
 
         public TimeSpan Duration => Order != null ? ExitTime - Order.OpenTime : TimeSpan.FromSeconds(0);
     }

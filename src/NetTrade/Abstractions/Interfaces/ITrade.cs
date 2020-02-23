@@ -20,5 +20,7 @@ namespace NetTrade.Abstractions.Interfaces
         double SortinoRatio { get; }
 
         TimeSpan Duration { get; }
+
+        double MaxDrawDown { get; }
     }
 }

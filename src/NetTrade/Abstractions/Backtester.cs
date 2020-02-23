@@ -93,8 +93,8 @@ namespace NetTrade.Abstractions
 
                     result.VsBuyHoldRatio = tradeReturns.Sum() / dataReturns;
 
-                    result.SharpeRatio = SharpeRatioCalculator.GetSharpeRatio(initialDeposit, tradeData);
-                    result.SortinoRatio = SortinoRatioCalculator.GetSortinoRatio(initialDeposit, tradeData);
+                    result.SharpeRatio = SharpeRatioCalculator.GetSharpeRatio(tradeData);
+                    result.SortinoRatio = SortinoRatioCalculator.GetSortinoRatio(tradeData);
                 }
             }
 

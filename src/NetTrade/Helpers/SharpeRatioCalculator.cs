@@ -7,20 +7,16 @@ namespace NetTrade.Helpers
 {
     public static class SharpeRatioCalculator
     {
-        public static double GetSharpeRatio(double initialDeposit, IEnumerable<double> data)
+        public static double GetSharpeRatio(IEnumerable<double> data)
         {
             if (!data.Any())
             {
-                return 0;
+                return double.NaN;
             }
 
-            var returns = data.Select(iDataPoint => iDataPoint / initialDeposit * 100).ToList();
+            var standardDeviation = StdCalculator.GetStd(data);
 
-            var variance = returns.Select(iValue => Math.Pow(iValue - returns.Average(), 2)).Sum() / returns.Count > 1 ? (returns.Count - 1) : 1;
-
-            var standardDeviation = Math.Sqrt(variance);
-
-            return returns.Sum() / standardDeviation;
+            return data.Sum() / standardDeviation;
         }
     }
 }

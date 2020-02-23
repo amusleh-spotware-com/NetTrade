@@ -109,24 +109,15 @@ namespace NetTrade.TradeEngines
 
             Account.ChangeBalance(order.NetProfit, Server.CurrentTime, string.Empty, AccountChangeType.Trading);
 
-            var depositTransaction = Account.Transactions.FirstOrDefault(iTransaction => iTransaction.Amount > 0);
+            var tradeData = Trades.Select(iTrade => iTrade.Order.NetProfit);
 
-            ITrade trade;
+            var sharpeRatio = SharpeRatioCalculator.GetSharpeRatio(tradeData);
+            var sortinoRatio = SortinoRatioCalculator.GetSortinoRatio(tradeData);
 
-            if (depositTransaction != null)
-            {
-                var tradeData = Trades.Select(iTrade => iTrade.Order.NetProfit);
+            var maxDrawDown = MaxDrawdownCalculator.GetMaxDrawdown(Account.EquityChanges);
 
-                var sharpeRatio = SharpeRatioCalculator.GetSharpeRatio(depositTransaction.Amount, tradeData);
-                var sortinoRatio = SortinoRatioCalculator.GetSortinoRatio(depositTransaction.Amount, tradeData);
-
-                trade = new Trade(order, Server.CurrentTime, exitPrice, Account.Equity, Account.CurrentBalance, sharpeRatio,
-                    sortinoRatio);
-            }
-            else
-            {
-                trade = new Trade(order, Server.CurrentTime, exitPrice, Account.Equity, Account.CurrentBalance, 0, 0);
-            }
+            var trade = new Trade(order, Server.CurrentTime, exitPrice, Account.Equity, Account.CurrentBalance, sharpeRatio,
+                sortinoRatio, maxDrawDown);
 
             _trades.Add(trade);
         }
