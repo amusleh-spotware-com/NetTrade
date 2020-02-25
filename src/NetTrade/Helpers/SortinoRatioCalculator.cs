@@ -11,15 +11,15 @@ namespace NetTrade.Helpers
 
             if (data.Any())
             {
-                var negativeReturns = data.Where(iData => iData < 0);
+                var negativeData = data.Where(iData => iData < 0);
 
-                if (negativeReturns.Any())
+                if (negativeData.Any())
                 {
-                    var negativeReturnsStd = StdCalculator.GetStd(negativeReturns);
+                    var dataStd = StdCalculator.GetStd(data);
 
-                    if (negativeReturnsStd != 0)
+                    if (dataStd != 0)
                     {
-                        result = data.Sum() / negativeReturnsStd;
+                        result = (negativeData.Sum() / data.Count()) / dataStd;
                     }
                 }
             }

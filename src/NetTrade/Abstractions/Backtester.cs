@@ -110,6 +110,8 @@ namespace NetTrade.Abstractions
                 var durationAverageInHours = trades.Select(iTrade => iTrade.Duration.TotalHours).Average();
 
                 result.AverageTradeDuration = TimeSpan.FromHours(durationAverageInHours);
+
+                result.AverageBarsPeriod = trades.Select(iTrade => iTrade.BarsPeriod).Average();
             }
 
             return result;

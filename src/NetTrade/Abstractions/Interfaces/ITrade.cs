@@ -22,5 +22,7 @@ namespace NetTrade.Abstractions.Interfaces
         TimeSpan Duration { get; }
 
         double MaxDrawDown { get; }
+
+        int BarsPeriod { get; }
     }
 }

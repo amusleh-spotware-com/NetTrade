@@ -9,14 +9,24 @@ namespace NetTrade.Helpers
     {
         public static double GetSharpeRatio(IEnumerable<double> data)
         {
-            if (!data.Any())
+            double result = double.NaN;
+
+            if (data.Any())
             {
-                return double.NaN;
+                var positiveData = data.Where(iData => iData > 0);
+
+                if (positiveData.Any())
+                {
+                    var dataStd = StdCalculator.GetStd(data);
+
+                    if (dataStd != 0)
+                    {
+                        result = (positiveData.Sum() / data.Count()) / dataStd;
+                    }
+                }
             }
 
-            var standardDeviation = StdCalculator.GetStd(data);
-
-            return data.Sum() / standardDeviation;
+            return result;
         }
     }
 }

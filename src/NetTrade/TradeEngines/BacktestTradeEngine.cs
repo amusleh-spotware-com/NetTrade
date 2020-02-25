@@ -100,6 +100,8 @@ namespace NetTrade.TradeEngines
 
             var exitPrice = order.TradeType == TradeType.Buy ? order.Symbol.GetPrice(TradeType.Sell) :
                 order.Symbol.GetPrice(TradeType.Buy);
+            
+            var barsPeriod = order.Symbol.Bars.Time.Where(iBarTime => iBarTime >= order.OpenTime).Count();
 
             var tradingEvent = new TradingEvent(Server.CurrentTime, TradingEventType.MarketOrderClosed, order, string.Empty);
 
@@ -117,7 +119,7 @@ namespace NetTrade.TradeEngines
             var maxDrawDown = MaxDrawdownCalculator.GetMaxDrawdown(Account.EquityChanges);
 
             var trade = new Trade(order, Server.CurrentTime, exitPrice, Account.Equity, Account.CurrentBalance, sharpeRatio,
-                sortinoRatio, maxDrawDown);
+                sortinoRatio, maxDrawDown, barsPeriod);
 
             _trades.Add(trade);
         }
