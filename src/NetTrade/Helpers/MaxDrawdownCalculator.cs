@@ -9,20 +9,32 @@ namespace NetTrade.Helpers
     {
         public static double GetMaxDrawdown(IEnumerable<IAccountChange> changes)
         {
-            var changesCopy = changes.ToList();
+            var changesCopy = new List<IAccountChange>();
 
-            var peakChange = GetPeakChange(changesCopy);
+            double maxDrawDown = 0;
 
-            var troughChange = GetTroughChange(changesCopy, peakChange);
-
-            double result = 0;
-
-            if (troughChange != null)
+            foreach (var change in changes)
             {
-                result = (troughChange.NewValue - peakChange.NewValue) / peakChange.NewValue;
+                changesCopy.Add(change);
+
+                var peakChange = GetPeakChange(changesCopy);
+
+                var troughChange = GetTroughChange(changesCopy, peakChange);
+
+                double currentDrawDown  = 0;
+
+                if (troughChange != null)
+                {
+                    currentDrawDown = (troughChange.NewValue - peakChange.NewValue) / peakChange.NewValue * 100;
+                }
+
+                if (currentDrawDown < maxDrawDown)
+                {
+                    maxDrawDown = currentDrawDown;
+                }
             }
 
-            return result > 0 ? 0 : Math.Round(result, 3) * 100;
+            return maxDrawDown;
         }
 
         private static IAccountChange GetTroughChange(IEnumerable<IAccountChange> changes, IAccountChange peakChange)

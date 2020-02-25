@@ -24,7 +24,7 @@ namespace NetTrade.Helpers.Tests
                 new AccountChange(900, 100, DateTimeOffset.Now.AddDays(-6), string.Empty, AccountChangeType.Trading),
             };
 
-            var actualDrawdown = MaxDrawdownCalculator.GetMaxDrawdown(changes);
+            var actualDrawdown = Math.Round(MaxDrawdownCalculator.GetMaxDrawdown(changes), 1);
             var expectedDrawdown = -30.8;
 
             Assert.AreEqual(expectedDrawdown, actualDrawdown);
