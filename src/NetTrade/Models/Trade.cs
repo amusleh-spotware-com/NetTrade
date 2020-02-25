@@ -5,9 +5,11 @@ namespace NetTrade.Models
 {
     public class Trade : ITrade
     {
-        public Trade(MarketOrder order, DateTimeOffset exitTime, double exitPrice, double equity, double balance,
+        public Trade(long id, MarketOrder order, DateTimeOffset exitTime, double exitPrice, double equity, double balance,
             double sharpeRatio, double sortinoRatio, double maxDrawDown, int barsPeriod)
         {
+            Id = id;
+
             Order = order;
 
             ExitTime = exitTime;
@@ -46,5 +48,7 @@ namespace NetTrade.Models
         public TimeSpan Duration => Order != null ? ExitTime - Order.OpenTime : TimeSpan.FromSeconds(0);
 
         public int BarsPeriod { get; }
+
+        public long Id { get; }
     }
 }

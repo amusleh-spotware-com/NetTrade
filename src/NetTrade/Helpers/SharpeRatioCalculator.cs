@@ -14,7 +14,7 @@ namespace NetTrade.Helpers
             if (data.Any())
             {
                 var positiveData = data.Where(iData => iData > 0);
-
+                
                 if (positiveData.Any())
                 {
                     var dataStd = StdCalculator.GetStd(data);

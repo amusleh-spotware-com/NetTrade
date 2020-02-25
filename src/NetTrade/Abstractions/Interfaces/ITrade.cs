@@ -24,5 +24,7 @@ namespace NetTrade.Abstractions.Interfaces
         double MaxDrawDown { get; }
 
         int BarsPeriod { get; }
+
+        long Id { get; }
     }
 }
