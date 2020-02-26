@@ -1,7 +1,5 @@
 ﻿using NetTrade.Abstractions.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace NetTrade.Helpers
 {
@@ -9,78 +7,31 @@ namespace NetTrade.Helpers
     {
         public static double GetMaxDrawdown(IEnumerable<IAccountChange> changes)
         {
-            var changesCopy = new List<IAccountChange>();
+            IAccountChange peakChange = null;
 
-            double maxDrawDown = 0;
+            double maxDrop = double.MinValue, maxDrawdown = double.MaxValue;
 
             foreach (var change in changes)
             {
-                changesCopy.Add(change);
-
-                var peakChange = GetPeakChange(changesCopy);
-
-                var troughChange = GetTroughChange(changesCopy, peakChange);
-
-                double currentDrawDown  = 0;
-
-                if (troughChange != null)
+                if (peakChange == null)
                 {
-                    currentDrawDown = (troughChange.NewValue - peakChange.NewValue) / peakChange.NewValue * 100;
-                }
+                    peakChange = change;
 
-                if (currentDrawDown < maxDrawDown)
-                {
-                    maxDrawDown = currentDrawDown;
-                }
-            }
-
-            return maxDrawDown;
-        }
-
-        private static IAccountChange GetTroughChange(IEnumerable<IAccountChange> changes, IAccountChange peakChange)
-        {
-            var troughValue = double.MaxValue;
-
-            IAccountChange troughChange = null;
-
-            var changesOrdered = changes.Where(iChange => iChange.Time > peakChange.Time).OrderBy(iChange => iChange.Time);
-
-            foreach (var change in changesOrdered)
-            {
-                if (change.NewValue >= troughValue)
-                {
                     continue;
                 }
 
-                troughValue = change.NewValue;
+                var diff = peakChange.NewValue - change.NewValue;
 
-                troughChange = change;
+                peakChange = diff < 0 ? change : peakChange;
+
+                maxDrop = maxDrop > diff ? maxDrop : diff;
+
+                var newDrawdown = maxDrop / peakChange.NewValue * -100;
+
+                maxDrawdown = newDrawdown < maxDrawdown ? newDrawdown : maxDrawdown;
             }
 
-            return troughChange;
-        }
-
-        private static IAccountChange GetPeakChange(IEnumerable<IAccountChange> changes)
-        {
-            var peakValue = double.MinValue;
-
-            IAccountChange result = null;
-
-            var changesOrdered = changes.OrderBy(iChange => iChange.Time);
-
-            foreach (var change in changesOrdered)
-            {
-                if (change.NewValue < peakValue)
-                {
-                    continue;
-                }
-
-                peakValue = change.NewValue;
-
-                result = change;
-            }
-
-            return result;
+            return maxDrawdown < 0 ? maxDrawdown : 0;
         }
     }
 }

@@ -28,7 +28,12 @@ namespace NetTrade.TradeEngines.Tests
 
             account.AddTransaction(new Transaction(10000, DateTimeOffset.Now, string.Empty));
 
-            _symbol = new OhlcSymbol(new Mock<IBars>().Object)
+            var barsMock = new Mock<IBars>();
+
+            barsMock.SetReturnsDefault<ISeries<DateTimeOffset>>(new Collections.ExpandableSeries<DateTimeOffset>());
+            barsMock.SetReturnsDefault<ISeries<double>>(new Collections.ExpandableSeries<double>());
+
+            _symbol = new OhlcSymbol(barsMock.Object)
             {
                 Digits = 5,
                 TickSize = 0.00001,

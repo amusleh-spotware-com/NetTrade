@@ -2,6 +2,7 @@
 {
     public enum OrderErrorCode
     {
+        None,
         InvalidTargetPrice,
         NotEnoughMargin
     }
