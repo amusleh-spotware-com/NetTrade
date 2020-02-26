@@ -32,8 +32,6 @@ namespace NetTrade.Abstractions.Interfaces
 
         double AverageReturn { get; }
 
-        double VsBuyHoldRatio { get; }
-
         TimeSpan AverageTradeDuration { get; }
 
         double AverageBarsPeriod { get; }

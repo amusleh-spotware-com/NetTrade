@@ -33,8 +33,6 @@ namespace NetTrade.Models
 
         public double AverageReturn { get; set; }
 
-        public double VsBuyHoldRatio { get; set; }
-
         public TimeSpan AverageTradeDuration { get; set; }
 
         public double AverageBarsPeriod { get; set; }

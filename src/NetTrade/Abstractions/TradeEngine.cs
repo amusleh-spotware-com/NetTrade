@@ -173,7 +173,7 @@ namespace NetTrade.Abstractions
 
             grossProfitInTicks *= Math.Pow(10, order.Symbol.Digits);
 
-            order.GrossProfit = grossProfitInTicks * order.Symbol.TickValue * order.Volume * order.Symbol.VolumeUnitValue;
+            order.GrossProfit = grossProfitInTicks * order.Symbol.TickValue * order.Volume;
 
             var netProfit = order.GrossProfit - (order.Commission * order.Volume);
 

@@ -74,13 +74,6 @@ namespace NetTrade.Abstractions
 
             if (Robot.Account.CurrentBalance > 0)
             {
-                var symbolsData = SymbolsData.Select(iSymbol => iSymbol.Data.Select(iBar => iBar.Close)).ToList();
-
-                var dataReturns = symbolsData.Select(iSymbol => iSymbol.Skip(1)
-                    .Zip(iSymbol, (current, previous) => previous == 0 ? 0 : Math.Round((current - previous) / previous * 100, 2))
-                    .Sum())
-                    .Sum();
-
                 var depositTransaction = Robot.Account.Transactions.FirstOrDefault(iTransaction => iTransaction.Amount > 0);
 
                 if (depositTransaction != null && trades.Any())
@@ -88,10 +81,6 @@ namespace NetTrade.Abstractions
                     var initialDeposit = depositTransaction.Amount;
 
                     var tradeData = trades.Select(iTrade => iTrade.Order.NetProfit);
-
-                    var tradeReturns = trades.Select(iTrade => iTrade.Order.NetProfit / initialDeposit * 100).ToList();
-
-                    result.VsBuyHoldRatio = tradeReturns.Sum() / dataReturns;
 
                     result.SharpeRatio = SharpeRatioCalculator.GetSharpeRatio(tradeData);
                     result.SortinoRatio = SortinoRatioCalculator.GetSortinoRatio(tradeData);
