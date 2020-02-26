@@ -13,16 +13,13 @@ namespace NetTrade.Helpers
 
             if (data.Any())
             {
-                var positiveData = data.Where(iData => iData > 0);
-                
-                if (positiveData.Any())
-                {
-                    var dataStd = StdCalculator.GetStd(data);
+                var returns = data.Take(data.Count() - 1).Zip(data.Skip(1), (oldValue, newValue) => (newValue - oldValue) / oldValue * 100);
 
-                    if (dataStd != 0)
-                    {
-                        result = (positiveData.Sum() / data.Count()) / dataStd;
-                    }
+                if (returns.Any())
+                {
+                    var returnsStd = StdCalculator.GetStd(returns);
+
+                    result = returns.Average() / returnsStd;
                 }
             }
 
