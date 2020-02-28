@@ -21,7 +21,9 @@ namespace NetTrade.Abstractions.Interfaces
 
         TimeSpan Duration { get; }
 
-        double MaxDrawDown { get; }
+        double EquityMaxDrawDown { get; }
+
+        double BalanceMaxDrawDown { get; }
 
         int BarsPeriod { get; }
 

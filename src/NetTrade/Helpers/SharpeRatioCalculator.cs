@@ -17,7 +17,7 @@ namespace NetTrade.Helpers
 
                 if (returns.Any())
                 {
-                    var returnsStd = StdCalculator.GetStd(returns);
+                    var returnsStd = StdCalculator.GetStd(returns, true);
 
                     result = returns.Average() / returnsStd;
                 }

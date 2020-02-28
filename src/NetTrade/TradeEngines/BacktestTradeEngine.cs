@@ -55,12 +55,13 @@ namespace NetTrade.TradeEngines
             var sharpeRatio = SharpeRatioCalculator.GetSharpeRatio(tradeData);
             var sortinoRatio = SortinoRatioCalculator.GetSortinoRatio(tradeData);
 
-            var maxDrawDown = MaxDrawdownCalculator.GetMaxDrawdown(Account.EquityChanges);
+            var equityMaxDrawDown = MaxDrawdownCalculator.GetMaxDrawdown(Account.EquityChanges);
+            var balanceMaxDrawDown = MaxDrawdownCalculator.GetMaxDrawdown(Account.BalanceChanges);
 
             var id = _trades.Count + 1;
 
             var trade = new Trade(id, order, Server.CurrentTime, exitPrice, Account.Equity, Account.CurrentBalance,
-                sharpeRatio, sortinoRatio, maxDrawDown, barsPeriod);
+                sharpeRatio, sortinoRatio, equityMaxDrawDown, balanceMaxDrawDown, barsPeriod);
 
             _trades.Add(trade);
         }

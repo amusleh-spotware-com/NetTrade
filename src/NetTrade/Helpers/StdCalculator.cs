@@ -6,13 +6,15 @@ namespace NetTrade.Helpers
 {
     public static class StdCalculator
     {
-        public static double GetStd(IEnumerable<double> data)
+        public static double GetStd(IEnumerable<double> data, bool isSample)
         {
             var average = data.Average();
 
             var deviationsSum = data.Select(iValue => Math.Pow(iValue - average, 2)).Sum();
 
-            var count = data.Count() > 1 ? (data.Count() - 1) : 1;
+            var dataCount = data.Count();
+
+            var count = isSample && dataCount > 1 ? (dataCount - 1) : dataCount;
 
             var variance = deviationsSum / count;
 

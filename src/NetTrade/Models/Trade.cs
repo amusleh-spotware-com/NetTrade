@@ -6,7 +6,7 @@ namespace NetTrade.Models
     public class Trade : ITrade
     {
         public Trade(long id, MarketOrder order, DateTimeOffset exitTime, double exitPrice, double equity, double balance,
-            double sharpeRatio, double sortinoRatio, double maxDrawDown, int barsPeriod)
+            double sharpeRatio, double sortinoRatio, double equityMaxDrawDown, double balanceMaxDrawDown, int barsPeriod)
         {
             Id = id;
 
@@ -24,7 +24,9 @@ namespace NetTrade.Models
 
             SortinoRatio = sortinoRatio;
 
-            MaxDrawDown = maxDrawDown;
+            EquityMaxDrawDown = equityMaxDrawDown;
+
+            BalanceMaxDrawDown = balanceMaxDrawDown;
 
             BarsPeriod = barsPeriod;
         }
@@ -43,12 +45,14 @@ namespace NetTrade.Models
 
         public double SortinoRatio { get; }
 
-        public double MaxDrawDown { get; }
-
         public TimeSpan Duration => Order != null ? ExitTime - Order.OpenTime : TimeSpan.FromSeconds(0);
 
         public int BarsPeriod { get; }
 
         public long Id { get; }
+
+        public double EquityMaxDrawDown { get; }
+
+        public double BalanceMaxDrawDown { get; }
     }
 }
