@@ -63,8 +63,8 @@ namespace NetTrade.TradeEngines.Tests
             {
                 Volume = 1000,
                 TradeType = TradeType.Buy,
-                StopLossPrice = .95,
-                TakeProfitPrice = 1.05,
+                StopLossInTicks = 5,
+                TakeProfitInTicks = 5,
             };
 
             var result = _tradeEngine.Execute(orderParameters);
@@ -75,12 +75,14 @@ namespace NetTrade.TradeEngines.Tests
         [TestMethod()]
         public void UpdateSymbolOrdersTest()
         {
+            (_symbol as OhlcSymbol).PublishBar(new Bar(DateTimeOffset.Now, 0.9, 1, 1, 0.95, 1000));
+
             var orderParameters = new MarketOrderParameters(_symbol)
             {
                 Volume = 1000,
                 TradeType = TradeType.Buy,
-                StopLossPrice = .95,
-                TakeProfitPrice = 1.05,
+                StopLossInTicks = 5,
+                TakeProfitInTicks = 5,
             };
 
             var result = _tradeEngine.Execute(orderParameters);
@@ -88,7 +90,7 @@ namespace NetTrade.TradeEngines.Tests
             Assert.IsTrue(result.IsSuccessful);
             Assert.IsTrue(_tradeEngine.Orders.Contains(result.Order));
 
-            (_symbol as OhlcSymbol).PublishBar(new Bar(DateTimeOffset.Now, 1, 1, 1, 1.1, 1000));
+            (_symbol as OhlcSymbol).PublishBar(new Bar(DateTimeOffset.Now, 0.95, 1, 0.8, 0.87, 1000));
 
             _tradeEngine.UpdateSymbolOrders(_symbol);
 
@@ -102,8 +104,8 @@ namespace NetTrade.TradeEngines.Tests
             {
                 Volume = 1000,
                 TradeType = TradeType.Buy,
-                StopLossPrice = .95,
-                TakeProfitPrice = 1.05,
+                StopLossInTicks = 5,
+                TakeProfitInTicks = 5,
             };
 
             var result = _tradeEngine.Execute(orderParameters);

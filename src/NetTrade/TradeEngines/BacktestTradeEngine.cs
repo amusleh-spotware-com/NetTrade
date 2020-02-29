@@ -111,13 +111,13 @@ namespace NetTrade.TradeEngines
                 if (parameters.StopLossInTicks.HasValue)
                 {
                     var stopLossInSymbolTicks = parameters.StopLossInTicks * parameters.Symbol.TickSize;
-                    order.StopLossPrice = order.TradeType == TradeType.Buy ? order.EntryPrice - stopLossInSymbolTicks : order.EntryPrice + stopLossInSymbolTicks;
+                    order.StopLossPrice = order.TradeType == TradeType.Buy ? entryPrice - stopLossInSymbolTicks : entryPrice + stopLossInSymbolTicks;
                 }
 
                 if (parameters.TakeProfitInTicks.HasValue)
                 {
                     var takeProfitInSymbolTicks = parameters.TakeProfitInTicks * parameters.Symbol.TickSize;
-                    order.StopLossPrice = order.TradeType == TradeType.Buy ? order.EntryPrice + takeProfitInSymbolTicks : order.EntryPrice - takeProfitInSymbolTicks;
+                    order.StopLossPrice = order.TradeType == TradeType.Buy ? entryPrice + takeProfitInSymbolTicks : entryPrice - takeProfitInSymbolTicks;
                 }
 
                 AddOrder(order);
