@@ -34,9 +34,13 @@ namespace NetTrade.Abstractions.Interfaces
 
         double Spread { get; }
 
-        event OnTickHandler OnTickEvent;
+        event OnTickHandler RobotOnTickEvent;
 
-        event OnBarHandler OnBarEvent;
+        event OnBarHandler RobotOnBarEvent;
+
+        event OnTickHandler IndicatorOnTickEvent;
+
+        event OnBarHandler IndicatorOnBarEvent;
 
         double GetPrice(TradeType tradeType);
     }

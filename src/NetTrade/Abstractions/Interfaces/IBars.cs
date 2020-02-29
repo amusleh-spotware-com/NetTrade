@@ -1,4 +1,5 @@
 ﻿using System;
+using NetTrade.Enums;
 
 namespace NetTrade.Abstractions.Interfaces
 {
@@ -14,8 +15,10 @@ namespace NetTrade.Abstractions.Interfaces
 
         ISeries<double> Close { get; }
 
-        ISeries<long> Volume { get; }
+        ISeries<double> Volume { get; }
 
         int AddBar(IBar bar);
+
+        ISeries<double> GetData(DataSourceType source);
     }
 }

@@ -40,9 +40,13 @@ namespace NetTrade.Symbols
 
         public double Spread => Ask - Bid;
 
-        public event OnTickHandler OnTickEvent;
+        public event OnTickHandler RobotOnTickEvent;
 
-        public event OnBarHandler OnBarEvent;
+        public event OnBarHandler RobotOnBarEvent;
+
+        public event OnTickHandler IndicatorOnTickEvent;
+
+        public event OnBarHandler IndicatorOnBarEvent;
 
         public double GetPrice(TradeType tradeType) => tradeType == TradeType.Buy ? Ask + (Slippage * TickSize) : Bid - (Slippage - TickSize);
 
@@ -51,7 +55,8 @@ namespace NetTrade.Symbols
             Bid = bid;
             Ask = ask;
 
-            OnTickEvent?.Invoke(this);
+            IndicatorOnTickEvent?.Invoke(this);
+            RobotOnTickEvent?.Invoke(this);
         }
 
         public void PublishBar(IBar bar)
@@ -60,7 +65,8 @@ namespace NetTrade.Symbols
 
             int index = Bars.AddBar(bar);
 
-            OnBarEvent?.Invoke(this, index);
+            IndicatorOnBarEvent?.Invoke(this, index);
+            RobotOnBarEvent?.Invoke(this, index);
         }
 
         #region Equality methods

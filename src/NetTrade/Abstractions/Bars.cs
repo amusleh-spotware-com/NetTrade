@@ -1,5 +1,6 @@
 ﻿using NetTrade.Abstractions.Interfaces;
 using NetTrade.Collections;
+using NetTrade.Enums;
 using System;
 
 namespace NetTrade.Abstractions
@@ -16,7 +17,7 @@ namespace NetTrade.Abstractions
 
         private readonly ExpandableSeries<double> _close = new ExpandableSeries<double>();
 
-        private readonly ExpandableSeries<long> _volume = new ExpandableSeries<long>();
+        private readonly ExpandableSeries<double> _volume = new ExpandableSeries<double>();
 
         public ISeries<DateTimeOffset> Time => _time;
 
@@ -28,7 +29,7 @@ namespace NetTrade.Abstractions
 
         public ISeries<double> Close => _close;
 
-        public ISeries<long> Volume => _volume;
+        public ISeries<double> Volume => _volume;
 
         public virtual int AddBar(IBar bar)
         {
@@ -42,6 +43,30 @@ namespace NetTrade.Abstractions
             _volume.Add(index, bar.Volume);
 
             return index;
+        }
+
+        public virtual ISeries<double> GetData(DataSourceType source)
+        {
+            switch (source)
+            {
+                case DataSourceType.Open:
+                    return Open;
+
+                case DataSourceType.High:
+                    return High;
+
+                case DataSourceType.Low:
+                    return Low;
+
+                case DataSourceType.Close:
+                    return Close;
+
+                case DataSourceType.Volume:
+                    return Volume;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(source));
+            }
         }
 
         public abstract object Clone();

@@ -56,8 +56,8 @@ namespace NetTrade.Abstractions
 
             foreach (var symbol in Symbols)
             {
-                symbol.OnTickEvent += Symbol_OnTickEvent;
-                symbol.OnBarEvent += SymbolBars_OnBarEvent;
+                symbol.RobotOnTickEvent += Symbol_OnTickEvent;
+                symbol.RobotOnBarEvent += SymbolBars_OnBarEvent;
             }
 
             Timer.OnTimerElapsedEvent += timer => OnTimer();
