@@ -9,5 +9,9 @@ namespace NetTrade.Models
         public MarketOrderParameters(ISymbol symbol) : base(OrderType.Market, symbol)
         {
         }
+
+        public double? StopLossInTicks { get; set; }
+
+        public double? TakeProfitInTicks { get; set; }
     }
 }

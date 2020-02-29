@@ -105,8 +105,20 @@ namespace NetTrade.TradeEngines
                 var order = new MarketOrder(entryPrice, parameters, Server.CurrentTime)
                 {
                     Commission = parameters.Symbol.Commission * 2,
-                    MarginUsed = marginRequired
+                    MarginUsed = marginRequired,
                 };
+
+                if (parameters.StopLossInTicks.HasValue)
+                {
+                    var stopLossInSymbolTicks = parameters.StopLossInTicks * parameters.Symbol.TickSize;
+                    order.StopLossPrice = order.TradeType == TradeType.Buy ? order.EntryPrice - stopLossInSymbolTicks : order.EntryPrice + stopLossInSymbolTicks;
+                }
+
+                if (parameters.TakeProfitInTicks.HasValue)
+                {
+                    var takeProfitInSymbolTicks = parameters.TakeProfitInTicks * parameters.Symbol.TickSize;
+                    order.StopLossPrice = order.TradeType == TradeType.Buy ? order.EntryPrice + takeProfitInSymbolTicks : order.EntryPrice - takeProfitInSymbolTicks;
+                }
 
                 AddOrder(order);
 

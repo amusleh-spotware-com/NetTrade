@@ -19,5 +19,9 @@ namespace NetTrade.Models
         public double TargetPrice { get; set; }
 
         public DateTimeOffset? ExpiryTime { get; set; }
+
+        public double? StopLossPrice { get; set; }
+
+        public double? TakeProfitPrice { get; set; }
     }
 }

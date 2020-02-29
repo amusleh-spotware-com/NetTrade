@@ -18,10 +18,6 @@ namespace NetTrade.Abstractions
 
             Comment = orderParameters.Comment;
 
-            StopLossPrice = orderParameters.StopLossPrice;
-
-            TakeProfitPrice = orderParameters.TakeProfitPrice;
-
             OpenTime = openTime;
         }
 

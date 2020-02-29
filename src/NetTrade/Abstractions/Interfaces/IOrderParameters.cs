@@ -13,9 +13,5 @@ namespace NetTrade.Abstractions.Interfaces
         double Volume { get; }
 
         string Comment { get; }
-
-        double? StopLossPrice { get; }
-
-        double? TakeProfitPrice { get; }
     }
 }

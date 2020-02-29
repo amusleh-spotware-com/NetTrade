@@ -140,8 +140,8 @@ namespace NetTrade.Abstractions
             {
                 Volume = order.Volume,
                 TradeType = order.TradeType,
-                StopLossPrice = order.StopLossPrice,
-                TakeProfitPrice = order.TakeProfitPrice,
+                StopLossInTicks = order.StopLossPrice.HasValue ? (double?)Math.Abs(order.TargetPrice - order.StopLossPrice.Value) : null,
+                TakeProfitInTicks = order.TakeProfitPrice.HasValue ? (double?)Math.Abs(order.TargetPrice - order.TakeProfitPrice.Value) : null,
                 Comment = order.Comment,
             };
 

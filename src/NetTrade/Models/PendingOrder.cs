@@ -9,6 +9,10 @@ namespace NetTrade.Models
         {
             TargetPrice = parameters.TargetPrice;
             ExpiryTime = parameters.ExpiryTime;
+
+            StopLossPrice = parameters.StopLossPrice;
+
+            TakeProfitPrice = parameters.TakeProfitPrice;
         }
 
         public double TargetPrice { get; set; }

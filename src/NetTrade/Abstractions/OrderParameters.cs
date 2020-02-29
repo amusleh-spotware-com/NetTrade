@@ -18,10 +18,6 @@ namespace NetTrade.Abstractions
 
         public TradeType TradeType { get; set; }
 
-        public double? StopLossPrice { get; set; }
-
-        public double? TakeProfitPrice { get; set; }
-
         public string Comment { get; set; }
 
         public ISymbol Symbol { get; }
