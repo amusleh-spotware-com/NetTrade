@@ -30,7 +30,9 @@ namespace NetTrade.TradeEngines
             }
         }
 
-        public override void CloseMarketOrder(MarketOrder order)
+        public override void CloseMarketOrder(MarketOrder order) => CloseMarketOrder(order, CloseReason.Manual);
+
+        public override void CloseMarketOrder(MarketOrder order, CloseReason closeReason)
         {
             if (_orders.Contains(order))
             {
@@ -60,8 +62,23 @@ namespace NetTrade.TradeEngines
 
             var id = _trades.Count + 1;
 
-            var trade = new Trade(id, order, Server.CurrentTime, exitPrice, Account.Equity, Account.CurrentBalance,
-                sharpeRatio, sortinoRatio, equityMaxDrawDown, balanceMaxDrawDown, barsPeriod);
+            var tradeParameters = new TradeParameters
+            {
+                Id = id,
+                Order = order,
+                ExitTime = Server.CurrentTime,
+                ExitPrice = exitPrice,
+                Balance = Account.CurrentBalance,
+                Equity = Account.Equity,
+                BalanceMaxDrawDown = balanceMaxDrawDown,
+                EquityMaxDrawDown = equityMaxDrawDown,
+                BarsPeriod = barsPeriod,
+                CloseReason = closeReason,
+                SharpeRatio = sharpeRatio,
+                SortinoRatio = sortinoRatio
+            };
+
+            var trade = new Trade(tradeParameters);
 
             _trades.Add(trade);
         }

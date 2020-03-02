@@ -1,34 +1,36 @@
 ﻿using NetTrade.Abstractions.Interfaces;
 using System;
+using NetTrade.Enums;
 
 namespace NetTrade.Models
 {
     public class Trade : ITrade
     {
-        public Trade(long id, MarketOrder order, DateTimeOffset exitTime, double exitPrice, double equity, double balance,
-            double sharpeRatio, double sortinoRatio, double equityMaxDrawDown, double balanceMaxDrawDown, int barsPeriod)
+        public Trade(TradeParameters parameters)
         {
-            Id = id;
+            Id = parameters.Id;
 
-            Order = order;
+            Order = parameters.Order;
 
-            ExitTime = exitTime;
+            ExitTime = parameters.ExitTime;
 
-            ExitPrice = exitPrice;
+            ExitPrice = parameters.ExitPrice;
 
-            Equity = equity;
+            Equity = parameters.Equity;
 
-            Balance = balance;
+            Balance = parameters.Balance;
 
-            SharpeRatio = sharpeRatio;
+            SharpeRatio = parameters.SharpeRatio;
 
-            SortinoRatio = sortinoRatio;
+            SortinoRatio = parameters.SortinoRatio;
 
-            EquityMaxDrawDown = equityMaxDrawDown;
+            EquityMaxDrawDown = parameters.EquityMaxDrawDown;
 
-            BalanceMaxDrawDown = balanceMaxDrawDown;
+            BalanceMaxDrawDown = parameters.BalanceMaxDrawDown;
 
-            BarsPeriod = barsPeriod;
+            BarsPeriod = parameters.BarsPeriod;
+
+            CloseReason = parameters.CloseReason;
         }
 
         public MarketOrder Order { get; }
@@ -54,5 +56,7 @@ namespace NetTrade.Models
         public double EquityMaxDrawDown { get; }
 
         public double BalanceMaxDrawDown { get; }
+
+        public CloseReason CloseReason { get; }
     }
 }

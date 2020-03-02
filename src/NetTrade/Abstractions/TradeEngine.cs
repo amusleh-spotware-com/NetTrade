@@ -36,6 +36,8 @@ namespace NetTrade.Abstractions
 
         public abstract TradeResult Execute(IOrderParameters parameters);
 
+        public abstract void CloseMarketOrder(MarketOrder order, CloseReason closeReason);
+
         public abstract void CloseMarketOrder(MarketOrder order);
 
         public abstract void CancelPendingOrder(PendingOrder order);
@@ -54,11 +56,11 @@ namespace NetTrade.Abstractions
 
                     totalEquityChange += CalculateMarketOrderProfit(marketOrder);
 
-                    bool closeOrder = IsTimeToCloseMarketOrder(marketOrder);
+                    bool closeOrder = IsTimeToCloseMarketOrder(marketOrder, out CloseReason closeReason);
 
                     if (closeOrder)
                     {
-                        CloseMarketOrder(marketOrder);
+                        CloseMarketOrder(marketOrder, closeReason);
                     }
                 }
                 else if (order is PendingOrder)
@@ -184,19 +186,41 @@ namespace NetTrade.Abstractions
             return result;
         }
 
-        protected virtual bool IsTimeToCloseMarketOrder(MarketOrder order)
+        protected virtual bool IsTimeToCloseMarketOrder(MarketOrder order, out CloseReason closeReason)
         {
             bool result = false;
 
-            if (order.TradeType == TradeType.Buy &&
-                (order.Symbol.Bid >= order.TakeProfitPrice || order.Symbol.Bid <= order.StopLossPrice))
+            closeReason = CloseReason.None;
+
+            if (order.TradeType == TradeType.Buy)
             {
-                result = true;
+                if (order.Symbol.Bid >= order.TakeProfitPrice)
+                {
+                    result = true;
+
+                    closeReason = CloseReason.TakeProfitTriggered;
+                }
+                else if (order.Symbol.Bid <= order.StopLossPrice)
+                {
+                    result = true;
+
+                    closeReason = CloseReason.StopLossTriggered;
+                }
             }
-            else if (order.TradeType == TradeType.Sell &&
-                (order.Symbol.Ask <= order.TakeProfitPrice || order.Symbol.Ask >= order.StopLossPrice))
+            else if (order.TradeType == TradeType.Sell)
             {
-                result = true;
+                if (order.Symbol.Ask <= order.TakeProfitPrice)
+                {
+                    result = true;
+
+                    closeReason = CloseReason.TakeProfitTriggered;
+                }
+                else if (order.Symbol.Ask >= order.StopLossPrice)
+                {
+                    result = true;
+
+                    closeReason = CloseReason.StopLossTriggered;
+                }
             }
 
             return result;

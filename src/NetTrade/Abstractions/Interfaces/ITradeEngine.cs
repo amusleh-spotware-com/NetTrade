@@ -22,6 +22,8 @@ namespace NetTrade.Abstractions.Interfaces
 
         void CloseMarketOrder(MarketOrder order);
 
+        void CloseMarketOrder(MarketOrder order, CloseReason closeReason);
+
         void CloseAllMarketOrders();
 
         void CloseAllMarketOrders(TradeType tradeType);

@@ -1,4 +1,5 @@
-﻿using NetTrade.Models;
+﻿using NetTrade.Enums;
+using NetTrade.Models;
 using System;
 
 namespace NetTrade.Abstractions.Interfaces
@@ -28,5 +29,7 @@ namespace NetTrade.Abstractions.Interfaces
         int BarsPeriod { get; }
 
         long Id { get; }
+
+        CloseReason CloseReason { get; }
     }
 }
