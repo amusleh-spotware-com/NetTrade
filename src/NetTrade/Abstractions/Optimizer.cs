@@ -85,13 +85,13 @@ namespace NetTrade.Abstractions
 
             _robots.Clear();
 
-            OnOptimizationStartedEvent?.Invoke(this);
-
             OnStart();
 
             RunningMode = RunningMode.Running;
 
-            StartRobots();
+            OnOptimizationStartedEvent?.Invoke(this);
+
+            StartRobotsBacktest();
         }
 
         public Task StartAsync() => Task.Run(Start);
@@ -131,7 +131,7 @@ namespace NetTrade.Abstractions
             _robots.Add(robot);
         }
 
-        protected virtual void StartRobots()
+        protected virtual void StartRobotsBacktest()
         {
             _cancellationTokenSource = new CancellationTokenSource();
 
