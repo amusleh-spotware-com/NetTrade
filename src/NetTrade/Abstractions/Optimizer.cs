@@ -152,13 +152,16 @@ namespace NetTrade.Abstractions
                     robotsWithSettings.Add((robot, robotParameters));
                 }
 
-                Parallel.ForEach(robotsWithSettings, parallelOptions, async (iRobotWithSettings) =>
+                Parallel.ForEach(robotsWithSettings, parallelOptions, async (iRobotWithSettings, state) =>
                 {
                     iRobotWithSettings.Item2.Backtester.OnBacktestStopEvent += Backtester_OnBacktestStopEvent;
 
                     await iRobotWithSettings.Item1.StartAsync(iRobotWithSettings.Item2).ConfigureAwait(false);
 
-                    parallelOptions.CancellationToken.ThrowIfCancellationRequested();
+                    if (parallelOptions.CancellationToken.IsCancellationRequested)
+                    {
+                        state.Stop();
+                    }
                 });
             }
             catch (OperationCanceledException)
