@@ -141,41 +141,33 @@ namespace NetTrade.Abstractions
                 MaxDegreeOfParallelism = Settings.MaxProcessorNumber
             };
 
-            try
+            var robotsWithSettings = new List<(IRobot, IRobotParameters)>();
+
+            foreach (var robot in _robots)
             {
-                var robotsWithSettings = new List<(IRobot, IRobotParameters)>();
+                var robotParameters = GetRobotParameters();
 
-                foreach (var robot in _robots)
+                robotsWithSettings.Add((robot, robotParameters));
+            }
+
+            Parallel.ForEach(robotsWithSettings, parallelOptions, async (iRobotWithSettings, state) =>
+            {
+                iRobotWithSettings.Item2.Backtester.OnBacktestStopEvent += Backtester_OnBacktestStopEvent;
+
+                await iRobotWithSettings.Item1.StartAsync(iRobotWithSettings.Item2).ConfigureAwait(false);
+
+                if (parallelOptions.CancellationToken.IsCancellationRequested)
                 {
-                    var robotParameters = GetRobotParameters();
-
-                    robotsWithSettings.Add((robot, robotParameters));
+                    state.Stop();
                 }
+            });
 
-                Parallel.ForEach(robotsWithSettings, parallelOptions, async (iRobotWithSettings, state) =>
-                {
-                    iRobotWithSettings.Item2.Backtester.OnBacktestStopEvent += Backtester_OnBacktestStopEvent;
-
-                    await iRobotWithSettings.Item1.StartAsync(iRobotWithSettings.Item2).ConfigureAwait(false);
-
-                    if (parallelOptions.CancellationToken.IsCancellationRequested)
-                    {
-                        state.Stop();
-                    }
-                });
-            }
-            catch (OperationCanceledException)
+            if (RunningMode == RunningMode.Running)
             {
+                Stop();
             }
-            finally
-            {
-                if (RunningMode == RunningMode.Running)
-                {
-                    Stop();
-                }
 
-                _cancellationTokenSource.Dispose();
-            }
+            _cancellationTokenSource.Dispose();
         }
 
         private void Backtester_OnBacktestStopEvent(object sender, IRobot robot)
