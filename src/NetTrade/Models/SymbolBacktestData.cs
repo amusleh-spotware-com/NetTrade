@@ -16,7 +16,7 @@ namespace NetTrade.Models
 
         public ISymbol Symbol { get; }
 
-        public IEnumerable<IBar> Data { get; }
+        public IReadOnlyList<IBar> Data { get; }
 
         public IBar GetBar(DateTimeOffset time) => Data.FirstOrDefault(iBar => iBar.Time == time);
 

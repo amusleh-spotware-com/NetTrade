@@ -7,7 +7,7 @@ namespace NetTrade.Abstractions.Interfaces
     {
         ISymbol Symbol { get; }
 
-        IEnumerable<IBar> Data { get; }
+        IReadOnlyList<IBar> Data { get; }
 
         IBar GetBar(DateTimeOffset time);
 
