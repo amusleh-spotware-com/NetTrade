@@ -8,7 +8,11 @@ namespace NetTrade.Backtesters
     {
         protected override async Task StartDataFeed()
         {
-            for (var currentTime = Settings.StartTime; currentTime <= Settings.EndTime; currentTime = currentTime.Add(Interval))
+            var startTime = Settings.StartTime;
+            var endTime = Settings.EndTime;
+            var interval = Interval;
+
+            for (var currentTime = startTime; currentTime <= endTime; currentTime = currentTime.Add(interval))
             {
                 bool shouldContinueDataFeed = await ShouldContinueDataFeed();
 
