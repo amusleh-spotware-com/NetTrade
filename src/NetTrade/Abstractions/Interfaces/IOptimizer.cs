@@ -11,8 +11,6 @@ namespace NetTrade.Abstractions.Interfaces
 
         RunningMode RunningMode { get; }
 
-        IReadOnlyList<Robot> Robots { get; }
-
         event OnOptimizationPassCompletionHandler OnOptimizationPassCompletionEvent;
 
         event OnOptimizationStartedHandler OnOptimizationStartedEvent;

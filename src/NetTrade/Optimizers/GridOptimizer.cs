@@ -1,6 +1,7 @@
 ﻿using NetTrade.Abstractions;
 using NetTrade.Abstractions.Interfaces;
 using NetTrade.Helpers;
+using System.Threading.Tasks;
 
 namespace NetTrade.Optimizers
 {
@@ -12,14 +13,14 @@ namespace NetTrade.Optimizers
 
         protected override void OnStart()
         {
-            var parametersGrid = OptimizerParameterGridCreator.GetParameterGrid(Settings.Parameters);
+            var parametersGrid = OptimizerParameterGridCreator.GetParameterGrid(Settings.Parameters).ToArray();
 
-            foreach (var parameterGrid in parametersGrid)
+            Parallel.For(0, parametersGrid.Length, iRobotIndex =>
             {
-                var robot = OptimizerRobotCreator.GetRobot(Settings.RobotType, parameterGrid);
+                var robot = OptimizerRobotCreator.GetRobot(Settings.RobotType, parametersGrid[iRobotIndex]);
 
                 AddRobot(robot);
-            }
+            });
         }
     }
 }

@@ -87,7 +87,7 @@ namespace NetTrade.Optimizers.Tests
 
             _optimizer.Start();
 
-            Assert.AreEqual(_optimizer.Robots.Count, completedPassCounter);
+            Assert.AreEqual(9, completedPassCounter);
         }
 
         [TestMethod()]
@@ -102,7 +102,7 @@ namespace NetTrade.Optimizers.Tests
 
             await _optimizer.StartAsync();
 
-            Assert.AreEqual(_optimizer.Robots.Count, completedPassCounter);
+            Assert.AreEqual(9, completedPassCounter);
         }
     }
 }

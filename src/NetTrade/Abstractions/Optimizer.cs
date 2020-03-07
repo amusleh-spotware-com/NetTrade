@@ -4,6 +4,7 @@ using NetTrade.Enums;
 using NetTrade.Helpers;
 using NetTrade.Models;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -13,7 +14,7 @@ namespace NetTrade.Abstractions
 {
     public abstract class Optimizer : IOptimizer
     {
-        private readonly List<Robot> _robots = new List<Robot>();
+        private ConcurrentBag<Robot> _robots;
 
         private CancellationTokenSource _cancellationTokenSource;
 
@@ -25,8 +26,6 @@ namespace NetTrade.Abstractions
         public IOptimizerSettings Settings { get; }
 
         public RunningMode RunningMode { get; private set; } = RunningMode.Stopped;
-
-        public IReadOnlyList<Robot> Robots => _robots;
 
         public event OnOptimizationPassCompletionHandler OnOptimizationPassCompletionEvent;
 
@@ -83,7 +82,7 @@ namespace NetTrade.Abstractions
                 throw new InvalidOperationException("The optimizer is already in running mode");
             }
 
-            _robots.Clear();
+            _robots = new ConcurrentBag<Robot>();
 
             OnStart();
 
@@ -141,22 +140,20 @@ namespace NetTrade.Abstractions
                 MaxDegreeOfParallelism = Settings.MaxProcessorNumber
             };
 
-            var robotsWithSettings = new List<(IRobot, IRobotParameters)>();
-
-            foreach (var robot in _robots)
-            {
-                var robotParameters = GetRobotParameters();
-
-                robotsWithSettings.Add((robot, robotParameters));
-            }
-
             try
             {
-                Parallel.ForEach(robotsWithSettings, parallelOptions, async (iRobotWithSettings, state) =>
-                {
-                    iRobotWithSettings.Item2.Backtester.OnBacktestStopEvent += Backtester_OnBacktestStopEvent;
+                var robotsCount = _robots.Count;
 
-                    await iRobotWithSettings.Item1.StartAsync(iRobotWithSettings.Item2).ConfigureAwait(false);
+                Parallel.For(0, robotsCount, parallelOptions, async (iRobotIndex, state) =>
+                {
+                    if (_robots.TryTake(out var iRobot))
+                    {
+                        var robotParameters = GetRobotParameters();
+
+                        robotParameters.Backtester.OnBacktestStopEvent += Backtester_OnBacktestStopEvent;
+
+                        await iRobot.StartAsync(robotParameters).ConfigureAwait(false);
+                    }
 
                     if (parallelOptions.CancellationToken.IsCancellationRequested)
                     {
