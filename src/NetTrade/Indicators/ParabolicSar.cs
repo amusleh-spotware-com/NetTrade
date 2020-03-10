@@ -8,7 +8,7 @@ namespace NetTrade.Indicators
 {
     public class ParabolicSar : Indicator
     {
-        private ExpandableSeries<double> _data = new ExpandableSeries<double>();
+        private readonly ExpandableSeries<double> _data = new ExpandableSeries<double>();
 
         private double _currentAccelerationFactor, _extremePoint;
 

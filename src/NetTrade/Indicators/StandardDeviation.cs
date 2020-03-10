@@ -1,16 +1,17 @@
-﻿using NetTrade.Abstractions.Interfaces;
-using NetTrade.Abstractions;
+﻿using NetTrade.Abstractions;
+using NetTrade.Abstractions.Interfaces;
 using NetTrade.Collections;
 using NetTrade.Enums;
+using NetTrade.Helpers;
 using System.Linq;
 
 namespace NetTrade.Indicators
 {
-    public class SimpleMovingAverage : Indicator
+    public class StandardDeviation : Indicator
     {
         private readonly ExpandableSeries<double> _data = new ExpandableSeries<double>();
 
-        public SimpleMovingAverage(ISymbol symbol, int periods, DataSourceType dataSourceType)
+        public StandardDeviation(ISymbol symbol, int periods, DataSourceType dataSourceType)
         {
             Symbol = symbol;
 
@@ -39,7 +40,7 @@ namespace NetTrade.Indicators
             {
                 var dataWindow = symbolData.Skip(symbolData.Count - Periods);
 
-                dataPoint = dataWindow.Sum() / dataWindow.Count();
+                dataPoint = StdCalculator.GetStd(dataWindow, true);
             }
 
             _data.Add(dataPoint);

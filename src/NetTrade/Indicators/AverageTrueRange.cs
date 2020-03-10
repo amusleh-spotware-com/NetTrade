@@ -7,9 +7,9 @@ namespace NetTrade.Indicators
 {
     public class AverageTrueRange : Indicator
     {
-        private TrueRange _trueRange;
+        private readonly TrueRange _trueRange;
 
-        private ExpandableSeries<double> _data = new ExpandableSeries<double>();
+        private readonly ExpandableSeries<double> _data = new ExpandableSeries<double>();
 
         public AverageTrueRange(ISymbol symbol, int periods)
         {

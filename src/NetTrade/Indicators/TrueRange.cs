@@ -7,7 +7,7 @@ namespace NetTrade.Indicators
 {
     public class TrueRange : Indicator
     {
-        private ExpandableSeries<double> _data = new ExpandableSeries<double>();
+        private readonly ExpandableSeries<double> _data = new ExpandableSeries<double>();
 
         public TrueRange(ISymbol symbol)
         {
