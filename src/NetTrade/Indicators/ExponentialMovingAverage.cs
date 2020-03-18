@@ -10,26 +10,33 @@ namespace NetTrade.Indicators
     {
         private readonly ExpandableSeries<double> _data = new ExpandableSeries<double>();
 
-        public ExponentialMovingAverage(ISymbol symbol, int periods, DataSourceType dataSourceType)
+        private int _periods;
+
+        public ExponentialMovingAverage(ISymbol symbol)
         {
             Symbol = symbol;
 
             Symbol.IndicatorOnBarEvent += Symbol_OnBarEvent;
 
-            Periods = periods;
-
-            DataSourceType = dataSourceType;
-
-            WeightedMultiplier = 2 / (Periods + 1.0);
+            Periods = 14;
         }
 
         public ISymbol Symbol { get; }
 
-        public double WeightedMultiplier { get; }
+        public double WeightedMultiplier { get; private set; }
 
-        public int Periods { get; }
+        public int Periods 
+        {
+            get => _periods;
+            set
+            {
+                _periods = value;
 
-        public DataSourceType DataSourceType { get; }
+                WeightedMultiplier = 2 / (_periods + 1.0);
+            }
+        }
+
+        public DataSourceType DataSourceType { get; set; } = DataSourceType.Close;
 
         public ISeries<double> Data => _data;
 

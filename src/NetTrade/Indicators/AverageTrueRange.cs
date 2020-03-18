@@ -11,18 +11,16 @@ namespace NetTrade.Indicators
 
         private readonly ExpandableSeries<double> _data = new ExpandableSeries<double>();
 
-        public AverageTrueRange(ISymbol symbol, int periods)
+        public AverageTrueRange(ISymbol symbol)
         {
             Symbol = symbol;
-
-            Periods = periods;
 
             _trueRange = new TrueRange(Symbol);
 
             _trueRange.OnNewValueEvent += _trueRange_OnNewValueEvent;
         }
 
-        public int Periods { get; }
+        public int Periods { get; set; } = 14;
 
         public ISymbol Symbol { get; }
 

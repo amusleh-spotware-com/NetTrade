@@ -14,29 +14,22 @@ namespace NetTrade.Indicators
 
         private bool _isUpTrend;
 
-        public ParabolicSar(ISymbol symbol, double minAccelerationFactor, double maxAccelerationFactor,
-            double accelerationFactorStep)
+        public ParabolicSar(ISymbol symbol)
         {
             Symbol = symbol;
 
             Symbol.IndicatorOnBarEvent += Symbol_OnBarEvent;
-
-            MinAccelerationFactor = minAccelerationFactor;
-
-            MaxAccelerationFactor = maxAccelerationFactor;
-
-            AccelerationFactorStep = accelerationFactorStep;
 
             _currentAccelerationFactor = MinAccelerationFactor;
         }
 
         public ISymbol Symbol { get; }
 
-        public double MinAccelerationFactor { get; }
+        public double MinAccelerationFactor { get; set; } = 0.02;
 
-        public double MaxAccelerationFactor { get; }
+        public double MaxAccelerationFactor { get; set; } = 0.2;
 
-        public double AccelerationFactorStep { get; }
+        public double AccelerationFactorStep { get; set; } = 0.02;
 
         public ISeries<double> Data => _data;
 
