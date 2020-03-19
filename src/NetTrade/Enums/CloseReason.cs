@@ -9,6 +9,7 @@ namespace NetTrade.Enums
         None,
         StopLossTriggered,
         TakeProfitTriggered,
-        Manual
+        Manual,
+        Forced
     }
 }

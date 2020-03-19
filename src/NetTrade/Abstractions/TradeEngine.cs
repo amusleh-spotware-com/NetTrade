@@ -82,7 +82,11 @@ namespace NetTrade.Abstractions
             }
         }
 
-        public virtual void CloseAllMarketOrders()
+        public virtual void CloseAllMarketOrders() => CloseAllMarketOrders(CloseReason.Manual);
+
+        public virtual void CloseAllMarketOrders(TradeType tradeType) => CloseAllMarketOrders(CloseReason.Manual);
+
+        public virtual void CloseAllMarketOrders(CloseReason closeReason)
         {
             foreach (var order in Orders)
             {
@@ -91,11 +95,11 @@ namespace NetTrade.Abstractions
                     continue;
                 }
 
-                CloseMarketOrder(order as MarketOrder);
+                CloseMarketOrder(order as MarketOrder, closeReason);
             }
         }
 
-        public virtual void CloseAllMarketOrders(TradeType tradeType)
+        public virtual void CloseAllMarketOrders(TradeType tradeType, CloseReason closeReason)
         {
             foreach (var order in Orders)
             {
@@ -104,7 +108,7 @@ namespace NetTrade.Abstractions
                     continue;
                 }
 
-                CloseMarketOrder(order as MarketOrder);
+                CloseMarketOrder(order as MarketOrder, closeReason);
             }
         }
 

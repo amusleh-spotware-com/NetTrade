@@ -95,7 +95,7 @@ namespace NetTrade.Abstractions
         {
             if (Mode == Mode.Backtest)
             {
-                Trade.CloseAllMarketOrders();
+                Trade.CloseAllMarketOrders(CloseReason.Forced);
             }
 
             if (RunningMode == RunningMode.Stopped)
