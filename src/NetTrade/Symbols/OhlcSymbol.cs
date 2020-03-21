@@ -48,7 +48,7 @@ namespace NetTrade.Symbols
 
         public event OnBarHandler IndicatorOnBarEvent;
 
-        public double GetPrice(TradeType tradeType) => tradeType == TradeType.Buy ? Ask + (Slippage * TickSize) : Bid - (Slippage - TickSize);
+        public double GetPrice(TradeType tradeType) => tradeType == TradeType.Buy ? Ask + (Slippage * TickSize) : Bid - (Slippage * TickSize);
 
         private void SetBidAsk(double bid, double ask)
         {
