@@ -1,0 +1,39 @@
+NetTrade
+
+This is a .Net library for developing trading algorithms, you will be able to write you algorithm in C# and backtest/optimize it with just few lines of code.
+
+NetTrade is very adaptive, you can customize it based on your needs or you can develop a fully functional algo trading platform on top of it.
+
+The library itself contains a default backtester/optimizer, but you can create your own backtester/optimizer based on your needs.
+
+Its written on .Net Standard and you will be able to use it on all .Net family.
+
+The idea behind NetTrade was to develop a lightweight library that perform all the hard work of backtesting, optimization, and live trading of a trading algorithm without having any dependency outside .Net built in libraries.
+
+NetTrade makes trading algorithm development very simple, and if you have any experience with popular trading platforms like MetaTrader 4/5, cTrader, or NinjaTrader you will found NetTrade very similar to those platforms.
+
+Quick Start
+
+Install NetTrade on your .Net project via Nuget: 
+
+Let's create a simple moving average crossover trading system:
+
+''' Code '''
+
+As you can see the code is very clean and compact, you just have to create a class that's driven from NetTrade abstract Robot class, and you will be able to use all NetTrade features like backtesting and optimization.
+
+Code for backtesting the simple moving average crossover system:
+
+''' Code '''
+
+Code for optimizing the simple moving average crossover system:
+
+''' Code '''
+
+Live Trading
+
+NetTrade manages trading with its "TradeEngine" class, by default it contains a "BacktestTradeEngine" which is used by backtesters and optimizers, you can built or modify the default BacktestTradeEngine based on your needs.
+
+To live trade a NetTrade robot you have to create an implementation of TradeEngine that connects to a specific broker API and sends the robot orders to broker, for now NetTrade doesn't contain any live trading "TradeEngine" and we need your contribution to add more trading engines on NetTrade. 
+
+For detailed documentation please check project Wiki.

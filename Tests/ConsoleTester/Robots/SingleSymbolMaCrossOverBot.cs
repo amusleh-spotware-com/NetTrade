@@ -1,8 +1,8 @@
 ﻿using NetTrade.Abstractions;
 using NetTrade.Abstractions.Interfaces;
 using NetTrade.Attributes;
-using NetTrade.Collections;
 using NetTrade.Enums;
+using NetTrade.Indicators;
 using NetTrade.Models;
 using System;
 using System.Linq;
@@ -12,7 +12,7 @@ namespace ConsoleTester.Robots
     [Robot(Name = "Single Symbol Ma Cross Over Bot", Group = "Sample")]
     public class SingleSymbolMaCrossOverBot : Robot
     {
-        private ExpandableSeries<double> _fastMa, _slowMa;
+        private SimpleMovingAverage _fastMa, _slowMa;
 
         [Parameter("Fast MA Period", DefaultValue = 5)]
         public int FastMaPeriod { get; set; }
@@ -30,20 +30,18 @@ namespace ConsoleTester.Robots
                 throw new InvalidOperationException("This robot is only for single symbol use, not multi symbol");
             }
 
-            _fastMa = new ExpandableSeries<double>();
-            _slowMa = new ExpandableSeries<double>();
+            _fastMa = new SimpleMovingAverage(Symbols.First()) { DataSourceType = DataSourceType.Close, Periods = FastMaPeriod };
+
+            _slowMa = new SimpleMovingAverage(Symbols.First()) { DataSourceType = DataSourceType.Close, Periods = SlowMaPeriod };
         }
 
         public override void OnBar(ISymbol symbol, int index)
         {
-            _fastMa.Add(index, GetAverage(symbol.Bars.Close, FastMaPeriod));
-            _slowMa.Add(index, GetAverage(symbol.Bars.Close, SlowMaPeriod));
-
-            if (_fastMa[index] > _slowMa[index])
+            if (_fastMa.Data[index] > _slowMa.Data[index])
             {
-                ClosePositions(TradeType.Sell);
+                Trade.CloseAllMarketOrders(TradeType.Sell);
 
-                if (_fastMa[index - 1] <= _slowMa[index - 1] && !Trade.Orders.Any(iOrder => iOrder.OrderType == OrderType.Market && iOrder.TradeType == TradeType.Buy))
+                if (_fastMa.Data[index - 1] <= _slowMa.Data[index - 1] && !Trade.Orders.Any(iOrder => iOrder.OrderType == OrderType.Market && iOrder.TradeType == TradeType.Buy))
                 {
                     var marketOrderParameters = new MarketOrderParameters(symbol)
                     {
@@ -54,11 +52,11 @@ namespace ConsoleTester.Robots
                     Trade.Execute(marketOrderParameters);
                 }
             }
-            else if (_fastMa[index] < _slowMa[index])
+            else if (_fastMa.Data[index] < _slowMa.Data[index])
             {
-                ClosePositions(TradeType.Buy);
+                Trade.CloseAllMarketOrders(TradeType.Buy);
 
-                if (_fastMa[index - 1] >= _slowMa[index - 1] && !Trade.Orders.Any(iOrder => iOrder.OrderType == OrderType.Market && iOrder.TradeType == TradeType.Sell))
+                if (_fastMa.Data[index - 1] >= _slowMa.Data[index - 1] && !Trade.Orders.Any(iOrder => iOrder.OrderType == OrderType.Market && iOrder.TradeType == TradeType.Sell))
                 {
                     var marketOrderParameters = new MarketOrderParameters(symbol)
                     {
@@ -68,31 +66,6 @@ namespace ConsoleTester.Robots
 
                     Trade.Execute(marketOrderParameters);
                 }
-            }
-        }
-
-        private double GetAverage(ISeries<double> price, int period)
-        {
-            if (price.Count < period)
-            {
-                return double.NaN;
-            }
-
-            var data = price.TakeLast(period);
-
-            return data.Sum() / data.Count();
-        }
-
-        private void ClosePositions(TradeType tradeType)
-        {
-            foreach (var order in Trade.Orders)
-            {
-                if (order.OrderType != OrderType.Market || order.TradeType != tradeType)
-                {
-                    continue;
-                }
-
-                Trade.CloseMarketOrder(order as MarketOrder);
             }
         }
     }
