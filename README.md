@@ -169,5 +169,4 @@ NetTrade manages trading with its "TradeEngine" class. By default it contains a 
 
 To live trade a NetTrade robot you have to create an implementation of the TradeEngine that connects to a specific broker API and sends the robot orders to the broker. For now NetTrade doesn't contain any live trading "TradeEngine" and we need your contribution to add more trading engines on NetTrade. 
 
-- View the [Documentation][docs].
-[docs]: https://nettrade.readthedocs.io/en/latest/
+- <a href="https://nettrade.readthedocs.io/en/latest/">Documentation</a>
