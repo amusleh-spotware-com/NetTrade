@@ -1,1 +1,13 @@
+site_name: NetTrade
 theme: readthedocs
+
+pages:
+- Getting Started:
+    - 'Robot': 'index.md'
+    - 'IRobotParameters': 'IRobotParameters.md' 
+    - 'Backtesting': 'Backtesting.md' 
+    - 'Optimization': 'Optimization.md' 
+    - 'Indicators': 'Indicators.md' 
+    - 'Symbol': 'Symbol.md' 
+    - 'Bars': 'Bars.md' 
+    - 'TradeEngine': 'TradeEngine.md' 
