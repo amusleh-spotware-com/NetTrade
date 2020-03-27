@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Indicators - NetTrade</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Indicators";
+    var mkdocs_page_input_path = "Indicators.md";
+    var mkdocs_page_url = "/Indicators/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> NetTrade</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Getting Started</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="..">Robot</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../IRobotParameters/">IRobotParameters</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Backtesting/">Backtesting</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Optimization/">Optimization</a>
+                </li>
+                <li class=" current">
+                    
+    <a class="current" href="./">Indicators</a>
+    <ul class="subnav">
+            
+    </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Symbol/">Symbol</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Bars/">Bars</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../TradeEngine/">TradeEngine</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">NetTrade</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Getting Started &raquo;</li>
+        
+      
+    
+    <li>Indicators</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1>Indicators</h1>
+
+<p>Technical indicators are very important for algo trading, and NetTrade allows you to develop indicators and use them on your NetTrade robots. It comes with several built-in indicators that you can use to learn about how to develop an indicator based on the functions provided by NetTrade.</p>
+<p>You can find the built-in indicators inside the NetTrade indicators directory. Below is an example of a simple moving average indicator:</p>
+<pre><code class="c#">    public class SimpleMovingAverage : Indicator
+    {
+        private readonly ExpandableSeries&lt;double&gt; _data = new ExpandableSeries&lt;double&gt;();
+
+        public SimpleMovingAverage(ISymbol symbol)
+        {
+            Symbol = symbol;
+
+            Symbol.IndicatorOnBarEvent += Symbol_OnBarEvent;
+        }
+
+        public ISymbol Symbol { get; }
+
+        public int Periods { get; set; } = 14;
+
+        public DataSourceType DataSourceType { get; set; } = DataSourceType.Close;
+
+        public ISeries&lt;double&gt; Data =&gt; _data;
+
+        private void Symbol_OnBarEvent(object sender, int index)
+        {
+            var symbolData = Symbol.Bars.GetData(DataSourceType);
+
+            var dataPoint = double.NaN;
+
+            if (symbolData.Count &gt;= Periods)
+            {
+                var dataWindow = symbolData.Skip(symbolData.Count - Periods);
+
+                dataPoint = dataWindow.Sum() / dataWindow.Count();
+            }
+
+            _data.Add(dataPoint);
+
+            OnNewValue(index);
+        }
+    }
+
+</code></pre>
+
+<p>As you can see all the indicators must be implemented in the "IIndicator" interface or in the "Indicator" abstract class.</p>
+<p>You can use one indicator inside another indicator; "Average True Range" is a good example:</p>
+<pre><code class="c#">    public class AverageTrueRange : Indicator
+    {
+        private readonly TrueRange _trueRange;
+
+        private readonly ExpandableSeries&lt;double&gt; _data = new ExpandableSeries&lt;double&gt;();
+
+        public AverageTrueRange(ISymbol symbol)
+        {
+            Symbol = symbol;
+
+            _trueRange = new TrueRange(Symbol);
+
+            _trueRange.OnNewValueEvent += _trueRange_OnNewValueEvent;
+        }
+
+        public int Periods { get; set; } = 14;
+
+        public ISymbol Symbol { get; }
+
+        public ISeries&lt;double&gt; Data =&gt; _data;
+
+        private void _trueRange_OnNewValueEvent(object sender, int index)
+        {
+            var dataPoint = double.NaN;
+
+            if (index + 1 &gt;= Periods)
+            {
+                var dataWindow = _trueRange.Data.Skip(_trueRange.Data.Count - Periods);
+
+                dataPoint = dataWindow.Sum() / dataWindow.Count();
+            }
+
+            _data.Add(dataPoint);
+
+            OnNewValue(index);
+        }
+    }
+
+</code></pre>
+
+<p>Inside "Average True Range" we have used the "True Range" indicator.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../Symbol/" class="btn btn-neutral float-right" title="Symbol">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../Optimization/" class="btn btn-neutral" title="Optimization"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../Optimization/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../Symbol/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/require.js"></script>
+      <script src="../search/search.js"></script>
+
+</body>
+</html>

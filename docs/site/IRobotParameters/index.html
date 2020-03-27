@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>IRobotParameters - NetTrade</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "IRobotParameters";
+    var mkdocs_page_input_path = "IRobotParameters.md";
+    var mkdocs_page_url = "/IRobotParameters/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> NetTrade</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Getting Started</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="..">Robot</a>
+                </li>
+                <li class=" current">
+                    
+    <a class="current" href="./">IRobotParameters</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#properties">Properties</a></li>
+    
+
+    </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Backtesting/">Backtesting</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Optimization/">Optimization</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Indicators/">Indicators</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Symbol/">Symbol</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Bars/">Bars</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../TradeEngine/">TradeEngine</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">NetTrade</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Getting Started &raquo;</li>
+        
+      
+    
+    <li>IRobotParameters</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1>IRobotParameters</h1>
+
+<p>This is the configuration object that is passed to a robot start method. The robot will use this object to know its mode (backtest or live), as well as all the necessary data it needs to operate. Below you can find the descriptions for each property of this object.</p>
+<h2 id="properties">Properties</h2>
+<p>Mode: You set it to either backtest or live. When you optimize a robot, this property value is set by an optimizer to backtest.</p>
+<p>Symbols: The robot symbols; these are symbols that the robot can trade and use to receive their market data.</p>
+<p>Backtester: In the case where you set the mode to "Backtest", you have to provide a backtester for the robot.</p>
+<p>BacktestSettings: These are the settings that will be used by the Backtester, like the start and end times.</p>
+<p>Account: The trading account for the robot.</p>
+<p>TradeEngine: This is the trade engine that will be used by the robot. When executing an order inside your robot, you should use this trade engine.</p>
+<p>Server: A server object allows you to have access to some general data like the current time.</p>
+<p>Timer: This is the timer that will be used by the robot. You cannot use .Net built-in or any other third party timers in the backtest.</p>
+<p>SymbolsBacktestData: The symbols data; for each of the robot symbols you have to provide its backtest data. In live mode this property will not be used and you can ignore it.</p>
+<p>For most of the above properties NetTrade has a defualt implementation. You don't have to create your own implementations unless you need to.</p>
+<p>There is a default implementation of an 'IRobotParameters' interface called the 'RobotParameters' class in 'NetTrade.Models'. You can use this instead of creating your own implementation, but if your robot needs any kind of custom data then you will have to create your own implementation.</p>
+<p>Below is an example of RobotParameters:</p>
+<pre><code class="c#">            var startTime = data.Min(iBar =&gt; iBar.Time); // Setting backtest start/end time based on symbol available data
+            var endTime = data.Max(iBar =&gt; iBar.Time);
+
+            var robotParmeters = new RobotParameters
+            {
+                Account = new BacktestAccount(1, 1, string.Empty, 500, &quot;ConsoleTester&quot;),
+                Backtester = new OhlcBacktester { Interval = TimeSpan.FromHours(1) },
+                BacktestSettings = new BacktestSettings(startTime, endTime),
+                Mode = Mode.Backtest,
+                Server = new Server(),
+                Symbols = new List&lt;ISymbol&gt; { symbol },
+                SymbolsBacktestData = new List&lt;ISymbolBacktestData&gt; { new SymbolBacktestData(symbol, data) },
+                Timer = new DefaultTimer(),
+            };
+
+            robotParmeters.TradeEngine = new BacktestTradeEngine(robotParmeters.Server, robotParmeters.Account);
+
+            robotParmeters.Account.AddTransaction(new Transaction(10000, startTime));
+
+            robotParmeters.Backtester.OnBacktestStopEvent += Backtester_OnBacktestStopEvent;
+            robotParmeters.Backtester.OnBacktestProgressChangedEvent += Backtester_OnBacktestProgressChangedEvent;
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../Backtesting/" class="btn btn-neutral float-right" title="Backtesting">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href=".." class="btn btn-neutral" title="Robot"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../Backtesting/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/require.js"></script>
+      <script src="../search/search.js"></script>
+
+</body>
+</html>

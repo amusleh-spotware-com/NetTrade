@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Symbol - NetTrade</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Symbol";
+    var mkdocs_page_input_path = "Symbol.md";
+    var mkdocs_page_url = "/Symbol/";
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js"></script>
+  <script src="../js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="../js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> NetTrade</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Getting Started</span>
+    <ul class="subnav">
+                <li class="">
+                    
+    <a class="" href="..">Robot</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../IRobotParameters/">IRobotParameters</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Backtesting/">Backtesting</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Optimization/">Optimization</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Indicators/">Indicators</a>
+                </li>
+                <li class=" current">
+                    
+    <a class="current" href="./">Symbol</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#isymbol-properties">ISymbol Properties</a></li>
+    
+
+    <li class="toctree-l3"><a href="#isymbol-events">ISymbol Events</a></li>
+    
+
+    <li class="toctree-l3"><a href="#isymbol-methods">ISymbol Methods</a></li>
+    
+
+    <li class="toctree-l3"><a href="#ohlcsymbol-methods">OhlcSymbol Methods</a></li>
+    
+
+    </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../Bars/">Bars</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="../TradeEngine/">TradeEngine</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">NetTrade</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Getting Started &raquo;</li>
+        
+      
+    
+    <li>Symbol</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1>Symbol</h1>
+
+<p>A symbol is an asset that you can trade in NetTrade. Each symbol can have different settings based on the real asset. NetTrade came with a default "OhlcSymbol" implementation of the "ISymbol" interface, but you can also create your own implementation and use it instead, according to your requirements.</p>
+<h2 id="isymbol-properties">ISymbol Properties</h2>
+<p>Name: A symbol code name, for example EURUSD or AAPL.</p>
+<p>TickSize: The tick size of a symbol in its price term. For EURUSD it's 0.00001 or for Stocks it's one cent or 0.01.</p>
+<p>TickValue: The monetary value of one symbol tick movement, or how much it will cost if you trade one unit of symbol volume, as seen by the price moving by one tick.</p>
+<p>Commission: The amount of commission your broker charges you upon opening or closing a position.</p>
+<p>Digits: The number of decimal digit points in the symbol price. For EURUSD it's 5 or for Stocks it's 2.</p>
+<p>MinVolume: The minimum volume that your broker allows you to trade for the symbol, for EURUSD it's 1000 unit (0.01 lots).</p>
+<p>MaxVolume: The maximum volume that your broker allows you to trade for the symbol.</p>
+<p>VolumeStep: The step or interval that your broker allows you to increase or decrease in terms of volume.</p>
+<p>VolumeUnitValue: One volume unit of monetary vlaue.</p>
+<p>Bid: The latest bid price of the symbol.</p>
+<p>Ask: The lastest ask price of the symbol.</p>
+<p>Bars: The price data of the symbol OHLC.</p>
+<p>Slippage: The slippage symbol; this will only be used for the backtest.</p>
+<p>Spread: The current spread of the symbol.</p>
+<h2 id="isymbol-events">ISymbol Events</h2>
+<p>RobotOnTickEvent: This event is used by the robots. It is triggered whenever the symbol price changes by one tick.</p>
+<p>IndicatorOnTickEvent: Similar to the RobotOnTickEvent, but this is used by indicators and it is triggered before the RobotOnTickEvent.</p>
+<p>RobotOnBarEvent: This event is used by the robots. It is triggered whenever a new OHLC bar opens.</p>
+<p>IndicatorOnBarEvent: Similar to the RobotOnBarEvent, but this is used by indicators and it is triggered before the RobotOnBarEvent.</p>
+<h2 id="isymbol-methods">ISymbol Methods</h2>
+<p>GetPrice: You can use this method to get the price of a symbol based on the trade type. For buy orders it returns the ask price and for sell orders it returns the bid price.</p>
+<h2 id="ohlcsymbol-methods">OhlcSymbol Methods</h2>
+<p>PublishBar: This method is used to publish a new OHLC price bar for the symbol. It adds the bar to the symbol Bars data collection and triggers the symbol OnTick and OnBar events.</p>
+<p>Symbol objects must be cloneable.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../Bars/" class="btn btn-neutral float-right" title="Bars">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../Indicators/" class="btn btn-neutral" title="Indicators"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../Indicators/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+        <span style="margin-left: 15px"><a href="../Bars/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/require.js"></script>
+      <script src="../search/search.js"></script>
+
+</body>
+</html>

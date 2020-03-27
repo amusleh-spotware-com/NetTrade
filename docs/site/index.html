@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="None">
+  
+  <link rel="shortcut icon" href="./img/favicon.ico">
+  <title>Robot - NetTrade</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="./css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="./css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="./css/highlight.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Robot";
+    var mkdocs_page_input_path = "index.md";
+    var mkdocs_page_url = "/";
+  </script>
+  
+  <script src="./js/jquery-2.1.1.min.js"></script>
+  <script src="./js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="./js/highlight.pack.js"></script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="." class="icon icon-home"> NetTrade</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <span class="caption-text">Getting Started</span>
+    <ul class="subnav">
+                <li class=" current">
+                    
+    <a class="current" href=".">Robot</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l3"><a href="#implementable-robot-general-methods">Implementable Robot General Methods</a></li>
+    
+
+    <li class="toctree-l3"><a href="#backtester-event-handler-methods">Backtester Event Handler Methods</a></li>
+    
+
+    <li class="toctree-l3"><a href="#account-event-handler-methods">Account Event Handler Methods</a></li>
+    
+
+    </ul>
+                </li>
+                <li class="">
+                    
+    <a class="" href="IRobotParameters/">IRobotParameters</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="Backtesting/">Backtesting</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="Optimization/">Optimization</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="Indicators/">Indicators</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="Symbol/">Symbol</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="Bars/">Bars</a>
+                </li>
+                <li class="">
+                    
+    <a class="" href="TradeEngine/">TradeEngine</a>
+                </li>
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href=".">NetTrade</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".">Docs</a> &raquo;</li>
+    
+      
+        
+          <li>Getting Started &raquo;</li>
+        
+      
+    
+    <li>Robot</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1>Robot</h1>
+
+<p>NetTrade has a main abstract "Robot" class, this class represents a trading system and/or algorithm; you can backtest or optimize any class that is driven from the "Robot" class or the "IRobot" interface with NetTrade.</p>
+<p>A robot can be as simple as using a few technical analysis indicators to get trading decisions, or as complicated as using ML models to get trading decisions, an external service or an API.</p>
+<p>All you need to do is create a class that's driven from the "Robot" abstract class or for more customization from the "IRobot" interface, give it a name, add some robot parameters, implement the interface methods, and you will have a trading robot.</p>
+<p>A simple robot example:</p>
+<pre><code class="c#">    [Robot(Name = &quot;Simple Bot&quot;, Group = &quot;Sample&quot;)]
+    public class SimpleBot : Robot
+    {
+        [Parameter(&quot;Volume&quot;, DefaultValue = 1)]
+        public double Volume { get; set; }
+
+        public override void OnStart()
+        {
+        }
+
+        public override void OnBar(ISymbol symbol, int index)
+        {
+            if (symbol.Bars.Close[index] &gt; symbol.Bars.Open[index])
+            {
+                ClosePositions(TradeType.Sell);
+
+                var buyOrderParameters = new MarketOrderParameters(symbol)
+                {
+                    Volume = Volume,
+                    TradeType = TradeType.Buy,
+                };
+
+                Trade.Execute(buyOrderParameters);
+            }
+            else if (symbol.Bars.Close[index] &lt; symbol.Bars.Open[index])
+            {
+                ClosePositions(TradeType.Buy);
+
+                var sellOrderParameters = new MarketOrderParameters(symbol)
+                {
+                    Volume = Volume,
+                    TradeType = TradeType.Sell,
+                };
+
+                Trade.Execute(sellOrderParameters);
+            }
+        }
+
+        private void ClosePositions(TradeType tradeType)
+        {
+            foreach (var order in Trade.Orders)
+            {
+                if (order.OrderType != OrderType.Market || order.TradeType != tradeType)
+                {
+                    continue;
+                }
+
+                Trade.CloseMarketOrder(order as MarketOrder);
+            }
+        }
+    }
+</code></pre>
+
+<p>The above robot opens a buy market order whenever there is an up/bullish bar, and a sell order whenever there is a down/bearish bar. The robot closes all positions of opposite direction before opening a new one.</p>
+<p>As you can see in the robot code we have a "Volume" parameter; this parameter value will be used for setting the volume of the orders, and the NetTrade optimizer can optimize the value of this parameter or of any other robot parameter.</p>
+<p>Now let's start from the first line of the robot code which is "RobotAttribute". There we set a name for the robot and for a group. This data can be used by your app to display a user friendly name and to categorize your robots.</p>
+<p>After that we have a robot parameter. A robot can contain as many parameters as is needed. These parameters are recognized by the NetTrade optimizer and you will be able to optimize the values for the robot parameters. You can set the min/max/step and the default values for numeric parameters.</p>
+<p>The parameter type can be any .Net object, but the NetTrade default "GridOptimizer" can only optimize numeric (int, long, double), enum, string, TimeSpan, DateTime, and DateTimeOffset types.</p>
+<p>In the case where you would want to optimize a custom type parameter, you will have to create your own optimizer based on your requirements.</p>
+<p>The "OnStart" robot method is its initialization method. You have to input some form of an initialization code, and it will be called once when the robot "Start" method is called.</p>
+<p>The "OnBar" method is called whenever a new OHLC bar opens for that specific symbol. You will get the symbol and the bar index from the method parameters. To access the bar data you can use "symbol.Bars.Open/High/Low/Close/Volume[index]".</p>
+<p>To start a robot, you can call its "StartAsync" method. There are other methods such as the Stop, Pause, and Resume methods that allow you to manage the running mode of a robot.</p>
+<p>You have to pass an IRobotParameters object to StartAsync; this object will have all the necessary data that is needed for the robot to operate. You can find more about this on its own page. </p>
+<h2 id="implementable-robot-general-methods">Implementable Robot General Methods</h2>
+<p>OnStart: This method is called when you call the robot "StartAsync" method.</p>
+<p>OnTick: This method is called on each new upcoming tick.</p>
+<p>OnTimer: This method is called every time the robot timer interval elapses. The robot class has a timer which you can start using the OnStart method and you can use a "TimeSpane" to set its interval value. Don't use the conventional .Net timers because it will not work on backtest/optimizer.</p>
+<p>OnPause: This method is called when you call the robot "Pause" method.</p>
+<p>OnResume: This method is called when you call the robot "Resume" method. You should only call a robot "Resume" method if it's in "Paused" mode otherwise you will get an "InvalidOperationException" exception.</p>
+<p>OnStop: This method is called when you call the robot "Stop" method. You should only call a robot "Stop" method if it's in "Running" or "Paused" modes otherwise you will get an "InvalidOperationException" exception.</p>
+<h2 id="backtester-event-handler-methods">Backtester Event Handler Methods</h2>
+<p>If you start a robot in backtesting/optimization mode, the robot will use its backtester to get symbol data, and each backtester has several event handler methods that you can override to get data about the backtest operation status.</p>
+<p>Backtester_OnBacktestStartEvent: This method is called when the backtest operation starts.</p>
+<p>Backtester_OnBacktestPauseEvent: This method is called when the backtest operation is paused.</p>
+<p>Backtester_OnBacktestStopEvent: This method is called when the backtest operation stops or is finished.</p>
+<h2 id="account-event-handler-methods">Account Event Handler Methods</h2>
+<p>For a trading account there are some methods that you can override.</p>
+<p>Account_OnMarginCallEvent: This method is called whenever you get a margin called.</p>
+<p>Robot Properties</p>
+<p>Trade: This property allows you to access the trade engine for the purpose of executing orders.</p>
+<p>RunningMode: The current running robot mode.</p>
+<p>Account: The trading account.</p>
+<p>Symbols: The symbols for the robot; the robot will receive only this symbol data.</p>
+<p>Mode: This is either a back test for backtesting and optimization, or live for live trading.</p>
+<p>Backtester: If you are backtesting/optimizing a robot you can access the back tester with this property.</p>
+<p>BacktestSettings: If you are backtesting/optimizing a robot you can access the backtest setting with this property.</p>
+<p>Server: The server object that is connected to the robot. It's used to get the current time or some other server-related data.</p>
+<p>Timer: Robot timer; with this you can start/stop/configure the timer.</p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="IRobotParameters/" class="btn btn-neutral float-right" title="IRobotParameters">Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+      
+        <span style="margin-left: 15px"><a href="IRobotParameters/" style="color: #fcfcfc">Next &raquo;</a></span>
+      
+    </span>
+</div>
+    <script>var base_url = '.';</script>
+    <script src="./js/theme.js"></script>
+      <script src="./search/require.js"></script>
+      <script src="./search/search.js"></script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 0.17.2
+Build Date UTC : 2020-03-27 19:04:41
+-->

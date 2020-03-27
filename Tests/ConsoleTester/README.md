@@ -1,8 +1,8 @@
-Console Tester
+# Console Tester
 
 This console app allows you to test a simple moving average robot, it contains the Amazon and Microsoft price data so you don't have to import any price data by your self.
 
-Instruction
+<strong>Instruction</strong>
 
 1. Run the console app
 2. Provide the symbol code, either MSFT or AMZN
