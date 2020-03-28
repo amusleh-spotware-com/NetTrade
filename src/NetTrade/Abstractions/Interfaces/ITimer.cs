@@ -3,7 +3,7 @@ using System;
 
 namespace NetTrade.Abstractions.Interfaces
 {
-    public interface ITimer
+    public interface ITimer: IDisposable
     {
         TimeSpan Interval { get; }
 

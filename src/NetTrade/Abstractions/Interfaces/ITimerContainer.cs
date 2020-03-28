@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace NetTrade.Abstractions.Interfaces
 {
-    public interface ITimerContainer: IDisposable
+    public interface ITimerContainer
     {
         IReadOnlyList<ITimer> Timers { get; }
 
@@ -12,9 +12,5 @@ namespace NetTrade.Abstractions.Interfaces
         bool RemoveTimer(ITimer timer);
 
         void SetCurrentTime(DateTimeOffset currentTime);
-
-        void PauseSystemTimer();
-
-        void ResumeSystemTimer();
     }
 }

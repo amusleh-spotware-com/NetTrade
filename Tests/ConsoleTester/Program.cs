@@ -85,7 +85,7 @@ namespace ConsoleTester
                 Server = new Server(),
                 Symbols = new List<ISymbol> { symbol },
                 SymbolsBacktestData = new List<ISymbolBacktestData> { new SymbolBacktestData(symbol, data) },
-                TimerContainer = new TimerContainer(Mode.Backtest),
+                TimerContainer = new TimerContainer(),
             };
 
             robotParmeters.TradeEngine = new BacktestTradeEngine(robotParmeters.Server, robotParmeters.Account);
@@ -150,7 +150,6 @@ namespace ConsoleTester
             };
             optimizerSettings.TradeEngineType = typeof(BacktestTradeEngine);
             optimizerSettings.TimerContainerType = typeof(TimerContainer);
-            optimizerSettings.TimerContainerParameters = new object[] { Mode.Backtest };
             optimizerSettings.ServerType = typeof(Server);
             optimizerSettings.RobotSettingsType = typeof(RobotParameters);
             optimizerSettings.RobotType = typeof(SingleSymbolMaCrossOverBot);

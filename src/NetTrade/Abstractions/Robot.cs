@@ -50,7 +50,7 @@ namespace NetTrade.Abstractions
             Trade = parameters.TradeEngine ?? new BacktestTradeEngine(Server, Account);
             Mode = parameters.Mode;
 
-            TimerContainer = parameters.TimerContainer ?? new TimerContainer(Mode);
+            TimerContainer = parameters.TimerContainer ?? new TimerContainer();
 
             foreach (var symbol in Symbols)
             {
@@ -98,7 +98,10 @@ namespace NetTrade.Abstractions
 
             if (Mode == Mode.Live)
             {
-                TimerContainer.Dispose();
+                foreach (var timer in TimerContainer.Timers)
+                {
+                    timer.Dispose();
+                }
             }
 
             try
@@ -122,7 +125,10 @@ namespace NetTrade.Abstractions
 
             if (Mode == Mode.Live)
             {
-                TimerContainer.PauseSystemTimer();
+                foreach (var timer in TimerContainer.Timers)
+                {
+                    timer.Stop();
+                }
             }
 
             try
@@ -151,7 +157,10 @@ namespace NetTrade.Abstractions
 
             if (Mode == Mode.Live)
             {
-                TimerContainer.ResumeSystemTimer();
+                foreach (var timer in TimerContainer.Timers)
+                {
+                    timer.Start();
+                }
             }
 
             try

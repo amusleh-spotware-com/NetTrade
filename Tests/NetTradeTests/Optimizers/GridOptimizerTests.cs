@@ -47,7 +47,6 @@ namespace NetTrade.Optimizers.Tests
             }.ToArray();
             _optimizerSettings.TradeEngineType = typeof(BacktestTradeEngine);
             _optimizerSettings.TimerContainerType = typeof(TimerContainer);
-            _optimizerSettings.TimerContainerParameters = new object[] { Mode.Backtest };
             _optimizerSettings.ServerType = typeof(Server);
             _optimizerSettings.RobotSettingsType = typeof(RobotParameters);
             _optimizerSettings.RobotType = typeof(SampleBot);

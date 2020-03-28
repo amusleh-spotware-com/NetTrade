@@ -1,11 +1,29 @@
 ﻿using NetTrade.Abstractions.Interfaces;
+using NetTrade.Enums;
 using NetTrade.Helpers;
 using System;
+using System.Timers;
 
 namespace NetTrade.Timers
 {
     public class DefaultTimer : ITimer
     {
+        private readonly Timer _systemTimer;
+
+        private readonly Mode _mode;
+
+        public DefaultTimer(Mode mode)
+        {
+            _mode = mode;
+
+            if (_mode == Mode.Live)
+            {
+                _systemTimer = new Timer();
+
+                _systemTimer.Elapsed += SystemTimer_Elapsed;
+            }
+        }
+
         public TimeSpan Interval { get; private set; }
 
         public bool Enabled { get; private set; }
@@ -40,6 +58,13 @@ namespace NetTrade.Timers
             Enabled = true;
 
             OnTimerStartEvent?.Invoke(this);
+
+            if (_mode == Mode.Live)
+            {
+                _systemTimer.Interval = Interval.TotalMilliseconds;
+
+                _systemTimer.Start();
+            }
         }
 
         public void Stop()
@@ -47,6 +72,8 @@ namespace NetTrade.Timers
             Enabled = false;
 
             OnTimerStopEvent?.Invoke(this);
+
+            _systemTimer?.Stop();
         }
 
         public void SetInterval(TimeSpan interval)
@@ -55,5 +82,12 @@ namespace NetTrade.Timers
 
             OnTimerIntervalChangedEvent?.Invoke(this, interval);
         }
+
+        public void Dispose()
+        {
+            _systemTimer?.Dispose();
+        }
+
+        private void SystemTimer_Elapsed(object sender, ElapsedEventArgs e) => SetCurrentTime(DateTimeOffset.Now);
     }
 }
