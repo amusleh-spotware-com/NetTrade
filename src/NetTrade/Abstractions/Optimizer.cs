@@ -40,7 +40,8 @@ namespace NetTrade.Abstractions
 
             robotParameters.Mode = Mode.Backtest;
 
-            robotParameters.SymbolsBacktestData = Settings.SymbolsData.Select(iSymbolData => iSymbolData.Clone() as ISymbolBacktestData).ToList();
+            robotParameters.SymbolsBacktestData = Settings.SymbolsData.Select(iSymbolData => iSymbolData.Clone() as
+                ISymbolBacktestData).ToList();
 
             robotParameters.Symbols = robotParameters.SymbolsBacktestData.Select(iSymbolData => iSymbolData.Symbol).ToList();
 
@@ -52,9 +53,11 @@ namespace NetTrade.Abstractions
 
             robotParameters.Backtester.Interval = Settings.BacktesterInterval;
 
-            robotParameters.Server = Activator.CreateInstance(Settings.ServerType, Settings.ServerParameters) as IServer;
+            robotParameters.Server = Settings.ServerType != null ? Activator.CreateInstance(Settings.ServerType,
+                Settings.ServerParameters) as IServer : null;
 
-            robotParameters.Timer = Activator.CreateInstance(Settings.TimerType, Settings.TimerParameters) as ITimer;
+            robotParameters.TimerContainer = Settings.TimerContainerType != null ? Activator.CreateInstance(
+                Settings.TimerContainerType, Settings.TimerContainerParameters) as ITimerContainer : null;
 
             robotParameters.Account = new BacktestAccount(0, 0, string.Empty, Settings.AccountLeverage, "Optimizer");
 
@@ -69,8 +72,8 @@ namespace NetTrade.Abstractions
                 tradeEngineParameters.AddRange(Settings.TradeEngineParameters);
             }
 
-            robotParameters.TradeEngine = Activator.CreateInstance(Settings.TradeEngineType, tradeEngineParameters.ToArray()) as
-                ITradeEngine;
+            robotParameters.TradeEngine = Settings.TradeEngineType != null ? Activator.CreateInstance(Settings.TradeEngineType,
+                tradeEngineParameters.ToArray()) as ITradeEngine : null;
 
             return robotParameters;
         }

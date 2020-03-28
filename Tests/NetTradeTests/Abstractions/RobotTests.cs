@@ -33,7 +33,6 @@ namespace NetTrade.Abstractions.Tests
             _robotSettingsMock.SetupProperty(settings => settings.Account, new Mock<IAccount>().Object);
             _robotSettingsMock.SetupProperty(settings => settings.TradeEngine, new Mock<ITradeEngine>().Object);
             _robotSettingsMock.SetupProperty(settings => settings.Mode, Mode.Backtest);
-            _robotSettingsMock.SetupProperty(settings => settings.Timer, new DefaultTimer());
 
             _robotMock = new Mock<Robot>();
         }

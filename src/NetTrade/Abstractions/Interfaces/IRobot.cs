@@ -23,7 +23,7 @@ namespace NetTrade.Abstractions.Interfaces
 
         IServer Server { get; }
 
-        ITimer Timer { get; }
+        ITimerContainer TimerContainer { get; }
 
         Task StartAsync(IRobotParameters settings);
 
@@ -44,8 +44,6 @@ namespace NetTrade.Abstractions.Interfaces
         void OnBar(ISymbol symbol, int index);
 
         void OnTick(ISymbol symbol);
-
-        void OnTimer();
 
         void SetTimeByBacktester(IBacktester backtester, DateTimeOffset time);
     }

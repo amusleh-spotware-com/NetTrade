@@ -37,9 +37,9 @@ namespace NetTrade.Abstractions.Interfaces
 
         object[] ServerParameters { get; }
 
-        Type TimerType { get; }
+        Type TimerContainerType { get; }
 
-        object[] TimerParameters { get; }
+        object[] TimerContainerParameters { get; }
 
         int MaxProcessorNumber { get; }
     }

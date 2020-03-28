@@ -2,17 +2,16 @@
 using NetTrade.Enums;
 using NetTrade.Exceptions;
 using NetTrade.Helpers;
+using NetTrade.Models;
+using NetTrade.TradeEngines;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Timers;
 
 namespace NetTrade.Abstractions
 {
     public abstract class Robot : IRobot
     {
-        private Timer _systemTimer;
-
         public Robot()
         {
             RobotParameterTools.SetParameterValuesToDefault(this);
@@ -34,7 +33,7 @@ namespace NetTrade.Abstractions
 
         public IServer Server { get; private set; }
 
-        public ITimer Timer { get; private set; }
+        public ITimerContainer TimerContainer { get; private set; }
 
         public async Task StartAsync(IRobotParameters parameters)
         {
@@ -45,22 +44,19 @@ namespace NetTrade.Abstractions
 
             _ = parameters ?? throw new ArgumentNullException(nameof(parameters));
 
-            Trade = parameters.TradeEngine;
             Account = parameters.Account;
             Symbols = parameters.Symbols;
+            Server = parameters.Server ?? new Server();
+            Trade = parameters.TradeEngine ?? new BacktestTradeEngine(Server, Account);
             Mode = parameters.Mode;
-            Backtester = parameters.Backtester;
-            BacktestSettings = parameters.BacktestSettings;
-            Server = parameters.Server;
-            Timer = parameters.Timer;
+
+            TimerContainer = parameters.TimerContainer ?? new TimerContainer(Mode);
 
             foreach (var symbol in Symbols)
             {
                 symbol.RobotOnTickEvent += Symbol_OnTickEvent;
                 symbol.RobotOnBarEvent += SymbolBars_OnBarEvent;
             }
-
-            Timer.OnTimerElapsedEvent += timer => OnTimer();
 
             Account.OnMarginCallEvent += Account_OnMarginCallEvent;
 
@@ -79,15 +75,10 @@ namespace NetTrade.Abstractions
 
             if (Mode == Mode.Backtest)
             {
-                await Backtest(parameters.SymbolsBacktestData).ConfigureAwait(false);
-            }
-            else
-            {
-                InitializeLiveTimer();
+                Backtester = parameters.Backtester;
+                BacktestSettings = parameters.BacktestSettings;
 
-                Timer.OnTimerIntervalChangedEvent += (timer, interval) => _systemTimer.Interval = interval.TotalMilliseconds;
-                Timer.OnTimerStartEvent += timer => _systemTimer.Start();
-                Timer.OnTimerStopEvent += timer => _systemTimer.Stop();
+                await Backtest(parameters.SymbolsBacktestData).ConfigureAwait(false);
             }
         }
 
@@ -107,7 +98,7 @@ namespace NetTrade.Abstractions
 
             if (Mode == Mode.Live)
             {
-                _systemTimer.Dispose();
+                TimerContainer.Dispose();
             }
 
             try
@@ -131,7 +122,7 @@ namespace NetTrade.Abstractions
 
             if (Mode == Mode.Live)
             {
-                _systemTimer.Stop();
+                TimerContainer.PauseSystemTimer();
             }
 
             try
@@ -160,7 +151,7 @@ namespace NetTrade.Abstractions
 
             if (Mode == Mode.Live)
             {
-                _systemTimer.Start();
+                TimerContainer.ResumeSystemTimer();
             }
 
             try
@@ -194,7 +185,7 @@ namespace NetTrade.Abstractions
                     "the provided back tester isn't the one available on robot settings");
             }
 
-            Timer.SetCurrentTime(time);
+            TimerContainer.SetCurrentTime(time);
 
             Server.SetTime(this, time);
         }
@@ -204,10 +195,6 @@ namespace NetTrade.Abstractions
         }
 
         public virtual void OnBar(ISymbol symbol, int index)
-        {
-        }
-
-        public virtual void OnTimer()
         {
         }
 
@@ -313,21 +300,5 @@ namespace NetTrade.Abstractions
         }
 
         #endregion Account event handlers
-
-        #region Other methods
-
-        private void InitializeLiveTimer()
-        {
-            _systemTimer = new Timer(Timer.Interval.TotalMilliseconds);
-
-            _systemTimer.Elapsed += (sender, args) => Timer.SetCurrentTime(DateTimeOffset.Now);
-
-            if (Timer.Enabled)
-            {
-                _systemTimer.Start();
-            }
-        }
-
-        #endregion Other methods
     }
 }

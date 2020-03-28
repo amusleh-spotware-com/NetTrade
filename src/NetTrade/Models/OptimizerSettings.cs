@@ -38,9 +38,9 @@ namespace NetTrade.Models
 
         public object[] ServerParameters { get; set; }
 
-        public Type TimerType { get; set; }
+        public Type TimerContainerType { get; set; }
 
-        public object[] TimerParameters { get; set; }
+        public object[] TimerContainerParameters { get; set; }
 
         public int MaxProcessorNumber { get; set; } = -1;
     }

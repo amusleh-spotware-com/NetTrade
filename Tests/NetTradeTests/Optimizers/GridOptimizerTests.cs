@@ -2,15 +2,15 @@
 using NetTrade.Abstractions.Interfaces;
 using NetTrade.Backtesters;
 using NetTrade.BarTypes;
+using NetTrade.Enums;
 using NetTrade.Helpers;
 using NetTrade.Models;
-using NetTrade.Timers;
+using NetTrade.Symbols;
 using NetTrade.TradeEngines;
 using NetTradeTests.Samples;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using NetTrade.Symbols;
 
 namespace NetTrade.Optimizers.Tests
 {
@@ -40,13 +40,14 @@ namespace NetTrade.Optimizers.Tests
             var symbolData = new SymbolBacktestData(symbol, data);
 
             _optimizerSettings.SymbolsData = new List<ISymbolBacktestData> { symbolData };
-            _optimizerSettings.BacktestSettingsParameters = new List<object> 
-            { 
+            _optimizerSettings.BacktestSettingsParameters = new List<object>
+            {
                 startTime,
                 endTime,
             }.ToArray();
             _optimizerSettings.TradeEngineType = typeof(BacktestTradeEngine);
-            _optimizerSettings.TimerType = typeof(DefaultTimer);
+            _optimizerSettings.TimerContainerType = typeof(TimerContainer);
+            _optimizerSettings.TimerContainerParameters = new object[] { Mode.Backtest };
             _optimizerSettings.ServerType = typeof(Server);
             _optimizerSettings.RobotSettingsType = typeof(RobotParameters);
             _optimizerSettings.RobotType = typeof(SampleBot);

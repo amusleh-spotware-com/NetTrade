@@ -62,7 +62,6 @@ namespace NetTrade.Backtesters.Tests
             _robotParametersMock.SetupProperty(robotParameters => robotParameters.Server, new Server());
             _robotParametersMock.SetupProperty(robotParameters => robotParameters.Account, new Mock<IAccount>().Object);
             _robotParametersMock.SetupProperty(robotParameters => robotParameters.Mode, Mode.Backtest);
-            _robotParametersMock.SetupProperty(robotParameters => robotParameters.Timer, new DefaultTimer());
 
             var tradeEngine = new BacktestTradeEngine(_robotParametersMock.Object.Server, _robotParametersMock.Object.Account);
 
