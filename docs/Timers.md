@@ -1,4 +1,4 @@
-<h1>Timers</h>
+<h1>Timers</h1>
 
 When your robot is running you might need to use a timer to run a code in a time interval, its one of the most things in algo trading and also a challenge, as in the backtesting mode the conventional .Net timers will not work due to iteration over time in backtest you can't get the behavior you want to from a conventional .Net timer, so to solve this issue NetTrade came with its own timers.
 
