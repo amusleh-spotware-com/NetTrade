@@ -14,7 +14,7 @@ NetTrade makes the development of trading algorithms very simple, and if you hav
 
 ## Quick Start
 
-Install NetTrade on your .Net project via Nuget: Install-Package NetTrade
+Install NetTrade on your .Net project via Nuget: ```Install-Package NetTrade```
 
 Let's create a simple moving average crossover trading system:
 
