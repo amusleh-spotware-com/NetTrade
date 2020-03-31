@@ -2,6 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Company>AlgoDeveloper</Company>
+    <Description>An algo trading framework for .Net</Description>
+    <RepositoryUrl>https://github.com/afhacker/NetTrade</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/afhacker/NetTrade</PackageProjectUrl>
+    <NeutralLanguage>en-GB</NeutralLanguage>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
