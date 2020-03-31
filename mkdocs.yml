@@ -11,3 +11,4 @@ pages:
     - 'Symbol': 'Symbol.md' 
     - 'Bars': 'Bars.md' 
     - 'TradeEngine': 'TradeEngine.md' 
+    - 'Timers': 'Timers.md'

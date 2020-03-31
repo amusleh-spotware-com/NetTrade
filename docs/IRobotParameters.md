@@ -18,7 +18,7 @@ TradeEngine: This is the trade engine that will be used by the robot. When execu
 
 Server: A server object allows you to have access to some general data like the current time.
 
-Timer: This is the timer that will be used by the robot. You cannot use .Net built-in or any other third party timers in the backtest.
+TimerContainer: This is an "ITimerContainer" object, it will manage your robot timers if it had any, if you don't provdie any value for this property the robot itself will instantiate a "NetTrade.Models.TimerContainer" object and use it instead 
 
 SymbolsBacktestData: The symbols data; for each of the robot symbols you have to provide its backtest data. In live mode this property will not be used and you can ignore it.
 
@@ -41,7 +41,6 @@ Below is an example of RobotParameters:
                 Server = new Server(),
                 Symbols = new List<ISymbol> { symbol },
                 SymbolsBacktestData = new List<ISymbolBacktestData> { new SymbolBacktestData(symbol, data) },
-                Timer = new DefaultTimer(),
             };
 
             robotParmeters.TradeEngine = new BacktestTradeEngine(robotParmeters.Server, robotParmeters.Account);

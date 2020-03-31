@@ -89,8 +89,6 @@ OnStart: This method is called when you call the robot "StartAsync" method.
 
 OnTick: This method is called on each new upcoming tick.
 
-OnTimer: This method is called every time the robot timer interval elapses. The robot class has a timer which you can start using the OnStart method and you can use a "TimeSpane" to set its interval value. Don't use the conventional .Net timers because it will not work on backtest/optimizer.
-
 OnPause: This method is called when you call the robot "Pause" method.
 
 OnResume: This method is called when you call the robot "Resume" method. You should only call a robot "Resume" method if it's in "Paused" mode otherwise you will get an "InvalidOperationException" exception.
@@ -131,5 +129,5 @@ BacktestSettings: If you are backtesting/optimizing a robot you can access the b
 
 Server: The server object that is connected to the robot. It's used to get the current time or some other server-related data.
 
-Timer: Robot timer; with this you can start/stop/configure the timer.
+TimerContainer: An object that implements "ITimerContainer" interface, its used by your robot to manage the timers if it had any
 
